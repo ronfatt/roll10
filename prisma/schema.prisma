@@ -1,0 +1,637 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MemberRole {
+  MEMBER
+  ADMIN
+}
+
+enum MemberStatus {
+  PENDING_PAYMENT
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+}
+
+enum BinaryLeg {
+  LEFT
+  RIGHT
+}
+
+enum OrderType {
+  INITIAL
+  UPGRADE
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID_DEMO
+  PAID
+}
+
+enum OrderStatus {
+  PENDING_CONFIRMATION
+  CONFIRMED
+  FAILED
+  CANCELLED
+}
+
+enum UpgradeEffectiveStatus {
+  NOT_APPLICABLE
+  WAITING_EFFECTIVE
+  EFFECTIVE
+  FAILED
+}
+
+enum BvEntryType {
+  CREDIT_ORDER
+  DEBIT_PAIRING
+  DEBIT_EOD_FLUSH
+  CARRYOVER_RETAIN
+  ADMIN_ADJUSTMENT
+}
+
+enum PairingTriggerType {
+  ORDER_BV
+  SCHEDULED_UPGRADE
+  MANUAL_CATCHUP
+}
+
+enum WalletEntryType {
+  DIRECT_COMMISSION
+  BINARY_PAIRING
+  WITHDRAWAL_LOCK
+  WITHDRAWAL_RELEASE
+  WITHDRAWAL_PAID
+  ADMIN_ADJUSTMENT
+}
+
+enum RetainedSide {
+  LEFT
+  RIGHT
+  NONE
+}
+
+enum TieBreakerRule {
+  KEEP_LEFT
+  KEEP_RIGHT
+}
+
+enum HeadcountRule {
+  ACTIVE_PAID_ALL_DEPTHS
+}
+
+enum UpgradePriceMode {
+  DIFFERENCE
+  FULL
+}
+
+enum WithdrawalStatus {
+  PENDING_APPROVAL
+  APPROVED
+  CHAIN_CONFIRMING
+  PAYOUT_PENDING_CHECK
+  PAID
+  REJECTED
+}
+
+enum DepositVerifyStatus {
+  AWAITING_TX
+  VERIFYING
+  VERIFIED_MATCH
+  MANUAL_REVIEW
+  MATCHED_CONFIRMED
+  REJECTED
+}
+
+enum TransferDirection {
+  DEPOSIT
+  PAYOUT
+}
+
+enum ReferralRewardCurrency {
+  USDT
+  POINTS
+}
+
+enum ReferralRewardStatus {
+  PENDING
+  CREDITED
+  REVERSED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PayoutStatus {
+  UNPAID
+  PENDING_CHECK
+  PAID
+  CANCELLED
+}
+
+model SystemConfig {
+  id                              Int              @id @default(1)
+  ruleVersion                     Int              @default(1)
+  tieBreakerRule                  TieBreakerRule   @default(KEEP_LEFT)
+  headcountRule                   HeadcountRule    @default(ACTIVE_PAID_ALL_DEPTHS)
+  upgradePriceMode                UpgradePriceMode @default(DIFFERENCE)
+  upgradeGrantsBv                 Boolean          @default(false)
+  upgradeTriggersDirectCommission Boolean          @default(false)
+  upgradeEffectiveDaysOffset      Int              @default(2)
+  upgradeEffectiveTimeSgt         String           @default("00:01:00")
+  directCommissionRateBps         Int              @default(2500)
+  pairingUnitBv                   Int              @default(100)
+  pairingRewardPointsCents        Int              @default(1000)
+  withdrawalFeeRateBps            Int              @default(2000)
+  withdrawalUsdRateMicros         Int              @default(1000000)
+  isDemoRate                      Boolean          @default(true)
+  productionPayoutEnabled         Boolean          @default(false)
+  usdtNetwork                     String           @default("TRON_TRC20")
+  usdtContractAddress             String           @default("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t")
+  usdtDepositAddress              String           @default("TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE")
+  usdtPayoutAddress               String           @default("TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH")
+  usdtMinConfirmations            Int              @default(19)
+  usdtWithdrawalProcessingHours   Int                    @default(72)
+  usdtDepositsEnabled             Boolean                @default(true)
+  usdtWithdrawalsEnabled          Boolean                @default(true)
+  directRewardCurrency            ReferralRewardCurrency @default(USDT)
+  directUsdtConversionMicros      Int                    @default(1000000)
+  directUsdtWithdrawalsEnabled    Boolean                @default(false)
+  updatedAt                       DateTime               @updatedAt
+
+  @@map("system_configs")
+}
+
+model RuleVersionRecord {
+  version                         Int              @id
+  tieBreakerRule                  TieBreakerRule
+  headcountRule                   HeadcountRule
+  upgradePriceMode                UpgradePriceMode
+  upgradeGrantsBv                 Boolean
+  upgradeTriggersDirectCommission Boolean
+  upgradeEffectiveDaysOffset      Int
+  upgradeEffectiveTimeSgt         String
+  directCommissionRateBps         Int
+  pairingUnitBv                   Int
+  pairingRewardPointsCents        Int
+  withdrawalFeeRateBps            Int
+  withdrawalUsdRateMicros         Int
+  isDemoRate                      Boolean
+  productionPayoutEnabled         Boolean
+  usdtNetwork                     String           @default("TRON_TRC20")
+  usdtContractAddress             String           @default("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t")
+  usdtDepositAddress              String           @default("TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE")
+  usdtPayoutAddress               String           @default("TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH")
+  usdtMinConfirmations            Int              @default(19)
+  usdtWithdrawalProcessingHours   Int                    @default(72)
+  usdtDepositsEnabled             Boolean                @default(true)
+  usdtWithdrawalsEnabled          Boolean                @default(true)
+  directRewardCurrency            ReferralRewardCurrency @default(USDT)
+  directUsdtConversionMicros      Int                    @default(1000000)
+  directUsdtWithdrawalsEnabled    Boolean                @default(false)
+  changedById                     String?
+  changeNote                      String?
+  createdAt                       DateTime         @default(now())
+
+  @@map("rule_version_records")
+}
+
+model PackageTier {
+  code                String         @id
+  nameEn              String
+  nameZh              String
+  priceUsdCents       Int
+  priceUsdtMicros     BigInt         @default(0)
+  bv                  Int
+  dailyCapPointsCents Int
+  sortOrder           Int
+  isActive            Boolean        @default(true)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  membersCurrent      Member[]       @relation("CurrentPackage")
+  membersPending      Member[]       @relation("PendingUpgradePackage")
+  ordersTarget        PackageOrder[] @relation("OrderTargetPackage")
+  ordersPrevious      PackageOrder[] @relation("OrderPreviousPackage")
+
+  @@map("package_tiers")
+}
+
+model Member {
+  id                          String                    @id @default(cuid())
+  memberCode                  String                    @unique
+  email                       String                    @unique
+  passwordHash                String
+  displayName                 String
+  role                        MemberRole                @default(MEMBER)
+  status                      MemberStatus              @default(PENDING_PAYMENT)
+  locale                      String                    @default("en")
+
+  sponsorId                   String?
+  sponsor                     Member?                   @relation("MemberSponsor", fields: [sponsorId], references: [id])
+  directReferrals             Member[]                  @relation("MemberSponsor")
+
+  placementParentId           String?
+  placementParent             Member?                   @relation("MemberPlacement", fields: [placementParentId], references: [id])
+  placedChildren              Member[]                  @relation("MemberPlacement")
+  placementLeg                BinaryLeg?
+  placedAt                    DateTime?
+  placedById                  String?
+  placedBy                    Member?                   @relation("MemberPlacedBy", fields: [placedById], references: [id])
+  placedActions               Member[]                  @relation("MemberPlacedBy")
+
+  currentPackageCode          String?
+  currentPackage              PackageTier?              @relation("CurrentPackage", fields: [currentPackageCode], references: [code])
+  dailyCapPointsCents         Int                       @default(0)
+
+  pendingUpgradePackageCode   String?
+  pendingUpgradePackage       PackageTier?              @relation("PendingUpgradePackage", fields: [pendingUpgradePackageCode], references: [code])
+  pendingUpgradeEffectiveDate String?
+  pendingUpgradeEffectiveAt   DateTime?
+  pendingUpgradeOrderId       String?
+
+  leftBv                      Int                       @default(0)
+  rightBv                     Int                       @default(0)
+  activeSettlementDate        String
+  todayPairedPointsCents      Int                       @default(0)
+  availablePointsCents        Int                       @default(0)
+  lockedPointsCents           Int                       @default(0)
+
+  activatedAt                 DateTime?
+  createdAt                   DateTime                  @default(now())
+  updatedAt                   DateTime                  @updatedAt
+
+  orders                      PackageOrder[]            @relation("OrderMember")
+  confirmedOrders             PackageOrder[]            @relation("OrderConfirmedBy")
+  requestedPlacements         PackageOrder[]            @relation("OrderRequestedParent")
+  bvLedgers                   BvLedger[]                @relation("BvLedgerMember")
+  sourcedBvLedgers            BvLedger[]                @relation("BvLedgerSourceMember")
+  pairingSettlements          BinaryPairingSettlement[]
+  walletLedgers               WalletLedger[]            @relation("WalletLedgerMember")
+  operatedWalletLedgers       WalletLedger[]            @relation("WalletLedgerOperator")
+  dailySettlements            DailySettlement[]
+  withdrawals                 WithdrawalRequest[]       @relation("WithdrawalMember")
+  approvedWithdrawals         WithdrawalRequest[]       @relation("WithdrawalApprovedBy")
+  paidWithdrawals             WithdrawalRequest[]       @relation("WithdrawalPaidBy")
+  rejectedWithdrawals         WithdrawalRequest[]       @relation("WithdrawalRejectedBy")
+  claimedWithdrawals          WithdrawalRequest[]       @relation("WithdrawalClaimedBy")
+  savedAddresses              MemberSavedAddress[]
+  referralRewardsEarned       ReferralRewardLedger[]    @relation("ReferralRewardRecipient")
+  referralRewardsSourced      ReferralRewardLedger[]    @relation("ReferralRewardSource")
+  auditLogs                   AuditLog[]                @relation("AuditActor")
+
+  @@unique([placementParentId, placementLeg])
+  @@index([sponsorId])
+  @@index([status])
+  @@index([pendingUpgradeEffectiveAt])
+  @@map("members")
+}
+
+model PackageOrder {
+  id                         String                 @id @default(cuid())
+  orderNo                    String                 @unique
+  memberId                   String
+  member                     Member                 @relation("OrderMember", fields: [memberId], references: [id])
+  orderType                  OrderType
+  targetPackageCode          String
+  targetPackage              PackageTier            @relation("OrderTargetPackage", fields: [targetPackageCode], references: [code])
+  previousPackageCode        String?
+  previousPackage            PackageTier?           @relation("OrderPreviousPackage", fields: [previousPackageCode], references: [code])
+  amountUsdCents             Int
+  bvAmount                   Int
+  commissionableBv           Int
+  paymentStatus              PaymentStatus          @default(UNPAID)
+  paymentRef                 String?
+  paidAt                     DateTime?
+  paymentMethod              String                 @default("USDT")
+  usdtNetwork                String?
+  usdtContractAddress        String?
+  usdtDepositAddress         String?
+  expectedUsdtMicros         BigInt?
+  actualUsdtMicros           BigInt?
+  submittedTxId              String?
+  paymentProofNote           String?
+  chainConfirmedAt           DateTime?
+  depositVerifyStatus        DepositVerifyStatus    @default(AWAITING_TX)
+  depositFailureReason       String?
+  matchedDepositEventId      String?                @unique
+  matchedDepositEvent        ChainTransferEvent?    @relation("MatchedDepositEvent", fields: [matchedDepositEventId], references: [id])
+  status                     OrderStatus            @default(PENDING_CONFIRMATION)
+  upgradeStatus              UpgradeEffectiveStatus @default(NOT_APPLICABLE)
+  requestedPlacementParentId String?
+  requestedPlacementParent   Member?                @relation("OrderRequestedParent", fields: [requestedPlacementParentId], references: [id])
+  requestedPlacementLeg      BinaryLeg?
+  failureReason              String?
+  confirmedAt                DateTime?
+  confirmedById              String?
+  confirmedBy                Member?                @relation("OrderConfirmedBy", fields: [confirmedById], references: [id])
+  effectiveSgtDate           String?
+  effectiveAt                DateTime?
+  upgradeProcessedAt         DateTime?
+  upgradeFailureReason       String?
+  isSameDayEffective         Boolean?
+  ruleVersion                Int                    @default(1)
+  createdAt                  DateTime               @default(now())
+  updatedAt                  DateTime               @updatedAt
+
+  bvLedgers                  BvLedger[]
+  walletLedgers              WalletLedger[]
+  referralRewardLedgers      ReferralRewardLedger[]
+  depositTransferEvents      ChainTransferEvent[]   @relation("OrderSubmittedEvents")
+
+  @@index([memberId, status])
+  @@index([status, createdAt])
+  @@index([upgradeStatus, effectiveAt])
+  @@index([depositVerifyStatus, createdAt])
+  @@index([submittedTxId])
+  @@map("package_orders")
+}
+
+model BvLedger {
+  id                  String                   @id @default(cuid())
+  eventKey            String                   @unique
+  memberId            String
+  member              Member                   @relation("BvLedgerMember", fields: [memberId], references: [id])
+  leg                 BinaryLeg
+  entryType           BvEntryType
+  deltaBv             Int
+  balanceAfterBv      Int
+  settlementDate      String
+  orderId             String?
+  order               PackageOrder?            @relation(fields: [orderId], references: [id])
+  sourceMemberId      String?
+  sourceMember        Member?                  @relation("BvLedgerSourceMember", fields: [sourceMemberId], references: [id])
+  pairingSettlementId String?
+  pairingSettlement   BinaryPairingSettlement? @relation(fields: [pairingSettlementId], references: [id])
+  dailySettlementId   String?
+  dailySettlement     DailySettlement?         @relation(fields: [dailySettlementId], references: [id])
+  note                String?
+  createdAt           DateTime                 @default(now())
+
+  @@index([memberId, createdAt])
+  @@index([orderId])
+  @@index([settlementDate])
+  @@map("bv_ledgers")
+}
+
+model BinaryPairingSettlement {
+  id                     String             @id @default(cuid())
+  settlementNo           String             @unique
+  eventKey               String             @unique
+  memberId               String
+  member                 Member             @relation(fields: [memberId], references: [id])
+  settlementDate         String
+  triggerType            PairingTriggerType
+  triggerOrderId         String?
+  pairsCount             Int
+  bvDeductedPerLeg       Int
+  pointsAwardedCents     Int
+  leftBvBefore           Int
+  rightBvBefore          Int
+  leftBvAfter            Int
+  rightBvAfter           Int
+  dailyCapPointsCents    Int
+  dailyPairedBeforeCents Int
+  dailyPairedAfterCents  Int
+  businessAt             DateTime           @default(now())
+  ruleVersion            Int                @default(1)
+  ruleSnapshot           Json?
+  createdAt              DateTime           @default(now())
+
+  bvLedgers              BvLedger[]
+  walletLedgers          WalletLedger[]
+
+  @@index([memberId, settlementDate])
+  @@index([triggerOrderId])
+  @@map("binary_pairing_settlements")
+}
+
+model WalletLedger {
+  id                  String                   @id @default(cuid())
+  ledgerNo            String                   @unique
+  eventKey            String                   @unique
+  memberId            String
+  member              Member                   @relation("WalletLedgerMember", fields: [memberId], references: [id])
+  entryType           WalletEntryType
+  deltaAvailableCents Int
+  deltaLockedCents    Int
+  availableAfterCents Int
+  lockedAfterCents    Int
+  orderId             String?
+  order               PackageOrder?            @relation(fields: [orderId], references: [id])
+  pairingSettlementId String?
+  pairingSettlement   BinaryPairingSettlement? @relation(fields: [pairingSettlementId], references: [id])
+  withdrawalId        String?
+  withdrawal          WithdrawalRequest?       @relation(fields: [withdrawalId], references: [id])
+  operatorId          String?
+  operator            Member?                  @relation("WalletLedgerOperator", fields: [operatorId], references: [id])
+  note                String?
+  createdAt           DateTime                 @default(now())
+
+  @@index([memberId, createdAt])
+  @@index([entryType])
+  @@index([orderId])
+  @@map("wallet_ledgers")
+}
+
+model ReferralRewardLedger {
+  id               String                 @id @default(cuid())
+  rewardNo         String                 @unique
+  eventKey         String                 @unique
+  memberId         String
+  member           Member                 @relation("ReferralRewardRecipient", fields: [memberId], references: [id])
+  sourceMemberId   String
+  sourceMember     Member                 @relation("ReferralRewardSource", fields: [sourceMemberId], references: [id])
+  orderId          String
+  order            PackageOrder           @relation(fields: [orderId], references: [id])
+  currency         ReferralRewardCurrency @default(USDT)
+  baseBv           Int
+  rateBps          Int
+  conversionMicros Int                    @default(1000000)
+  amountMicros     BigInt
+  status           ReferralRewardStatus   @default(CREDITED)
+  creditedAt       DateTime?
+  note             String?
+  createdAt        DateTime               @default(now())
+
+  @@index([memberId, currency, status])
+  @@index([orderId])
+  @@map("referral_reward_ledgers")
+}
+
+model DailySettlement {
+  id               String       @id @default(cuid())
+  settlementNo     String       @unique
+  memberId         String
+  member           Member       @relation(fields: [memberId], references: [id])
+  settlementDate   String
+  leftBvBefore     Int
+  rightBvBefore    Int
+  leftMemberCount  Int
+  rightMemberCount Int
+  retainedSide     RetainedSide
+  flushedSide      RetainedSide
+  flushedBv        Int
+  leftBvAfter      Int
+  rightBvAfter     Int
+  decisionBasis    String
+  businessAt       DateTime     @default(now())
+  executedAt       DateTime
+  triggeredBy      String
+  ruleVersion      Int          @default(1)
+  ruleSnapshot     Json?
+  createdAt        DateTime     @default(now())
+
+  bvLedgers        BvLedger[]
+
+  @@unique([memberId, settlementDate])
+  @@index([settlementDate])
+  @@map("daily_settlements")
+}
+
+model WithdrawalRequest {
+  id                     String               @id @default(cuid())
+  withdrawalNo           String               @unique
+  memberId               String
+  member                 Member               @relation("WithdrawalMember", fields: [memberId], references: [id])
+  requestedPointsCents   Int
+  feeRateBpsSnapshot     Int                  @default(2000)
+  feePointsCents         Int
+  netPointsCents         Int
+  usdRateMicros          Int
+  isDemoRate             Boolean              @default(true)
+  estimatedUsdCents      Int
+  payoutDestination      String
+  usdtNetwork            String               @default("TRON_TRC20")
+  usdtContractAddress    String?
+  companyPayoutAddress   String?
+  payoutAmountUsdtMicros BigInt               @default(0)
+  processingDeadlineAt   DateTime?
+  status                 WithdrawalStatus     @default(PENDING_APPROVAL)
+  approvalStatus         ApprovalStatus       @default(PENDING)
+  payoutStatus           PayoutStatus         @default(UNPAID)
+  claimedAt              DateTime?
+  claimedById            String?
+  claimedBy              Member?              @relation("WithdrawalClaimedBy", fields: [claimedById], references: [id])
+  approvedAt             DateTime?
+  approvedById           String?
+  approvedBy             Member?              @relation("WithdrawalApprovedBy", fields: [approvedById], references: [id])
+  paidAt                 DateTime?
+  paidById               String?
+  paidBy                 Member?              @relation("WithdrawalPaidBy", fields: [paidById], references: [id])
+  rejectedAt             DateTime?
+  rejectedById           String?
+  rejectedBy             Member?              @relation("WithdrawalRejectedBy", fields: [rejectedById], references: [id])
+  rejectionReason        String?
+  payoutCheckNote        String?
+  payoutFailureReason    String?
+  payoutTxRef            String?
+  chainConfirmedAt       DateTime?
+  matchedPayoutEventId   String?              @unique
+  matchedPayoutEvent     ChainTransferEvent?  @relation("MatchedPayoutEvent", fields: [matchedPayoutEventId], references: [id])
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  walletLedgers          WalletLedger[]
+  payoutTransferEvents   ChainTransferEvent[] @relation("WithdrawalSubmittedEvents")
+
+  @@index([memberId, createdAt])
+  @@index([status])
+  @@index([processingDeadlineAt])
+  @@index([payoutTxRef])
+  @@map("withdrawal_requests")
+}
+
+model MemberSavedAddress {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id])
+  network   String
+  label     String
+  address   String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([memberId, network, address])
+  @@index([memberId])
+  @@map("member_saved_addresses")
+}
+
+model ChainTransferEvent {
+  id                      String             @id @default(cuid())
+  direction               TransferDirection
+  network                 String
+  txId                    String
+  eventIndex              Int
+  contractAddress         String
+  fromAddress             String
+  toAddress               String
+  amountMicros            BigInt
+  confirmations           Int
+  minConfirmations        Int
+  chainSuccess            Boolean
+  chainTimestamp          DateTime?
+  verifyOutcome           String
+  rawPayload              Json?
+  submittedByOrderId      String?
+  submittedByOrder        PackageOrder?      @relation("OrderSubmittedEvents", fields: [submittedByOrderId], references: [id])
+  submittedByWithdrawalId String?
+  submittedByWithdrawal   WithdrawalRequest? @relation("WithdrawalSubmittedEvents", fields: [submittedByWithdrawalId], references: [id])
+  claimedOrderId          String?            @unique
+  claimedOrder            PackageOrder?      @relation("MatchedDepositEvent")
+  claimedWithdrawalId     String?            @unique
+  claimedWithdrawal       WithdrawalRequest? @relation("MatchedPayoutEvent")
+  attributionNote         String?
+  verifiedById            String?
+  verifiedAt              DateTime?
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+
+  @@unique([network, txId, eventIndex])
+  @@index([txId])
+  @@index([submittedByOrderId])
+  @@index([submittedByWithdrawalId])
+  @@map("chain_transfer_events")
+}
+
+model MockChainTx {
+  id                String   @id @default(cuid())
+  network           String
+  txId              String
+  txExecutedSuccess Boolean  @default(true)
+  confirmations     Int      @default(20)
+  chainTimestamp    DateTime @default(now())
+  simulateError     String?
+  transfers         Json
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([network, txId])
+  @@map("mock_chain_txs")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      Member?  @relation("AuditActor", fields: [actorId], references: [id])
+  actorRole  String?
+  action     String
+  entityType String
+  entityId   String
+  summary    String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
