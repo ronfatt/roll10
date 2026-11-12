@@ -4,17 +4,25 @@ import { useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, Lock } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock } from "lucide-react";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import { Roll10Logo } from "@/components/Roll10Logo";
+import { MarbleRaceLoader } from "@/components/MarbleRaceLoader";
 
-export function LoginForm({ t }: { t: Dictionary }) {
+export function LoginForm({
+  t,
+  locale = "en",
+}: {
+  t: Dictionary;
+  locale?: Locale;
+}) {
   const router = useRouter();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showRaceLoader, setShowRaceLoader] = useState(false);
   const inFlightRef = useRef(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,8 +43,7 @@ export function LoginForm({ t }: { t: Dictionary }) {
         inFlightRef.current = false;
         return;
       }
-      router.push("/dashboard");
-      router.refresh();
+      setShowRaceLoader(true);
     } catch {
       setError(t.auth.signInFailed);
       setLoading(false);
@@ -44,11 +51,27 @@ export function LoginForm({ t }: { t: Dictionary }) {
     }
   };
 
+  if (showRaceLoader) {
+    return (
+      <MarbleRaceLoader
+        locale={locale}
+        targetHref="/dashboard"
+        onComplete={() => {
+          router.replace("/dashboard");
+          router.refresh();
+        }}
+      />
+    );
+  }
+
   return (
     <div className="w-full max-w-md rounded-2xl border border-white/[0.1] bg-[#141619] p-6 shadow-2xl sm:p-8">
       <div className="mb-6">
         <div className="mb-5 flex items-center justify-between">
-          <Roll10Logo className="h-6 w-auto" />
+          <Link href="/" className="inline-flex items-center gap-2 text-xs text-[#9DA4B0] hover:text-[#E7C98E]">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <Roll10Logo className="h-6 w-auto" />
+          </Link>
           <span className="font-mono-sgt rounded-full border border-[#CBB487]/35 bg-[#CBB487]/10 px-2.5 py-0.5 text-[11px] font-medium text-[#CBB487]">
             SGT
           </span>

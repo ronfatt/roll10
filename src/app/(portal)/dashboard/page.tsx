@@ -20,12 +20,20 @@ export default async function DashboardPage({
     host.includes("localhost") || host.startsWith("127.") ? "http" : "https";
   const referralLink = `${proto}://${host}/register?ref=${member.memberCode}`;
 
-  const initialError =
+  const initialErrorBase =
     params?.simulateError === "1" ? t.common.loadError : null;
   const justActivated = params?.activated === "1";
-  const initialData = initialError
-    ? null
-    : await loadPortalHomeData(member.id, locale);
+
+  let initialData = null;
+  let initialError = initialErrorBase;
+  if (!initialErrorBase) {
+    try {
+      initialData = await loadPortalHomeData(member.id, locale);
+    } catch (err) {
+      console.error("[DashboardPage] loadPortalHomeData failed:", err);
+      initialError = t.common.loadError;
+    }
+  }
 
   return (
     <HomeClient

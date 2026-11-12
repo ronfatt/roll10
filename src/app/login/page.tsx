@@ -16,7 +16,7 @@ export default async function LoginPage() {
       <div className="absolute right-4 top-4 sm:right-8 sm:top-6">
         <LocaleToggle locale={locale} />
       </div>
-      <LoginForm t={t} />
+      <LoginForm t={t} locale={locale} />
     </div>
   );
 }
