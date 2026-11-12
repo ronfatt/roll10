@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp } from "@/lib/sgt";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminAuditPage() {
   await requireAdmin();
+  const locale = await getServerLocale();
+  const isZh = locale === "zh-CN";
 
   const logs = await prisma.auditLog.findMany({
     include: {
@@ -19,10 +22,12 @@ export default async function AdminAuditPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Immutable Audit Logs
+          {isZh ? "不可篡改审计日志" : "Immutable Audit Logs"}
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Orders, binary placements, rule updates, EOD settlements, withdrawals, and admin balance adjustments.
+          {isZh
+            ? "记录全平台订单确认、双轨安置、规则版本更新、午夜日结、提现出款及后台调账操作。"
+            : "Orders, binary placements, rule updates, EOD settlements, withdrawals, and admin balance adjustments."}
         </p>
       </div>
 
@@ -31,11 +36,11 @@ export default async function AdminAuditPage() {
           <table className="w-full text-left text-xs">
             <thead className="border-b border-white/[0.08] text-zinc-400">
               <tr>
-                <th className="py-2 pr-3">Time (SGT)</th>
-                <th className="py-2 pr-3">Action</th>
-                <th className="py-2 pr-3">Actor</th>
-                <th className="py-2 pr-3">Entity</th>
-                <th className="py-2 pr-3">Summary</th>
+                <th className="py-2 pr-3">{isZh ? "时间 (SGT)" : "Time (SGT)"}</th>
+                <th className="py-2 pr-3">{isZh ? "操作类型" : "Action"}</th>
+                <th className="py-2 pr-3">{isZh ? "操作人" : "Actor"}</th>
+                <th className="py-2 pr-3">{isZh ? "目标实体" : "Entity"}</th>
+                <th className="py-2 pr-3">{isZh ? "变更摘要" : "Summary"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.05]">

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp, getSgtDateString } from "@/lib/sgt";
 import { AdminSettlementsClient } from "@/components/admin/AdminSettlementsClient";
 
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminSettlementsPage() {
   await requireAdmin();
+  const locale = await getServerLocale();
   const currentSgtDate = getSgtDateString(new Date());
 
   const [raw, laggingActiveCount] = await Promise.all([
@@ -60,6 +62,7 @@ export default async function AdminSettlementsPage() {
 
   return (
     <AdminSettlementsClient
+      locale={locale}
       currentSgtDate={currentSgtDate}
       laggingActiveCount={laggingActiveCount}
       jobSummaries={jobSummaries}

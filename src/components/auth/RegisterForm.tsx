@@ -5,15 +5,17 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Eye, EyeOff, UserCheck } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import { Roll10Logo } from "@/components/Roll10Logo";
 
 export function RegisterForm({
   t,
+  locale = "en",
   initialRef,
   sponsorDisplayName,
 }: {
   t: Dictionary;
+  locale?: Locale;
   initialRef?: string;
   sponsorDisplayName?: string | null;
 }) {
@@ -50,7 +52,7 @@ export function RegisterForm({
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(data.error || "Registration failed");
+        setError(data.error || (locale === "zh-CN" ? "注册失败" : "Registration failed"));
         setLoading(false);
         inFlightRef.current = false;
         return;
@@ -69,7 +71,7 @@ export function RegisterForm({
       router.push(data.order?.id ? `/orders/${data.order.id}` : "/dashboard");
       router.refresh();
     } catch {
-      setError("Network error while registering");
+      setError(locale === "zh-CN" ? "注册时网络异常，请重试" : "Network error while registering");
       setLoading(false);
       inFlightRef.current = false;
     }
@@ -135,7 +137,7 @@ export function RegisterForm({
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            placeholder="Full name"
+            placeholder={locale === "zh-CN" ? "请输入会员昵称或姓名" : "Full name"}
             className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] px-3.5 py-2.5 text-sm text-[#F2F0EB] placeholder-[#A7AEBC]/45 outline-none focus:border-[#CBB487]"
           />
         </div>
@@ -165,13 +167,21 @@ export function RegisterForm({
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min 6 characters"
+              placeholder={locale === "zh-CN" ? "至少 6 位字符" : "Min 6 characters"}
               className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] pl-3.5 pr-11 py-2.5 text-sm text-[#F2F0EB] placeholder-[#A7AEBC]/45 outline-none focus:border-[#CBB487]"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={
+                showPassword
+                  ? locale === "zh-CN"
+                    ? "隐藏密码"
+                    : "Hide password"
+                  : locale === "zh-CN"
+                    ? "显示密码"
+                    : "Show password"
+              }
               className="absolute right-1 top-0.5 flex min-h-[40px] min-w-[40px] items-center justify-center rounded-lg text-[#A7AEBC] transition hover:text-[#F2F0EB]"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -185,9 +195,9 @@ export function RegisterForm({
           </label>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { code: "P100" as const, price: "100 U", bv: "100 BV", cap: "100 U/d" },
-              { code: "P500" as const, price: "500 U", bv: "500 BV", cap: "500 U/d" },
-              { code: "P1000" as const, price: "1,000 U", bv: "1,000 BV", cap: "1,000 U/d" },
+              { code: "P100" as const, price: "100 U", bv: "100 BV", cap: locale === "zh-CN" ? "100 U/天" : "100 U/d" },
+              { code: "P500" as const, price: "500 U", bv: "500 BV", cap: locale === "zh-CN" ? "500 U/天" : "500 U/d" },
+              { code: "P1000" as const, price: "1,000 U", bv: "1,000 BV", cap: locale === "zh-CN" ? "1,000 U/天" : "1,000 U/d" },
             ].map((pkg) => (
               <button
                 key={pkg.code}
@@ -203,7 +213,9 @@ export function RegisterForm({
                   {pkg.price}
                 </div>
                 <div className="tabular-nums text-[11px] text-[#F2F0EB]">{pkg.bv}</div>
-                <div className="tabular-nums text-[10px] text-[#A7AEBC]">Cap {pkg.cap}</div>
+                <div className="tabular-nums text-[10px] text-[#A7AEBC]">
+                  {locale === "zh-CN" ? `日封顶 ${pkg.cap}` : `Cap ${pkg.cap}`}
+                </div>
               </button>
             ))}
           </div>

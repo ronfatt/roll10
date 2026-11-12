@@ -3,6 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import type { Locale } from "@/lib/i18n";
+import {
+  formatBvEventType,
+  formatEntryTypeLabel,
+  formatLegLabel,
+} from "@/lib/i18n-labels";
 import { formatBv, formatU } from "@/lib/money";
 
 interface AdminWalletRow {
@@ -37,12 +43,15 @@ interface AdminBvRow {
 }
 
 export function AdminLedgersClient({
+  locale = "en",
   walletRows,
   bvRows,
 }: {
+  locale?: Locale;
   walletRows: AdminWalletRow[];
   bvRows: AdminBvRow[];
 }) {
+  const isZh = locale === "zh-CN";
   const [tab, setTab] = useState<"wallet" | "bv">("wallet");
   const [query, setQuery] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -75,10 +84,12 @@ export function AdminLedgersClient({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Bonus & BV Ledgers
+          {isZh ? "奖金与 BV 全平台流水" : "Bonus & BV Ledgers"}
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Filter platform-wide direct commissions, binary pairing payouts, and BV movements by member, SGT date, or order number.
+          {isZh
+            ? "按会员、SGT 日期或订单编号筛选全平台直推佣金、对碰奖金入账及 BV 变动流水。"
+            : "Filter platform-wide direct commissions, binary pairing payouts, and BV movements by member, SGT date, or order number."}
         </p>
       </div>
 
@@ -94,7 +105,9 @@ export function AdminLedgersClient({
                 : "border border-white/10 bg-[#141619] text-zinc-300"
             }`}
           >
-            Bonus / Wallet Ledgers ({filteredWallet.length})
+            {isZh
+              ? `奖金 / 钱包流水 (${filteredWallet.length})`
+              : `Bonus / Wallet Ledgers (${filteredWallet.length})`}
           </button>
           <button
             type="button"
@@ -105,7 +118,7 @@ export function AdminLedgersClient({
                 : "border border-white/10 bg-[#141619] text-zinc-300"
             }`}
           >
-            BV Ledgers ({filteredBv.length})
+            {isZh ? `BV 变动流水 (${filteredBv.length})` : `BV Ledgers (${filteredBv.length})`}
           </button>
         </div>
 
@@ -116,7 +129,7 @@ export function AdminLedgersClient({
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Member Code, Order No..."
+              placeholder={isZh ? "会员编号、订单号..." : "Member Code, Order No..."}
               className="rounded-xl border border-white/10 bg-[#141619] py-2 pl-9 pr-3 text-xs text-white placeholder-zinc-500 outline-none focus:border-[#CBB487]/60"
             />
           </div>
@@ -135,12 +148,12 @@ export function AdminLedgersClient({
             <table className="w-full text-left text-xs">
               <thead className="border-b border-white/[0.08] text-zinc-400">
                 <tr>
-                  <th className="py-2 pr-3">Ledger No</th>
-                  <th className="py-2 pr-3">Member</th>
-                  <th className="py-2 pr-3">Source</th>
-                  <th className="py-2 pr-3">Order / Ref</th>
-                  <th className="py-2 pr-3">U Δ</th>
-                  <th className="py-2 pr-3">Time (SGT)</th>
+                  <th className="py-2 pr-3">{isZh ? "流水号" : "Ledger No"}</th>
+                  <th className="py-2 pr-3">{isZh ? "会员" : "Member"}</th>
+                  <th className="py-2 pr-3">{isZh ? "类型 / 说明" : "Source"}</th>
+                  <th className="py-2 pr-3">{isZh ? "关联单号" : "Order / Ref"}</th>
+                  <th className="py-2 pr-3">{isZh ? "U 变动" : "U Δ"}</th>
+                  <th className="py-2 pr-3">{isZh ? "时间 (SGT)" : "Time (SGT)"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.05]">
@@ -151,7 +164,7 @@ export function AdminLedgersClient({
                       {w.memberCode} ({w.memberName})
                     </td>
                     <td className="py-2 pr-3 text-zinc-300">
-                      <div>{w.entryType}</div>
+                      <div>{formatEntryTypeLabel(w.entryType, locale)}</div>
                       {w.note && <div className="text-[11px] text-zinc-500">{w.note}</div>}
                     </td>
                     <td className="py-2 pr-3 tabular-nums">
@@ -189,13 +202,13 @@ export function AdminLedgersClient({
             <table className="w-full text-left text-xs">
               <thead className="border-b border-white/[0.08] text-zinc-400">
                 <tr>
-                  <th className="py-2 pr-3">Member</th>
-                  <th className="py-2 pr-3">Leg</th>
-                  <th className="py-2 pr-3">Type</th>
-                  <th className="py-2 pr-3">Order Ref</th>
-                  <th className="py-2 pr-3">Delta BV</th>
-                  <th className="py-2 pr-3">Balance After</th>
-                  <th className="py-2 pr-3">Time (SGT)</th>
+                  <th className="py-2 pr-3">{isZh ? "会员" : "Member"}</th>
+                  <th className="py-2 pr-3">{isZh ? "区间" : "Leg"}</th>
+                  <th className="py-2 pr-3">{isZh ? "类型" : "Type"}</th>
+                  <th className="py-2 pr-3">{isZh ? "关联订单" : "Order Ref"}</th>
+                  <th className="py-2 pr-3">{isZh ? "BV 变动" : "Delta BV"}</th>
+                  <th className="py-2 pr-3">{isZh ? "变动后余额" : "Balance After"}</th>
+                  <th className="py-2 pr-3">{isZh ? "时间 (SGT)" : "Time (SGT)"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.05]">
@@ -204,9 +217,9 @@ export function AdminLedgersClient({
                     <td className="py-2 pr-3 text-white">
                       {b.memberCode} ({b.memberName})
                     </td>
-                    <td className="py-2 pr-3 text-zinc-300">{b.leg}</td>
+                    <td className="py-2 pr-3 text-zinc-300">{formatLegLabel(b.leg, locale)}</td>
                     <td className="py-2 pr-3 text-zinc-300">
-                      <div>{b.entryType}</div>
+                      <div>{formatBvEventType(b.entryType, locale)}</div>
                       {b.note && <div className="text-[11px] text-zinc-500">{b.note}</div>}
                     </td>
                     <td className="py-2 pr-3 tabular-nums">

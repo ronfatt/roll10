@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp } from "@/lib/sgt";
 import { getOrCreateConfigTx } from "@/lib/settlement/engine";
 import { AdminConfigClient } from "@/components/admin/AdminConfigClient";
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminConfigPage() {
   await requireAdmin();
+  const locale = await getServerLocale();
 
   const [config, tiers, versions] = await Promise.all([
     getOrCreateConfigTx(prisma),
@@ -17,6 +19,7 @@ export default async function AdminConfigPage() {
 
   return (
     <AdminConfigClient
+      locale={locale}
       config={{
         ruleVersion: config.ruleVersion,
         tieBreakerRule: config.tieBreakerRule,
@@ -45,6 +48,7 @@ export default async function AdminConfigPage() {
       tiers={tiers.map((t) => ({
         code: t.code,
         nameEn: t.nameEn,
+        nameZh: t.nameZh,
         priceUsdCents: t.priceUsdCents,
         priceUsdtMicros: t.priceUsdtMicros.toString(),
         bv: t.bv,

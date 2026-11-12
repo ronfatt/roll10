@@ -36,6 +36,7 @@ export default async function RegisterPage({
       </div>
       <RegisterForm
         t={t}
+        locale={locale}
         initialRef={initialRef}
         sponsorDisplayName={sponsorDisplayName}
       />

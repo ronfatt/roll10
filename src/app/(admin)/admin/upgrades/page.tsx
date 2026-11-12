@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp } from "@/lib/sgt";
 import { AdminUpgradesClient } from "@/components/admin/AdminUpgradesClient";
 
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminUpgradesPage() {
   await requireAdmin();
+  const locale = await getServerLocale();
   const now = new Date();
 
   const orders = await prisma.packageOrder.findMany({
@@ -39,6 +41,7 @@ export default async function AdminUpgradesPage() {
 
   return (
     <AdminUpgradesClient
+      locale={locale}
       upgrades={orders.map((o) => {
         const catchup = pairingMap.get(o.id) ?? { pairs: 0, pointsCents: 0 };
         return {

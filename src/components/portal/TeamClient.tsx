@@ -19,7 +19,8 @@ import {
   Users,
   X,
 } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { formatLegLabel, formatMemberStatus } from "@/lib/i18n-labels";
 import { formatBv } from "@/lib/money";
 import type {
   PlacementBreadcrumbItem,
@@ -41,7 +42,7 @@ type DetailModalState =
   | { source: "placement"; node: PlacementNodeDto }
   | null;
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status, locale }: { status: string; locale: Locale }) {
   const active = status === "ACTIVE";
   return (
     <span
@@ -51,7 +52,7 @@ function StatusBadge({ status }: { status: string }) {
           : "bg-amber-500/15 text-amber-300"
       }`}
     >
-      {status}
+      {formatMemberStatus(status, locale)}
     </span>
   );
 }
@@ -68,6 +69,7 @@ function DesktopReferralBranch({
   loadingMap,
   highlightedId,
   t,
+  locale,
   onToggleExpand,
   onLoadMore,
   onOpenDetail,
@@ -80,6 +82,7 @@ function DesktopReferralBranch({
   loadingMap: Record<string, boolean>;
   highlightedId: string | null;
   t: Dictionary;
+  locale: Locale;
   onToggleExpand: (node: ReferralNodeDto) => void;
   onLoadMore: (nodeId: string) => void;
   onOpenDetail: (node: ReferralNodeDto) => void;
@@ -122,7 +125,7 @@ function DesktopReferralBranch({
             {node.displayName}
           </div>
           <div className="mt-1.5 flex items-center justify-between gap-2">
-            <StatusBadge status={node.status} />
+            <StatusBadge status={node.status} locale={locale} />
             <span className="tabular-nums text-[10px] text-[#A7AEBC]">
               {node.directCount} {t.tree.directsUnit}
             </span>
@@ -196,6 +199,7 @@ function DesktopReferralBranch({
                   loadingMap={loadingMap}
                   highlightedId={highlightedId}
                   t={t}
+                  locale={locale}
                   onToggleExpand={onToggleExpand}
                   onLoadMore={onLoadMore}
                   onOpenDetail={onOpenDetail}
@@ -249,6 +253,7 @@ function MobileReferralBranch({
   loadingMap,
   highlightedId,
   t,
+  locale,
   onToggleExpand,
   onLoadMore,
   onOpenDetail,
@@ -261,6 +266,7 @@ function MobileReferralBranch({
   loadingMap: Record<string, boolean>;
   highlightedId: string | null;
   t: Dictionary;
+  locale: Locale;
   onToggleExpand: (node: ReferralNodeDto) => void;
   onLoadMore: (nodeId: string) => void;
   onOpenDetail: (node: ReferralNodeDto) => void;
@@ -302,7 +308,7 @@ function MobileReferralBranch({
             <span className="rounded border border-white/[0.08] bg-[#08090B] px-2 py-0.5 text-[10px] font-medium text-[#F2F0EB]">
               {node.packageCode ?? "—"}
             </span>
-            <StatusBadge status={node.status} />
+            <StatusBadge status={node.status} locale={locale} />
           </div>
           <div className="mt-1 flex items-center justify-between gap-2">
             <span className="truncate text-sm font-semibold text-[#F2F0EB]">
@@ -362,6 +368,7 @@ function MobileReferralBranch({
                   loadingMap={loadingMap}
                   highlightedId={highlightedId}
                   t={t}
+                  locale={locale}
                   onToggleExpand={onToggleExpand}
                   onLoadMore={onLoadMore}
                   onOpenDetail={onOpenDetail}
@@ -401,6 +408,7 @@ function MobileReferralBranch({
 
 export function TeamClient({
   t,
+  locale = "en",
   initialFocusId,
   viewerId,
   viewerMemberCode,
@@ -408,6 +416,7 @@ export function TeamClient({
   initialTab,
 }: {
   t: Dictionary;
+  locale?: Locale;
   initialFocusId: string;
   viewerId: string;
   viewerMemberCode: string;
@@ -739,7 +748,10 @@ export function TeamClient({
       try {
         await navigator.share({
           title: t.brand,
-          text: `Join ROLL10 via ${viewerMemberCode}`,
+          text:
+            locale === "zh-CN"
+              ? `通过 ${viewerMemberCode} 加入 ROLL10`
+              : `Join ROLL10 via ${viewerMemberCode}`,
           url: referralLink,
         });
         return;
@@ -871,7 +883,9 @@ export function TeamClient({
             <div className="mb-2 flex items-center justify-between text-[11px] text-[#A7AEBC]">
               <span>
                 {refSearchResults.length > 0
-                  ? `${refSearchResults.length} results`
+                  ? locale === "zh-CN"
+                    ? `共找到 ${refSearchResults.length} 条结果`
+                    : `${refSearchResults.length} results`
                   : t.tree.noSearchResults}
               </span>
               <button
@@ -897,7 +911,7 @@ export function TeamClient({
                     </div>
                     <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#A7AEBC]">
                       <span>L{hit.depth}</span>
-                      <span>{hit.packageCode ?? hit.status}</span>
+                      <span>{hit.packageCode ?? formatMemberStatus(hit.status, locale)}</span>
                       <ChevronRight className="h-3.5 w-3.5 text-[#CBB487]" />
                     </div>
                   </button>
@@ -913,7 +927,9 @@ export function TeamClient({
             <div className="mb-2 flex items-center justify-between text-[11px] text-[#A7AEBC]">
               <span>
                 {placeSearchResults.length > 0
-                  ? `${placeSearchResults.length} results`
+                  ? locale === "zh-CN"
+                    ? `共找到 ${placeSearchResults.length} 条结果`
+                    : `${placeSearchResults.length} results`
                   : t.tree.noSearchResults}
               </span>
               <button
@@ -942,10 +958,20 @@ export function TeamClient({
                     </div>
                     <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#A7AEBC]">
                       <span>
-                        {hit.placementLeg ? (hit.placementLeg === "LEFT" ? "L" : "R") : "ROOT"} · L
-                        {hit.depth}
+                        {hit.placementLeg
+                          ? locale === "zh-CN"
+                            ? hit.placementLeg === "LEFT"
+                              ? "左区"
+                              : "右区"
+                            : hit.placementLeg === "LEFT"
+                              ? "L"
+                              : "R"
+                          : locale === "zh-CN"
+                            ? "顶点"
+                            : "ROOT"}{" "}
+                        · L{hit.depth}
                       </span>
-                      <span>{hit.packageCode ?? hit.status}</span>
+                      <span>{hit.packageCode ?? formatMemberStatus(hit.status, locale)}</span>
                       <ChevronRight className="h-3.5 w-3.5 text-[#CBB487]" />
                     </div>
                   </button>
@@ -997,6 +1023,7 @@ export function TeamClient({
                   loadingMap={refLoadingMap}
                   highlightedId={highlightedId}
                   t={t}
+                  locale={locale}
                   onToggleExpand={handleToggleReferralExpand}
                   onLoadMore={handleLoadMoreReferral}
                   onOpenDetail={(n) => setDetailModal({ source: "referral", node: n })}
@@ -1018,6 +1045,7 @@ export function TeamClient({
                     loadingMap={refLoadingMap}
                     highlightedId={highlightedId}
                     t={t}
+                    locale={locale}
                     onToggleExpand={handleToggleReferralExpand}
                     onLoadMore={handleLoadMoreReferral}
                     onOpenDetail={(n) => setDetailModal({ source: "referral", node: n })}
@@ -1159,7 +1187,7 @@ export function TeamClient({
                       <span className="rounded border border-white/[0.08] bg-[#08090B] px-2 py-0.5 text-[10px] font-medium text-[#F2F0EB]">
                         {placeFocus.packageCode ?? "—"}
                       </span>
-                      <StatusBadge status={placeFocus.status} />
+                      <StatusBadge status={placeFocus.status} locale={locale} />
                     </div>
                     <div className="mt-1.5 truncate text-base font-semibold text-[#F2F0EB]">
                       {placeFocus.displayName}
@@ -1180,7 +1208,7 @@ export function TeamClient({
                   <div className="mt-3 grid grid-cols-2 divide-x divide-white/[0.1] rounded-xl border border-white/[0.07] bg-[#08090B] text-[11px]">
                     <div className="px-3 py-2">
                       <div className="text-[#56C9DC]">
-                        L ({placeFocus.leftCount})
+                        {t.common.left} ({placeFocus.leftCount})
                       </div>
                       <div className="tabular-nums font-semibold text-[#F2F0EB]">
                         {formatBv(placeFocus.leftBv)}
@@ -1188,7 +1216,7 @@ export function TeamClient({
                     </div>
                     <div className="px-3 py-2">
                       <div className="text-[#A799F7]">
-                        R ({placeFocus.rightCount})
+                        {t.common.right} ({placeFocus.rightCount})
                       </div>
                       <div className="tabular-nums font-semibold text-[#F2F0EB]">
                         {formatBv(placeFocus.rightBv)}
@@ -1258,12 +1286,14 @@ export function TeamClient({
                           <span className="rounded border border-white/[0.08] bg-[#08090B] px-1.5 py-0.5 text-[10px] text-[#F2F0EB]">
                             {slot.node.packageCode ?? "—"}
                           </span>
-                          <StatusBadge status={slot.node.status} />
+                          <StatusBadge status={slot.node.status} locale={locale} />
                         </div>
 
                         {slot.node.leftBv !== null && slot.node.rightBv !== null && (
                           <div className="mt-2.5 rounded-lg border border-white/[0.06] bg-[#08090B] px-2 py-1.5 text-[10px] tabular-nums text-[#A7AEBC]">
-                            L {slot.node.leftCount} · R {slot.node.rightCount}
+                            {locale === "zh-CN"
+                              ? `左 ${slot.node.leftCount} · 右 ${slot.node.rightCount}`
+                              : `L ${slot.node.leftCount} · R ${slot.node.rightCount}`}
                           </div>
                         )}
 
@@ -1310,7 +1340,7 @@ export function TeamClient({
                 <span className="font-mono-sgt text-sm font-bold text-[#CBB487]">
                   {detailModal.node.memberCode}
                 </span>
-                <StatusBadge status={detailModal.node.status} />
+                <StatusBadge status={detailModal.node.status} locale={locale} />
               </div>
               <div className="mt-1 text-base font-semibold text-[#F2F0EB]">
                 {detailModal.node.displayName}
@@ -1323,7 +1353,9 @@ export function TeamClient({
                 <span className="font-medium text-[#F2F0EB]">
                   {detailModal.node.sponsorCode
                     ? `${detailModal.node.sponsorCode} (${detailModal.node.sponsorName})`
-                    : "Root"}
+                    : locale === "zh-CN"
+                      ? "顶点"
+                      : "Root"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
@@ -1336,15 +1368,18 @@ export function TeamClient({
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[#A7AEBC]">{t.tree.packageStatusLabel}</span>
                 <span className="font-semibold text-[#F2F0EB]">
-                  {detailModal.node.packageCode ?? "—"} · {detailModal.node.status}
+                  {detailModal.node.packageCode ?? "—"} ·{" "}
+                  {formatMemberStatus(detailModal.node.status, locale)}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[#A7AEBC]">{t.tree.placementParentLabel}</span>
                 <span className="font-mono-sgt text-[#D6D3CC]">
                   {detailModal.node.placementParentCode
-                    ? `${detailModal.node.placementParentCode} (${detailModal.node.placementLeg === "LEFT" ? "L" : "R"})`
-                    : "Pending"}
+                    ? `${detailModal.node.placementParentCode} (${formatLegLabel(detailModal.node.placementLeg, locale)})`
+                    : locale === "zh-CN"
+                      ? "待安置"
+                      : "Pending"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 border-t border-white/[0.08] pt-2">
@@ -1364,7 +1399,7 @@ export function TeamClient({
                 <span className="font-mono-sgt text-sm font-bold text-[#CBB487]">
                   {detailModal.node.memberCode}
                 </span>
-                <StatusBadge status={detailModal.node.status} />
+                <StatusBadge status={detailModal.node.status} locale={locale} />
               </div>
               <div className="mt-1 text-base font-semibold text-[#F2F0EB]">
                 {detailModal.node.displayName}
@@ -1377,36 +1412,39 @@ export function TeamClient({
                 <span className="font-medium text-[#F2F0EB]">
                   {detailModal.node.placementParentCode
                     ? `${detailModal.node.placementParentCode} (${detailModal.node.placementParentName})`
-                    : "Root"}
+                    : locale === "zh-CN"
+                      ? "顶点"
+                      : "Root"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[#A7AEBC]">{t.tree.placementLegLabel}</span>
                 <span className="font-mono-sgt font-semibold text-[#CBB487]">
                   {detailModal.node.placementLeg
-                    ? detailModal.node.placementLeg === "LEFT"
-                      ? "LEFT (L)"
-                      : "RIGHT (R)"
-                    : "ROOT"}
+                    ? formatLegLabel(detailModal.node.placementLeg, locale)
+                    : locale === "zh-CN"
+                      ? "顶点"
+                      : "ROOT"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[#A7AEBC]">{t.tree.sponsorLabel}</span>
                 <span className="font-mono-sgt text-[#D6D3CC]">
-                  {detailModal.node.sponsorCode ?? "Root"}
+                  {detailModal.node.sponsorCode ?? (locale === "zh-CN" ? "顶点" : "Root")}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[#A7AEBC]">{t.tree.packageStatusLabel}</span>
                 <span className="font-semibold text-[#F2F0EB]">
-                  {detailModal.node.packageCode ?? "—"} · {detailModal.node.status}
+                  {detailModal.node.packageCode ?? "—"} ·{" "}
+                  {formatMemberStatus(detailModal.node.status, locale)}
                 </span>
               </div>
               {detailModal.node.leftBv !== null && detailModal.node.rightBv !== null && (
                 <div className="grid grid-cols-2 gap-2 border-t border-white/[0.08] pt-2.5">
                   <div>
                     <div className="text-[#56C9DC]">
-                      L ({detailModal.node.leftCount})
+                      {t.common.left} ({detailModal.node.leftCount})
                     </div>
                     <div className="tabular-nums font-semibold text-[#F2F0EB]">
                       {formatBv(detailModal.node.leftBv)}
@@ -1414,7 +1452,7 @@ export function TeamClient({
                   </div>
                   <div>
                     <div className="text-[#A799F7]">
-                      R ({detailModal.node.rightCount})
+                      {t.common.right} ({detailModal.node.rightCount})
                     </div>
                     <div className="tabular-nums font-semibold text-[#F2F0EB]">
                       {formatBv(detailModal.node.rightBv)}

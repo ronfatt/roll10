@@ -16,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
+import { formatDecisionBasisLabel, formatLegLabel } from "@/lib/i18n-labels";
 import type { PortalHomePayload } from "@/lib/portal-home";
 import { formatBv, formatU, formatUsdtMicros } from "@/lib/money";
 import {
@@ -723,25 +724,35 @@ export function HomeClient({
 
           <div className="rounded-xl border border-[#6E512D]/45 bg-[#08090B] p-4 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[#9DA4B0]">Estimated Retained Side</span>
-              <span className="font-semibold text-[#F2F0EB]">{eodPreview.retainedSide}</span>
+              <span className="text-[#9DA4B0]">
+                {locale === "zh-CN" ? "预估保留区" : "Estimated Retained Side"}
+              </span>
+              <span className="font-semibold text-[#F2F0EB]">
+                {formatLegLabel(eodPreview.retainedSide, locale)}
+              </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[#9DA4B0]">Estimated Carryover BV</span>
+              <span className="text-[#9DA4B0]">
+                {locale === "zh-CN" ? "预估结转保留 BV" : "Estimated Carryover BV"}
+              </span>
               <span className="tabular-nums font-semibold text-emerald-300">
                 {formatBv(eodPreview.carryoverBv)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[#9DA4B0]">Estimated Flushed BV</span>
+              <span className="text-[#9DA4B0]">
+                {locale === "zh-CN" ? "预估清零 BV" : "Estimated Flushed BV"}
+              </span>
               <span className="tabular-nums font-semibold text-[#E7C98E]">
                 {formatBv(eodPreview.flushedBv)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[#9DA4B0]">Decision Basis</span>
+              <span className="text-[#9DA4B0]">
+                {locale === "zh-CN" ? "结转判定依据" : "Decision Basis"}
+              </span>
               <span className="text-right font-mono-sgt text-[#F2F0EB]">
-                {eodPreview.decisionBasis}
+                {formatDecisionBasisLabel(eodPreview.decisionBasis, locale)}
               </span>
             </div>
           </div>
@@ -751,8 +762,11 @@ export function HomeClient({
               <div className="font-semibold text-[#F2F0EB]">{t.overview.latestEodLabel}</div>
               <div className="font-mono-sgt text-[#9DA4B0]">{latestEod.settlementDate}</div>
               <div className="pt-1 text-[#D6D3CC]">
-                Retained <strong className="text-[#F2F0EB]">{latestEod.retainedSide}</strong> ·
-                Flushed{" "}
+                {locale === "zh-CN" ? "保留 " : "Retained "}
+                <strong className="text-[#F2F0EB]">
+                  {formatLegLabel(latestEod.retainedSide, locale)}
+                </strong>{" "}
+                · {locale === "zh-CN" ? "清零 " : "Flushed "}
                 <strong className="tabular-nums text-[#E7C98E]">
                   {formatBv(latestEod.flushedBv)}
                 </strong>
@@ -761,8 +775,9 @@ export function HomeClient({
           )}
 
           <p className="leading-relaxed text-[#9DA4B0]">
-            Estimated from live BV balances. Actual 00:00 SGT settlement compares BV first (headcount
-            only on ties) and runs prior to any D+2 00:01 SGT upgrade activation.
+            {locale === "zh-CN"
+              ? "以上按当前实时 BV 余额测算。实际每日 00:00 SGT 日结将优先比较双边 BV（仅在相同时比较活跃人数），并在 D+2 00:01 SGT 升级生效前执行。"
+              : "Estimated from live BV balances. Actual 00:00 SGT settlement compares BV first (headcount only on ties) and runs prior to any D+2 00:01 SGT upgrade activation."}
           </p>
 
           <Link
@@ -801,7 +816,7 @@ export function HomeClient({
               <div className="space-y-1.5 border-t border-white/[0.08] pt-2.5 text-[#9DA4B0]">
                 {waitingUpgrade.confirmedAtLabel && (
                   <div className="flex justify-between gap-2">
-                    <span>Confirmed (SGT)</span>
+                    <span>{locale === "zh-CN" ? "付款确认时间 (SGT)" : "Confirmed (SGT)"}</span>
                     <span className="font-mono-sgt text-[#F2F0EB]">
                       {waitingUpgrade.confirmedAtLabel}
                     </span>
@@ -816,7 +831,8 @@ export function HomeClient({
                 <div className="flex justify-between gap-2">
                   <span>{t.overview.capDuringWait}</span>
                   <span className="tabular-nums font-semibold text-[#F2F0EB]">
-                    {formatU(waitingUpgrade.currentCapPointsCents)} {t.common.points}/day
+                    {formatU(waitingUpgrade.currentCapPointsCents)} {t.common.points}/
+                    {locale === "zh-CN" ? "天" : "day"}
                   </span>
                 </div>
               </div>

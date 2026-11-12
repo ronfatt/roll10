@@ -4,6 +4,7 @@ import { ArrowRight, Users } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { requireMember } from "@/lib/session";
 import { getServerT } from "@/lib/i18n-server";
+import { formatLegLabel, formatMemberStatus } from "@/lib/i18n-labels";
 import {
   calculateDirectRewardUsdtMicros,
   formatU,
@@ -205,15 +206,20 @@ export default async function ReferralsPage() {
                           : "bg-amber-500/15 text-amber-300"
                       }`}
                     >
-                      {d.status}
+                      {formatMemberStatus(d.status, locale)}
                     </span>
                   </div>
                   <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#9DA4B0]">
-                    <span>Plan: {d.currentPackageCode ?? "Pending"}</span>
+                    <span>
+                      {locale === "zh-CN" ? "配套: " : "Plan: "}
+                      {d.currentPackageCode ?? (locale === "zh-CN" ? "待激活" : "Pending")}
+                    </span>
                     <span>
                       {d.placementParent
-                        ? `${d.placementParent.memberCode} · ${d.placementLeg}`
-                        : "Unplaced"}
+                        ? `${d.placementParent.memberCode} · ${formatLegLabel(d.placementLeg, locale)}`
+                        : locale === "zh-CN"
+                          ? "暂未安置"
+                          : "Unplaced"}
                     </span>
                   </div>
                   <div className="font-mono-sgt text-[10px] text-[#9DA4B0]">
@@ -228,11 +234,17 @@ export default async function ReferralsPage() {
               <table className="w-full text-left text-xs">
                 <thead className="border-b border-white/[0.08] text-[#9DA4B0]">
                   <tr>
-                    <th className="py-2 pr-3">Member</th>
-                    <th className="py-2 pr-3">Package</th>
-                    <th className="py-2 pr-3">Status</th>
-                    <th className="py-2 pr-3">Binary Placement (Separate)</th>
-                    <th className="py-2 pr-3">Joined (SGT)</th>
+                    <th className="py-2 pr-3">{locale === "zh-CN" ? "会员" : "Member"}</th>
+                    <th className="py-2 pr-3">{locale === "zh-CN" ? "配套" : "Package"}</th>
+                    <th className="py-2 pr-3">{locale === "zh-CN" ? "状态" : "Status"}</th>
+                    <th className="py-2 pr-3">
+                      {locale === "zh-CN"
+                        ? "双轨安置（独立于推荐树）"
+                        : "Binary Placement (Separate)"}
+                    </th>
+                    <th className="py-2 pr-3">
+                      {locale === "zh-CN" ? "加入时间 (SGT)" : "Joined (SGT)"}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
@@ -255,13 +267,15 @@ export default async function ReferralsPage() {
                               : "bg-amber-500/15 text-amber-300"
                           }`}
                         >
-                          {d.status}
+                          {formatMemberStatus(d.status, locale)}
                         </span>
                       </td>
                       <td className="py-2.5 pr-3 text-[#D6D3CC]">
                         {d.placementParent
-                          ? `${d.placementParent.memberCode} · ${d.placementLeg}`
-                          : "Unplaced"}
+                          ? `${d.placementParent.memberCode} · ${formatLegLabel(d.placementLeg, locale)}`
+                          : locale === "zh-CN"
+                            ? "暂未安置"
+                            : "Unplaced"}
                       </td>
                       <td className="py-2.5 pr-3 font-mono-sgt text-[#9DA4B0]">
                         {formatSgtTimestamp(d.createdAt)}

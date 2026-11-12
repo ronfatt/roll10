@@ -5,6 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertCircle, AlertTriangle, ArrowRight, Clock, Sparkles } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
+import {
+  formatDepositVerifyStatus,
+  formatEffectiveStatus,
+  formatOrderStatus,
+  formatOrderType,
+} from "@/lib/i18n-labels";
 import { formatBv, formatU, formatUsdtMicros } from "@/lib/money";
 import { formatNetworkLabel } from "@/lib/usdt/address";
 import { BottomDrawer } from "@/components/MotionPrimitives";
@@ -162,7 +168,7 @@ export function PackagesClient({
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(data.error || "Order submission failed");
+        setError(data.error || (locale === "zh-CN" ? "订单提交失败" : "Order submission failed"));
         setSubmitting(false);
         inFlightRef.current = false;
         return;
@@ -175,7 +181,11 @@ export function PackagesClient({
       router.push(`/orders/${ord.id}`);
       router.refresh();
     } catch {
-      setError("Network error submitting order. Please retry.");
+      setError(
+        locale === "zh-CN"
+          ? "提交订单时网络异常，请重试。"
+          : "Network error submitting order. Please retry."
+      );
       setSubmitting(false);
       inFlightRef.current = false;
     }
@@ -208,21 +218,22 @@ export function PackagesClient({
           )}
           <div className="mt-2.5 space-y-1 text-[#A7AEBC]">
             <div>
-              Paid Confirmed:{" "}
+              {locale === "zh-CN" ? "付款确认时间：" : "Paid Confirmed: "}
               <strong className="font-mono-sgt text-[#F2F0EB]">
                 {pendingUpgradeConfirmedLabel ?? "—"}
               </strong>
             </div>
             <div>
-              Exact Effective:{" "}
+              {locale === "zh-CN" ? "生效时间 (SGT)：" : "Exact Effective: "}
               <strong className="font-mono-sgt text-[#CBB487]">
                 {pendingUpgradeEffectiveLabel}
               </strong>
             </div>
             <div>
-              Current Active Cap:{" "}
+              {locale === "zh-CN" ? "生效前每日封顶：" : "Current Active Cap: "}
               <strong className="tabular-nums text-[#F2F0EB]">
-                {formatU(dailyCapPointsCents)} {t.common.points}/day ({currentPackageCode})
+                {formatU(dailyCapPointsCents)} {t.common.points}/
+                {locale === "zh-CN" ? "天" : "day"} ({currentPackageCode})
               </strong>
             </div>
           </div>
@@ -322,7 +333,8 @@ export function PackagesClient({
                 <div className="p-3">
                   <div className="text-[#A7AEBC]">{t.packages.dailyCapLabel}</div>
                   <div className="mt-0.5 tabular-nums font-semibold text-[#CBB487]">
-                    {formatU(tier.dailyCapPointsCents)} {t.common.points}/day
+                    {formatU(tier.dailyCapPointsCents)} {t.common.points}/
+                    {locale === "zh-CN" ? "天" : "day"}
                   </div>
                 </div>
               </div>
@@ -348,8 +360,9 @@ export function PackagesClient({
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold text-[#F2F0EB]">{t.packages.orderHistory}</h2>
           <span className="tabular-nums text-[11px] text-[#A7AEBC]">
-            L {formatBv(leftBv)} / R {formatBv(rightBv)} · Paired{" "}
-            {formatU(todayPairedPointsCents)} {t.common.points}
+            {locale === "zh-CN"
+              ? `左 ${formatBv(leftBv)} / 右 ${formatBv(rightBv)} · 今日已对碰 ${formatU(todayPairedPointsCents)} ${t.common.points}`
+              : `L ${formatBv(leftBv)} / R ${formatBv(rightBv)} · Paired ${formatU(todayPairedPointsCents)} ${t.common.points}`}
           </span>
         </div>
         {orders.length === 0 ? (
@@ -365,20 +378,21 @@ export function PackagesClient({
                   <span className="font-mono-sgt font-semibold text-[#CBB487]">{o.orderNo}</span>
                   <div className="flex items-center gap-1.5">
                     <span className="rounded-full border border-white/[0.08] bg-[#141619] px-2 py-0.5 text-[10px] font-medium text-[#F2F0EB]">
-                      {o.status}
+                      {formatOrderStatus(o.status, locale)}
                     </span>
                     {o.upgradeStatus !== "NOT_APPLICABLE" && (
                       <span className="rounded-full bg-[#CBB487]/20 px-2 py-0.5 text-[10px] font-semibold text-[#CBB487]">
                         {o.upgradeStatus === "WAITING_EFFECTIVE"
                           ? t.packages.waitingEffectiveBadge
-                          : o.upgradeStatus}
+                          : formatEffectiveStatus(o.upgradeStatus, locale)}
                       </span>
                     )}
                   </div>
                 </div>
                 <div className="mt-1.5 flex justify-between text-[#A7AEBC]">
                   <span>
-                    {o.orderType}: {o.previousPackageCode ? `${o.previousPackageCode} → ` : ""}
+                    {formatOrderType(o.orderType, locale)}:{" "}
+                    {o.previousPackageCode ? `${o.previousPackageCode} → ` : ""}
                     <strong className="text-[#F2F0EB]">{o.targetPackageCode}</strong>
                   </span>
                   <span className="tabular-nums text-[#F2F0EB]">
@@ -387,11 +401,14 @@ export function PackagesClient({
                 </div>
                 <div className="mt-1 flex flex-wrap justify-between gap-1 text-[11px] text-[#A7AEBC]">
                   <span>
-                    Confirmed:{" "}
-                    <span className="font-mono-sgt">{o.confirmedAtLabel ?? "Pending"}</span>
+                    {locale === "zh-CN" ? "确认时间：" : "Confirmed: "}
+                    <span className="font-mono-sgt">
+                      {o.confirmedAtLabel ?? (locale === "zh-CN" ? "待确认" : "Pending")}
+                    </span>
                   </span>
                   <span className="font-mono-sgt text-[#CBB487]">
-                    Effective: {o.effectiveAtLabel ?? "—"}
+                    {locale === "zh-CN" ? "生效时间：" : "Effective: "}
+                    {o.effectiveAtLabel ?? "—"}
                   </span>
                 </div>
                 {o.failureReason && (
@@ -400,8 +417,8 @@ export function PackagesClient({
                 <div className="mt-2 flex items-center justify-between border-t border-white/[0.06] pt-2">
                   <span className="text-[11px] text-[#A7AEBC]">
                     {o.expectedUsdtMicros
-                      ? `${formatUsdtMicros(o.expectedUsdtMicros)} · ${o.depositVerifyStatus ?? o.paymentStatus}`
-                      : o.paymentStatus}
+                      ? `${formatUsdtMicros(o.expectedUsdtMicros)} · ${formatDepositVerifyStatus(o.depositVerifyStatus, locale)}`
+                      : formatOrderStatus(o.paymentStatus, locale)}
                   </span>
                   <Link
                     href={`/orders/${o.id}`}
@@ -461,7 +478,9 @@ export function PackagesClient({
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Target Tier</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "目标升级配套" : "Target Tier"}
+                    </span>
                     <span className="font-semibold text-[#CBB487]">{selectedTarget.code}</span>
                   </div>
                   <div className="flex justify-between">
@@ -498,7 +517,9 @@ export function PackagesClient({
                   <>
                     <div className="flex justify-between px-1">
                       <span className="text-[#A7AEBC]">{t.packages.activeRuleLabel}</span>
-                      <span className="font-mono-sgt text-[#F2F0EB]">D+2 at 00:01:00 SGT</span>
+                      <span className="font-mono-sgt text-[#F2F0EB]">
+                        {locale === "zh-CN" ? "付款后 D+2 日 00:01:00 SGT" : "D+2 at 00:01:00 SGT"}
+                      </span>
                     </div>
                     <div className="rounded-xl border border-white/[0.06] bg-[#08090B] p-3 text-[#CBB487]">
                       {serverPreview?.naturalSchedule ?? naturalScheduleIfNow}
@@ -512,8 +533,12 @@ export function PackagesClient({
                       </div>
                       <div className="mt-1.5 tabular-nums font-semibold text-[#F2F0EB]">
                         {serverPreview
-                          ? `${serverPreview.estimatedCatchupPairs} pairs (+${formatU(serverPreview.estimatedCatchupPointsCents)} ${t.common.points})`
-                          : `${selectedTarget.estimatedCatchupPairs} pairs (+${formatU(selectedTarget.estimatedCatchupPointsCents)} ${t.common.points})`}
+                          ? locale === "zh-CN"
+                            ? `${serverPreview.estimatedCatchupPairs} 组 (+${formatU(serverPreview.estimatedCatchupPointsCents)} ${t.common.points})`
+                            : `${serverPreview.estimatedCatchupPairs} pairs (+${formatU(serverPreview.estimatedCatchupPointsCents)} ${t.common.points})`
+                          : locale === "zh-CN"
+                            ? `${selectedTarget.estimatedCatchupPairs} 组 (+${formatU(selectedTarget.estimatedCatchupPointsCents)} ${t.common.points})`
+                            : `${selectedTarget.estimatedCatchupPairs} pairs (+${formatU(selectedTarget.estimatedCatchupPointsCents)} ${t.common.points})`}
                       </div>
                       <p className="mt-1 text-[11px] leading-relaxed text-[#A7AEBC]">
                         {t.packages.previewDisclaimer}

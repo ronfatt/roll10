@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
+import type { Locale } from "@/lib/i18n";
+import { formatEffectiveStatus } from "@/lib/i18n-labels";
 import { formatU } from "@/lib/money";
 
 interface UpgradeRow {
@@ -24,7 +26,14 @@ interface UpgradeRow {
   catchupPointsCents: number;
 }
 
-export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
+export function AdminUpgradesClient({
+  locale = "en",
+  upgrades,
+}: {
+  locale?: Locale;
+  upgrades: UpgradeRow[];
+}) {
+  const isZh = locale === "zh-CN";
   const router = useRouter();
   const [filter, setFilter] = useState<"ALL" | "WAITING_EFFECTIVE" | "EFFECTIVE" | "FAILED">("ALL");
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -44,11 +53,17 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
     const data = await res.json();
     setBusyId(null);
     if (!res.ok || !data.ok) {
-      setBanner({ type: "err", text: data.error || `Retry failed for ${orderNo}` });
+      setBanner({
+        type: "err",
+        text: data.error || (isZh ? `订单 ${orderNo} 重试失败` : `Retry failed for ${orderNo}`),
+      });
       router.refresh();
       return;
     }
-    setBanner({ type: "ok", text: `Retried upgrade ${orderNo} successfully.` });
+    setBanner({
+      type: "ok",
+      text: isZh ? `升级订单 ${orderNo} 已重新执行。` : `Retried upgrade ${orderNo} successfully.`,
+    });
     router.refresh();
   };
 
@@ -57,10 +72,12 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Package Upgrades Management
+            {isZh ? "配套升级生效管理" : "Package Upgrades Management"}
           </h1>
           <p className="mt-1 text-sm text-zinc-400">
-            Track Waiting Effective, Effective, and Failed upgrades (D+2 00:01:00 SGT), catch-up pairing results, and retry failed upgrades using their original order number.
+            {isZh
+              ? "追踪等待生效、已生效及失效的升级订单（付款日 D+2 00:01:00 SGT）、补碰结果，并使用原订单号重跑异常升级。"
+              : "Track Waiting Effective, Effective, and Failed upgrades (D+2 00:01:00 SGT), catch-up pairing results, and retry failed upgrades using their original order number."}
           </p>
         </div>
 
@@ -76,7 +93,7 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
                   : "border border-white/10 bg-[#141619] text-zinc-300"
               }`}
             >
-              {st}
+              {st === "ALL" ? (isZh ? "全部" : "ALL") : formatEffectiveStatus(st, locale)}
             </button>
           ))}
         </div>
@@ -101,21 +118,23 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
 
       <div className="rounded-2xl border border-white/[0.08] bg-[#141619] p-5">
         {filtered.length === 0 ? (
-          <p className="py-8 text-center text-xs text-zinc-500">No upgrade orders found.</p>
+          <p className="py-8 text-center text-xs text-zinc-500">
+            {isZh ? "暂无配套升级订单。" : "No upgrade orders found."}
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="border-b border-white/[0.08] text-zinc-400">
                 <tr>
-                  <th className="py-2 pr-3">Order No</th>
-                  <th className="py-2 pr-3">Member</th>
-                  <th className="py-2 pr-3">Tier Change</th>
-                  <th className="py-2 pr-3">Paid Confirmed (SGT)</th>
-                  <th className="py-2 pr-3">Planned Effective (SGT)</th>
-                  <th className="py-2 pr-3">Actual Processed (SGT)</th>
-                  <th className="py-2 pr-3">Catch-Up Result</th>
-                  <th className="py-2 pr-3">Status</th>
-                  <th className="py-2 pr-3">Action</th>
+                  <th className="py-2 pr-3">{isZh ? "订单号" : "Order No"}</th>
+                  <th className="py-2 pr-3">{isZh ? "会员" : "Member"}</th>
+                  <th className="py-2 pr-3">{isZh ? "配套升级变更" : "Tier Change"}</th>
+                  <th className="py-2 pr-3">{isZh ? "付款确认 (SGT)" : "Paid Confirmed (SGT)"}</th>
+                  <th className="py-2 pr-3">{isZh ? "计划生效 (SGT)" : "Planned Effective (SGT)"}</th>
+                  <th className="py-2 pr-3">{isZh ? "实际执行 (SGT)" : "Actual Processed (SGT)"}</th>
+                  <th className="py-2 pr-3">{isZh ? "补碰结果" : "Catch-Up Result"}</th>
+                  <th className="py-2 pr-3">{isZh ? "状态" : "Status"}</th>
+                  <th className="py-2 pr-3">{isZh ? "操作" : "Action"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.05]">
@@ -138,7 +157,7 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
                       <span className="text-[#D8C39A]">{u.targetPackageCode}</span>
                     </td>
                     <td className="py-2.5 pr-3 tabular-nums text-zinc-300">
-                      {u.confirmedAtLabel ?? "Unconfirmed"}
+                      {u.confirmedAtLabel ?? (isZh ? "未确认" : "Unconfirmed")}
                     </td>
                     <td className="py-2.5 pr-3 tabular-nums text-zinc-200">
                       {u.effectiveAtLabel ?? "—"}
@@ -148,8 +167,12 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
                     </td>
                     <td className="py-2.5 pr-3 tabular-nums text-emerald-300">
                       {u.catchupPairs > 0
-                        ? `${u.catchupPairs} pairs (+${formatU(u.catchupPointsCents)} U)`
-                        : "0 pairs"}
+                        ? isZh
+                          ? `${u.catchupPairs} 组 (+${formatU(u.catchupPointsCents)} U)`
+                          : `${u.catchupPairs} pairs (+${formatU(u.catchupPointsCents)} U)`
+                        : isZh
+                          ? "0 组"
+                          : "0 pairs"}
                     </td>
                     <td className="py-2.5 pr-3">
                       <span
@@ -161,7 +184,7 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
                               : "bg-amber-500/15 text-amber-300"
                         }`}
                       >
-                        {u.upgradeStatus}
+                        {formatEffectiveStatus(u.upgradeStatus, locale)}
                       </span>
                       {u.upgradeFailureReason && (
                         <div className="mt-1 text-[11px] text-rose-300">
@@ -179,7 +202,7 @@ export function AdminUpgradesClient({ upgrades }: { upgrades: UpgradeRow[] }) {
                           className="inline-flex items-center gap-1 rounded-lg border border-[#CBB487]/40 bg-[#CBB487]/10 px-2.5 py-1 text-[11px] font-medium text-[#D8C39A] hover:bg-[#CBB487]/20 disabled:opacity-50"
                         >
                           <RefreshCw className="h-3 w-3" />
-                          <span>Retry (Same No)</span>
+                          <span>{isZh ? "原单号重跑" : "Retry (Same No)"}</span>
                         </button>
                       )}
                     </td>

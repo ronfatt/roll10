@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp, getSgtDateString } from "@/lib/sgt";
 import { AdminOrdersClient } from "@/components/admin/AdminOrdersClient";
 
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminOrdersPage() {
   await requireAdmin();
+  const locale = await getServerLocale();
 
   const [rawOrders, rawParents] = await Promise.all([
     prisma.packageOrder.findMany({
@@ -64,5 +66,5 @@ export default async function AdminOrdersPage() {
     rightOccupied: p.placedChildren.some((c) => c.placementLeg === "RIGHT"),
   }));
 
-  return <AdminOrdersClient orders={orders} activeParents={activeParents} />;
+  return <AdminOrdersClient locale={locale} orders={orders} activeParents={activeParents} />;
 }

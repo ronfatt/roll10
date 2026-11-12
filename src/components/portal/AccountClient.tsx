@@ -17,6 +17,7 @@ import {
   User,
 } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
+import { formatMemberStatus } from "@/lib/i18n-labels";
 import { LocaleToggle } from "@/components/LocaleToggle";
 
 export function AccountClient({
@@ -55,7 +56,10 @@ export function AccountClient({
       try {
         await navigator.share({
           title: t.brand,
-          text: `Join ROLL10 (${member.memberCode})`,
+          text:
+            locale === "zh-CN"
+              ? `欢迎加入 ROLL10 (${member.memberCode})`
+              : `Join ROLL10 (${member.memberCode})`,
           url: referralLink,
         });
         return;
@@ -100,7 +104,7 @@ export function AccountClient({
           <div className="p-3">
             <div className="text-[#A7AEBC]">{t.common.status}</div>
             <div className="mt-0.5 font-semibold text-[#F2F0EB]">
-              {member.status}
+              {formatMemberStatus(member.status, locale)}
               {member.pendingUpgradePackageCode ? ` (→ ${member.pendingUpgradePackageCode})` : ""}
             </div>
           </div>
@@ -191,8 +195,9 @@ export function AccountClient({
           <div>
             <div className="font-medium text-[#F2F0EB]">{t.account.securityTitle}</div>
             <div className="mt-0.5">
-              Authenticated session · Server-enforced permissions & immutable Asia/Singapore (SGT)
-              ledger settlement.
+              {locale === "zh-CN"
+                ? "已认证加密会话 · 服务端严格校验权限并按新加坡时间（SGT）执行不可篡改账本结算。"
+                : "Authenticated session · Server-enforced permissions & immutable Asia/Singapore (SGT) ledger settlement."}
             </div>
           </div>
         </div>
@@ -201,7 +206,7 @@ export function AccountClient({
       {/* Sign Out */}
       <button
         type="button"
-        onClick={() => signOut({ callbackUrl: "/login" })}
+        onClick={() => signOut({ callbackUrl: "/" })}
         className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-[#141619] text-sm font-medium text-rose-300 transition hover:border-rose-500/40"
       >
         <LogOut className="h-4 w-4" />

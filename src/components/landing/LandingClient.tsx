@@ -199,7 +199,7 @@ export function LandingClient({
                 </button>
                 <button
                   type="button"
-                  aria-label="Previous poster"
+                  aria-label={isZh ? "上一张海报" : "Previous poster"}
                   onClick={() =>
                     setSlideIdx((prev) => (prev - 1 + HERO_POSTERS.length) % HERO_POSTERS.length)
                   }
@@ -209,7 +209,7 @@ export function LandingClient({
                 </button>
                 <button
                   type="button"
-                  aria-label="Next poster"
+                  aria-label={isZh ? "下一张海报" : "Next poster"}
                   onClick={() => setSlideIdx((prev) => (prev + 1) % HERO_POSTERS.length)}
                   className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/60 text-[#E5E7EC] backdrop-blur-md hover:border-[#E7C98E] hover:text-[#E7C98E]"
                 >

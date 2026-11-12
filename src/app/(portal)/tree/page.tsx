@@ -12,7 +12,7 @@ export default async function TreePage({
   searchParams: Promise<{ focusId?: string; tab?: string; leg?: string }>;
 }) {
   const member = await requireMember();
-  const { t } = await getServerT();
+  const { locale, t } = await getServerT();
   const params = await searchParams;
 
   let initialFocusId =
@@ -44,6 +44,7 @@ export default async function TreePage({
   return (
     <TeamClient
       t={t}
+      locale={locale}
       initialFocusId={initialFocusId}
       viewerId={member.id}
       viewerMemberCode={member.memberCode}

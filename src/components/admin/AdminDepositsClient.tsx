@@ -10,6 +10,14 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { formatU, formatUsdtMicros } from "@/lib/money";
+import type { Locale } from "@/lib/i18n";
+import {
+  formatDepositVerifyStatus,
+  formatEntryTypeLabel,
+  formatLegLabel,
+  formatOrderStatus,
+  formatOrderType,
+} from "@/lib/i18n-labels";
 import { formatNetworkLabel } from "@/lib/usdt/address";
 
 interface DepositEventRow {
@@ -96,18 +104,21 @@ const STATUS_TABS = [
 ] as const;
 
 export function AdminDepositsClient({
+  locale = "en",
   initialQuery,
   initialStatus,
   minConfirmations,
   orders,
   activeMembers,
 }: {
+  locale?: Locale;
   initialQuery: string;
   initialStatus: string;
   minConfirmations: number;
   orders: AdminDepositOrderRow[];
   activeMembers: ActiveMemberOption[];
 }) {
+  const isZh = locale === "zh-CN";
   const router = useRouter();
   const [searchText, setSearchText] = useState(initialQuery);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -139,12 +150,15 @@ export function AdminDepositsClient({
     const data = await res.json();
     setBusyId(null);
     if (!res.ok || !data.ok) {
-      setBanner({ type: "err", text: data.error || "Chain verification failed" });
+      setBanner({
+        type: "err",
+        text: data.error || (isZh ? "链上核验失败" : "Chain verification failed"),
+      });
       return;
     }
     setBanner({
       type: "ok",
-      text: `${order.orderNo}: ${data.result?.message || data.result?.depositVerifyStatus || "Checked"}`,
+      text: `${order.orderNo}: ${data.result?.message || formatDepositVerifyStatus(data.result?.depositVerifyStatus, locale)}`,
     });
     router.refresh();
   };
@@ -181,12 +195,14 @@ export function AdminDepositsClient({
     const data = await res.json();
     setBusyId(null);
     if (!res.ok || !data.ok) {
-      setBanner({ type: "err", text: data.error || "Confirmation failed" });
+      setBanner({ type: "err", text: data.error || (isZh ? "确认结算失败" : "Confirmation failed") });
       return;
     }
     setBanner({
       type: "ok",
-      text: `Order ${order.orderNo} attributed, confirmed, and settled.`,
+      text: isZh
+        ? `订单 ${order.orderNo} 已归属确认并完成激活与结算。`
+        : `Order ${order.orderNo} attributed, confirmed, and settled.`,
     });
     router.refresh();
   };
@@ -195,10 +211,12 @@ export function AdminDepositsClient({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-white">
-          USDT Deposits & Chain Verification
+          {isZh ? "USDT 入金与链上核验" : "USDT Deposits & Chain Verification"}
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Inspect TxID transfer events, resolve multi-event or same-amount collisions, verify attribution, and trigger idempotent activation + binary placement.
+          {isZh
+            ? "核查 TxID 转账事件，解决多事件或同额待匹配冲突，确认归属后一键幂等激活配套与双轨安置。"
+            : "Inspect TxID transfer events, resolve multi-event or same-amount collisions, verify attribution, and trigger idempotent activation + binary placement."}
         </p>
       </div>
 
@@ -217,7 +235,11 @@ export function AdminDepositsClient({
               type="text"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              placeholder="Search orderNo, member code, or TxID..."
+              placeholder={
+                isZh
+                  ? "搜索订单号、会员编号或交易哈希 TxID..."
+                  : "Search orderNo, member code, or TxID..."
+              }
               className="min-h-[40px] w-full rounded-xl border border-white/10 bg-[#08090B] pl-9 pr-3 text-xs text-white placeholder-zinc-500"
             />
           </div>
@@ -225,7 +247,7 @@ export function AdminDepositsClient({
             type="submit"
             className="min-h-[40px] rounded-xl bg-[#CBB487] px-4 text-xs font-semibold text-[#08090B] hover:bg-[#D8C39A]"
           >
-            Search
+            {isZh ? "搜索" : "Search"}
           </button>
         </form>
 
@@ -241,7 +263,13 @@ export function AdminDepositsClient({
                   : "border border-white/10 bg-[#08090B] text-zinc-300 hover:border-[#CBB487]/50"
               }`}
             >
-              {tab}
+              {tab === "ALL"
+                ? isZh
+                  ? "全部"
+                  : "ALL"
+                : tab === "CONFIRMED"
+                  ? formatOrderStatus("CONFIRMED", locale)
+                  : formatDepositVerifyStatus(tab, locale)}
             </button>
           ))}
         </div>
@@ -266,7 +294,7 @@ export function AdminDepositsClient({
 
       {orders.length === 0 ? (
         <div className="rounded-2xl border border-white/[0.08] bg-[#141619] p-10 text-center text-sm text-zinc-400">
-          No USDT deposit orders match the current filter.
+          {isZh ? "没有符合当前条件的 USDT 入金订单。" : "No USDT deposit orders match the current filter."}
         </div>
       ) : (
         <div className="space-y-4">
@@ -290,7 +318,7 @@ export function AdminDepositsClient({
                         {order.orderNo}
                       </span>
                       <span className="rounded bg-white/[0.08] px-2 py-0.5 text-[11px] font-medium text-white">
-                        {order.orderType} · {order.targetPackageCode}
+                        {formatOrderType(order.orderType, locale)} · {order.targetPackageCode}
                       </span>
                       <span className="rounded bg-[#CBB487]/15 px-2 py-0.5 text-[11px] font-medium text-[#CBB487]">
                         {formatNetworkLabel(order.usdtNetwork)}
@@ -306,31 +334,41 @@ export function AdminDepositsClient({
                                 : "bg-amber-500/15 text-amber-200"
                         }`}
                       >
-                        Order: {order.status} · Verify: {order.depositVerifyStatus}
+                        {isZh ? "订单: " : "Order: "}
+                        {formatOrderStatus(order.status, locale)} ·{" "}
+                        {isZh ? "核验: " : "Verify: "}
+                        {formatDepositVerifyStatus(order.depositVerifyStatus, locale)}
                       </span>
                     </div>
                     <div className="mt-1 text-xs text-zinc-300">
-                      Member: <strong>{order.member.displayName}</strong> ({order.member.memberCode}) ·
-                      Sponsor:{" "}
+                      {isZh ? "会员: " : "Member: "}
+                      <strong>{order.member.displayName}</strong> ({order.member.memberCode}) ·{" "}
+                      {isZh ? "推荐人: " : "Sponsor: "}
                       {order.member.sponsorCode
                         ? `${order.member.sponsorName} (${order.member.sponsorCode})`
-                        : "Root"}
+                        : isZh
+                          ? "顶点"
+                          : "Root"}
                     </div>
                   </div>
 
                   <div className="text-right text-xs">
                     <div className="tabular-nums text-sm font-bold text-[#CBB487]">
-                      Expected {formatUsdtMicros(order.expectedUsdtMicros)}
+                      {isZh ? "应付: " : "Expected "}
+                      {formatUsdtMicros(order.expectedUsdtMicros)}
                     </div>
                     <div className="tabular-nums text-zinc-400">
-                      Actual:{" "}
+                      {isZh ? "实收: " : "Actual: "}
                       {order.actualUsdtMicros
                         ? formatUsdtMicros(order.actualUsdtMicros)
                         : "—"}
-                      {" · "}Confs: {order.confirmationsObserved}/{minConfirmations}
+                      {" · "}
+                      {isZh ? "确认: " : "Confs: "}
+                      {order.confirmationsObserved}/{minConfirmations}
                     </div>
                     <div className="font-mono-sgt text-[11px] text-zinc-400">
-                      Created: {order.createdAtLabel}
+                      {isZh ? "创建: " : "Created: "}
+                      {order.createdAtLabel}
                     </div>
                   </div>
                 </div>
@@ -338,18 +376,25 @@ export function AdminDepositsClient({
                 {/* Snapshot & Proof */}
                 <div className="grid gap-2 rounded-xl border border-white/[0.06] bg-[#08090B] p-3 text-xs sm:grid-cols-2">
                   <div>
-                    <div className="text-zinc-400">Company Deposit Address Snapshot</div>
+                    <div className="text-zinc-400">
+                      {isZh ? "订单绑定收款地址快照" : "Company Deposit Address Snapshot"}
+                    </div>
                     <div className="break-all font-mono-sgt text-zinc-200">
                       {order.usdtDepositAddress}
                     </div>
                   </div>
                   <div>
-                    <div className="text-zinc-400">Submitted TxID & Proof Note</div>
+                    <div className="text-zinc-400">
+                      {isZh ? "会员提交 TxID 与转账备注" : "Submitted TxID & Proof Note"}
+                    </div>
                     <div className="break-all font-mono-sgt text-zinc-200">
                       {order.submittedTxId ?? "—"}
                     </div>
                     {order.proofNote && (
-                      <div className="mt-0.5 text-zinc-400">Note: {order.proofNote}</div>
+                      <div className="mt-0.5 text-zinc-400">
+                        {isZh ? "备注: " : "Note: "}
+                        {order.proofNote}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -364,7 +409,9 @@ export function AdminDepositsClient({
                 {order.events.length > 0 && (
                   <div className="space-y-2">
                     <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                      Chain Transfer Events ({order.events.length})
+                      {isZh
+                        ? `链上转账解析事件 (${order.events.length})`
+                        : `Chain Transfer Events (${order.events.length})`}
                     </div>
                     <div className="space-y-1.5">
                       {order.events.map((ev) => {
@@ -397,11 +444,13 @@ export function AdminDepositsClient({
                             <div className="min-w-0 flex-1 space-y-0.5">
                               <div className="flex flex-wrap items-center justify-between gap-2">
                                 <span className="font-mono-sgt font-semibold text-[#CBB487]">
-                                  Event #{ev.eventIndex} · {formatUsdtMicros(ev.amountMicros)}
+                                  {isZh ? `事件 #${ev.eventIndex}` : `Event #${ev.eventIndex}`} ·{" "}
+                                  {formatUsdtMicros(ev.amountMicros)}
                                 </span>
                                 <span className="tabular-nums text-[11px] text-zinc-300">
-                                  {ev.confirmations} confs · {ev.chainSuccess ? "SUCCESS" : "FAILED"}
-                                  {claimedElsewhere ? " · CLAIMED BY ANOTHER ORDER" : ""}
+                                  {isZh
+                                    ? `${ev.confirmations} 次确认 · ${ev.chainSuccess ? "成功" : "失败"}${claimedElsewhere ? " · 已被其他订单认领" : ""}`
+                                    : `${ev.confirmations} confs · ${ev.chainSuccess ? "SUCCESS" : "FAILED"}${claimedElsewhere ? " · CLAIMED BY ANOTHER ORDER" : ""}`}
                                 </span>
                               </div>
                               <div className="break-all font-mono-sgt text-[11px] text-zinc-400">
@@ -421,7 +470,11 @@ export function AdminDepositsClient({
                     <div className="flex flex-wrap items-center gap-2">
                       <input
                         type="text"
-                        placeholder="Optional: override/paste TxID to inspect..."
+                        placeholder={
+                          isZh
+                            ? "选填：覆写或粘贴 TxID 重新查链..."
+                            : "Optional: override/paste TxID to inspect..."
+                        }
                         value={txInputMap[order.id] ?? ""}
                         onChange={(e) =>
                           setTxInputMap((prev) => ({ ...prev, [order.id]: e.target.value }))
@@ -435,14 +488,18 @@ export function AdminDepositsClient({
                         className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-white/15 bg-[#08090B] px-3.5 text-xs font-medium text-[#CBB487] hover:border-[#CBB487] disabled:opacity-50"
                       >
                         <RefreshCw className="h-3.5 w-3.5" />
-                        <span>Retry Chain Query</span>
+                        <span>{isZh ? "重新查询链上状态" : "Retry Chain Query"}</span>
                       </button>
                     </div>
 
                     <div className="grid gap-2.5 sm:grid-cols-3">
                       <input
                         type="text"
-                        placeholder="Attribution review note (optional)..."
+                        placeholder={
+                          isZh
+                            ? "归属复核备注（选填）..."
+                            : "Attribution review note (optional)..."
+                        }
                         value={noteMap[order.id] ?? ""}
                         onChange={(e) =>
                           setNoteMap((prev) => ({ ...prev, [order.id]: e.target.value }))
@@ -462,8 +519,9 @@ export function AdminDepositsClient({
                             className="min-h-[38px] rounded-xl border border-white/10 bg-[#08090B] px-3 text-xs text-white"
                           >
                             <option value="">
-                              Placement Parent: Auto-BFS under Sponsor (
-                              {order.member.sponsorCode ?? "ROOT"})
+                              {isZh
+                                ? `安置上级：按推荐人自动顺位查找 (${order.member.sponsorCode ?? "顶点"})`
+                                : `Placement Parent: Auto-BFS under Sponsor (${order.member.sponsorCode ?? "ROOT"})`}
                             </option>
                             {activeMembers.map((m) => (
                               <option key={m.id} value={m.id}>
@@ -481,8 +539,12 @@ export function AdminDepositsClient({
                             }
                             className="min-h-[38px] rounded-xl border border-white/10 bg-[#08090B] px-3 text-xs text-white"
                           >
-                            <option value="LEFT">Placement Leg: LEFT</option>
-                            <option value="RIGHT">Placement Leg: RIGHT</option>
+                            <option value="LEFT">
+                              {isZh ? "安置区间：左区 (LEFT)" : "Placement Leg: LEFT"}
+                            </option>
+                            <option value="RIGHT">
+                              {isZh ? "安置区间：右区 (RIGHT)" : "Placement Leg: RIGHT"}
+                            </option>
                           </select>
                         </>
                       )}
@@ -497,8 +559,12 @@ export function AdminDepositsClient({
                       <ShieldCheck className="h-4 w-4" />
                       <span>
                         {busyId === order.id
-                          ? "Settling..."
-                          : "Confirm Attribution, Activate & Settle"}
+                          ? isZh
+                            ? "正在入账结算..."
+                            : "Settling..."
+                          : isZh
+                            ? "确认收款归属、激活并结算"
+                            : "Confirm Attribution, Activate & Settle"}
                       </span>
                     </button>
                   </div>
@@ -509,28 +575,29 @@ export function AdminDepositsClient({
                   <div className="space-y-2 border-t border-white/[0.06] pt-3 text-xs">
                     <div className="flex flex-wrap gap-x-6 gap-y-1 text-zinc-300">
                       <span>
-                        Chain Confirmed:{" "}
+                        {isZh ? "链上确认: " : "Chain Confirmed: "}
                         <strong className="font-mono-sgt text-white">
                           {order.chainConfirmedAtLabel ?? "—"}
                         </strong>
                       </span>
                       <span>
-                        Server Confirmed (D):{" "}
+                        {isZh ? "服务端确认 (D): " : "Server Confirmed (D): "}
                         <strong className="font-mono-sgt text-[#CBB487]">
                           {order.confirmedAtLabel ?? "—"}
                         </strong>
                       </span>
                       <span>
-                        Effective:{" "}
+                        {isZh ? "生效时间: " : "Effective: "}
                         <strong className="font-mono-sgt text-white">
-                          {order.effectiveAtLabel ?? "Immediate"}
+                          {order.effectiveAtLabel ?? (isZh ? "立即生效" : "Immediate")}
                         </strong>
                       </span>
                       {order.member.placementParentCode && (
                         <span>
-                          Placed:{" "}
+                          {isZh ? "已安置: " : "Placed: "}
                           <strong className="text-white">
-                            {order.member.placementParentCode} → {order.member.placementLeg}
+                            {order.member.placementParentCode} →{" "}
+                            {formatLegLabel(order.member.placementLeg, locale)}
                           </strong>
                         </span>
                       )}
@@ -539,19 +606,22 @@ export function AdminDepositsClient({
                     {(order.walletLedgers.length > 0 || order.pairingSettlements.length > 0) && (
                       <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-3 space-y-1">
                         <div className="font-semibold text-emerald-300">
-                          Linked Commission & Binary Pairing Trace ({order.bvAmount} BV)
+                          {isZh
+                            ? `关联佣金与对碰结算追踪 (${order.bvAmount} BV)`
+                            : `Linked Commission & Binary Pairing Trace (${order.bvAmount} BV)`}
                         </div>
                         {order.walletLedgers.map((l) => (
                           <div key={l.id} className="text-[11px] text-zinc-300">
                             <span className="font-mono-sgt text-[#CBB487]">{l.ledgerNo}</span> ·{" "}
-                            {l.entryType} → {l.memberCode}: +
+                            {formatEntryTypeLabel(l.entryType, locale)} → {l.memberCode}: +
                             {formatU(l.deltaAvailableCents)} U
                           </div>
                         ))}
                         {order.pairingSettlements.map((p) => (
                           <div key={p.id} className="text-[11px] text-zinc-300">
                             <span className="font-mono-sgt text-[#CBB487]">{p.settlementNo}</span> ·{" "}
-                            {p.memberCode}: {p.pairsCount} pair(s) → +
+                            {p.memberCode}:{" "}
+                            {isZh ? `${p.pairsCount} 组对碰` : `${p.pairsCount} pair(s)`} → +
                             {formatU(p.pointsAwardedCents)} U
                           </div>
                         ))}

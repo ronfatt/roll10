@@ -117,7 +117,7 @@ export function AppShell({
 
         <div className="border-b border-white/[0.06] px-5 py-2.5">
           <div className="flex items-center justify-between text-[11px] text-[#9DA4B0]">
-            <span>Asia/Singapore</span>
+            <span>{locale === "zh-CN" ? "新加坡时间" : "Asia/Singapore"}</span>
             <span className="font-mono-sgt font-medium text-[#CBB487]">{sgtTimeLabel}</span>
           </div>
         </div>
@@ -187,7 +187,9 @@ export function AppShell({
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-2.5">
               <Roll10Logo className="h-4 w-auto" />
-              <span className="text-xs font-medium text-[#CBB487]">Admin</span>
+              <span className="text-xs font-medium text-[#CBB487]">
+                {locale === "zh-CN" ? "管理后台" : "Admin"}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Link

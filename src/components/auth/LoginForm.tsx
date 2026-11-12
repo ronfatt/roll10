@@ -132,7 +132,15 @@ export function LoginForm({
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={
+                showPassword
+                  ? locale === "zh-CN"
+                    ? "隐藏密码"
+                    : "Hide password"
+                  : locale === "zh-CN"
+                    ? "显示密码"
+                    : "Show password"
+              }
               className="absolute right-1 top-0.5 flex min-h-[40px] min-w-[40px] items-center justify-center rounded-lg text-[#A7AEBC] transition hover:text-[#F2F0EB]"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

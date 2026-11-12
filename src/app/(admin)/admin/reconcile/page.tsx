@@ -1,11 +1,13 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { AdminReconcileClient } from "@/components/admin/AdminReconcileClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminReconcilePage() {
   await requireAdmin();
+  const locale = await getServerLocale();
 
   const [members, walletSums, bvSums] = await Promise.all([
     prisma.member.findMany({ orderBy: { memberCode: "asc" }, take: 100 }),
@@ -60,5 +62,5 @@ export default async function AdminReconcilePage() {
     };
   });
 
-  return <AdminReconcileClient rows={rows} />;
+  return <AdminReconcileClient locale={locale} rows={rows} />;
 }

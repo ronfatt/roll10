@@ -15,6 +15,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
+import { formatOrderType } from "@/lib/i18n-labels";
 import { formatUsdtMicros } from "@/lib/money";
 import { formatNetworkLabel } from "@/lib/usdt/address";
 import { QrCodeSvg } from "@/components/QrCodeSvg";
@@ -290,13 +291,13 @@ export function UsdtOrderPaymentClient({
             </div>
             {order.confirmedAtLabel && (
               <div>
-                Confirmed (SGT):{" "}
+                {locale === "zh-CN" ? "确认时间 (SGT)：" : "Confirmed (SGT): "}
                 <strong className="font-mono-sgt text-[#F2F0EB]">{order.confirmedAtLabel}</strong>
               </div>
             )}
             {order.effectiveAtLabel && (
               <div>
-                Effective (SGT):{" "}
+                {locale === "zh-CN" ? "生效时间 (SGT)：" : "Effective (SGT): "}
                 <strong className="font-mono-sgt text-[#CBB487]">{order.effectiveAtLabel}</strong>
               </div>
             )}
@@ -330,7 +331,7 @@ export function UsdtOrderPaymentClient({
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
             <div>
               <div className="text-[11px] uppercase tracking-wider text-[#A7AEBC]">
-                {order.orderType} · {order.targetPackageCode}
+                {formatOrderType(order.orderType, locale)} · {order.targetPackageCode}
               </div>
               <div className="mt-0.5 text-sm font-semibold text-[#F2F0EB]">
                 {order.tierName} · {order.bvAmount} BV
@@ -482,7 +483,9 @@ export function UsdtOrderPaymentClient({
               <div>
                 <div className="font-semibold text-[#CBB487]">{t.deposit.waitingConfirmation}</div>
                 <div className="mt-0.5 tabular-nums text-[#A7AEBC]">
-                  Confirmations: {order.confirmationsObserved} / {order.minConfirmations}
+                  {locale === "zh-CN"
+                    ? `区块确认数: ${order.confirmationsObserved} / ${order.minConfirmations}`
+                    : `Confirmations: ${order.confirmationsObserved} / ${order.minConfirmations}`}
                 </div>
               </div>
             </div>
@@ -576,14 +579,18 @@ export function UsdtOrderPaymentClient({
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-mono-sgt text-[#CBB487]">
-                      Event #{ev.eventIndex} · {formatUsdtMicros(ev.amountMicros)}
+                      {locale === "zh-CN" ? `事件 #${ev.eventIndex}` : `Event #${ev.eventIndex}`} ·{" "}
+                      {formatUsdtMicros(ev.amountMicros)}
                     </span>
                     <span className="tabular-nums text-[#A7AEBC]">
-                      {ev.confirmations} confs · {ev.chainSuccess ? "SUCCESS" : "FAILED"}
+                      {locale === "zh-CN"
+                        ? `${ev.confirmations} 次确认 · ${ev.chainSuccess ? "成功" : "失败"}`
+                        : `${ev.confirmations} confs · ${ev.chainSuccess ? "SUCCESS" : "FAILED"}`}
                     </span>
                   </div>
                   <div className="font-mono-sgt break-all text-[#A7AEBC]">
-                    To: <span className="text-[#F2F0EB]">{ev.toAddress}</span>
+                    {locale === "zh-CN" ? "接收地址: " : "To: "}
+                    <span className="text-[#F2F0EB]">{ev.toAddress}</span>
                   </div>
                 </div>
               ))}

@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { AlertCircle, AlertTriangle, CheckCircle2, Info, Lock, Wallet } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import {
+  formatEntryTypeLabel,
+  formatTriggerTypeLabel,
+  formatWithdrawalStatusLabel,
+} from "@/lib/i18n-labels";
+import {
   formatBv,
   formatRateMicros,
   formatU,
@@ -301,7 +306,7 @@ export function WalletClient({
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(data.error || "Withdrawal request failed");
+        setError(data.error || (locale === "zh-CN" ? "提现申请提交失败" : "Withdrawal request failed"));
         setLoading(false);
         inFlightRef.current = false;
         return;
@@ -327,7 +332,7 @@ export function WalletClient({
         rejectionReason: w.rejectionReason ?? null,
         payoutTxRef: w.payoutTxRef ?? null,
         processingDeadlineLabel: quote.processingDeadlineLabel ?? `${processingHours}h SGT`,
-        createdAtLabel: "Just now (SGT)",
+        createdAtLabel: locale === "zh-CN" ? "刚刚 (SGT)" : "Just now (SGT)",
       });
       setConfirmStep(false);
       setShowWithdrawForm(false);
@@ -335,7 +340,11 @@ export function WalletClient({
       inFlightRef.current = false;
       router.refresh();
     } catch {
-      setError("Network error submitting withdrawal. Inputs preserved; please retry.");
+      setError(
+        locale === "zh-CN"
+          ? "网络异常，提交失败。表单内容已保留，请重试。"
+          : "Network error submitting withdrawal. Inputs preserved; please retry."
+      );
       setLoading(false);
       inFlightRef.current = false;
     }
@@ -405,13 +414,13 @@ export function WalletClient({
               <strong className="text-[#CBB487]">
                 {getWithdrawalStatusLabel(submittedWithdrawal.status, t)}
               </strong>{" "}
-              · Locked:{" "}
+              · {locale === "zh-CN" ? "锁定：" : "Locked: "}
               <strong className="tabular-nums text-[#F2F0EB]">
                 {formatU(submittedWithdrawal.requestedPointsCents)} {t.common.points}
               </strong>
             </div>
             <div>
-              Net Payout:{" "}
+              {locale === "zh-CN" ? "实际出款：" : "Net Payout: "}
               <strong className="tabular-nums text-[#CBB487]">
                 {formatUsdtMicros(submittedWithdrawal.payoutAmountUsdtMicros)}
               </strong>{" "}
@@ -600,7 +609,11 @@ export function WalletClient({
                   onClick={() => {
                     const trimmed = destination.trim();
                     if (!/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(trimmed)) {
-                      setError("Invalid TRON (TRC20) receiving address");
+                      setError(
+                        locale === "zh-CN"
+                          ? "无效的 TRON (TRC20) 收款地址"
+                          : "Invalid TRON (TRC20) receiving address"
+                      );
                       return;
                     }
                     setError(null);
@@ -694,7 +707,15 @@ export function WalletClient({
                               : "bg-amber-500/15 text-amber-300"
                         }`}
                       >
-                        {item.status}
+                        {locale === "zh-CN"
+                          ? item.status === "CREDITED"
+                            ? "已入账"
+                            : item.status === "REVERSED"
+                              ? "已冲正"
+                              : item.status === "PENDING"
+                                ? "待确认"
+                                : item.status
+                          : item.status}
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
@@ -730,7 +751,9 @@ export function WalletClient({
         <div className="rounded-2xl border border-white/[0.08] bg-[#141619] p-4">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-[#F2F0EB]">{t.wallet.ledgerTitle}</h2>
-            <span className="text-[11px] text-[#A7AEBC]">Tap item for source detail</span>
+            <span className="text-[11px] text-[#A7AEBC]">
+              {locale === "zh-CN" ? "点击条目查看来源详情" : "Tap item for source detail"}
+            </span>
           </div>
 
           {filteredLedgers.length === 0 ? (
@@ -745,7 +768,9 @@ export function WalletClient({
                   className="flex min-h-[56px] w-full items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-[#08090B] px-3.5 py-3 text-left text-xs transition-colors hover:border-[#CBB487]/50"
                 >
                   <div className="min-w-0">
-                    <div className="font-semibold text-[#F2F0EB]">{l.entryType}</div>
+                    <div className="font-semibold text-[#F2F0EB]">
+                      {formatEntryTypeLabel(l.entryType, locale)}
+                    </div>
                     <div className="font-mono-sgt mt-0.5 truncate text-[11px] text-[#A7AEBC]">
                       {l.refNo ?? l.ledgerNo} · {l.createdAtLabel}
                     </div>
@@ -760,7 +785,8 @@ export function WalletClient({
                       {formatU(l.deltaAvailableCents)} {t.common.points}
                     </div>
                     <div className="tabular-nums text-[10px] text-[#A7AEBC]">
-                      Bal: {formatU(l.availableAfterCents)} U
+                      {locale === "zh-CN" ? "余额: " : "Bal: "}
+                      {formatU(l.availableAfterCents)} U
                     </div>
                   </div>
                 </button>
@@ -796,8 +822,9 @@ export function WalletClient({
                 </div>
                 <div className="flex justify-between text-[#A7AEBC]">
                   <span>
-                    Req {formatU(w.requestedPointsCents)} U · Fee{" "}
-                    {formatU(w.feePointsCents)} U
+                    {locale === "zh-CN"
+                      ? `申请 ${formatU(w.requestedPointsCents)} U · 手续费 ${formatU(w.feePointsCents)} U`
+                      : `Req ${formatU(w.requestedPointsCents)} U · Fee ${formatU(w.feePointsCents)} U`}
                   </span>
                   <span className="tabular-nums font-semibold text-[#CBB487]">
                     {formatUsdtMicros(w.payoutAmountUsdtMicros)}
@@ -815,9 +842,15 @@ export function WalletClient({
                   <div className="text-[11px] text-rose-300">{w.rejectionReason}</div>
                 )}
                 <div className="flex flex-wrap justify-between gap-2 text-[10px] text-[#A7AEBC]">
-                  <span>Submitted: {w.createdAtLabel}</span>
+                  <span>
+                    {locale === "zh-CN" ? "提交时间：" : "Submitted: "}
+                    {w.createdAtLabel}
+                  </span>
                   {w.processingDeadlineLabel && (
-                    <span className="font-mono-sgt">SLA: {w.processingDeadlineLabel}</span>
+                    <span className="font-mono-sgt">
+                      {locale === "zh-CN" ? "预计处理期限：" : "SLA: "}
+                      {w.processingDeadlineLabel}
+                    </span>
                   )}
                 </div>
               </div>
@@ -914,8 +947,10 @@ export function WalletClient({
         onClose={() => setSelectedLedger(null)}
         title={
           selectedLedger
-            ? `${selectedLedger.ledgerNo} · ${selectedLedger.entryType}`
-            : "Bonus Source Detail"
+            ? `${selectedLedger.ledgerNo} · ${formatEntryTypeLabel(selectedLedger.entryType, locale)}`
+            : locale === "zh-CN"
+              ? "奖金流水来源详情"
+              : "Bonus Source Detail"
         }
       >
         {selectedLedger && (
@@ -929,26 +964,34 @@ export function WalletClient({
               {selectedLedger.sourceDetail?.kind === "DIRECT_ORDER" && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Source Order</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "来源订单" : "Source Order"}
+                    </span>
                     <strong className="font-mono-sgt text-[#F2F0EB]">
                       {selectedLedger.sourceDetail.orderNo}
                     </strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Referred Member</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "直推下级会员" : "Referred Member"}
+                    </span>
                     <strong className="text-[#F2F0EB]">
                       {selectedLedger.sourceDetail.sourceMember}
                     </strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Plan / BV</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "配套 / BV" : "Plan / BV"}
+                    </span>
                     <span>
                       {selectedLedger.sourceDetail.packageCode} ·{" "}
                       {formatBv(selectedLedger.sourceDetail.commissionableBv)} (25%)
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Confirmed (SGT)</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "确认时间 (SGT)" : "Confirmed (SGT)"}
+                    </span>
                     <span className="font-mono-sgt text-[#F2F0EB]">
                       {selectedLedger.sourceDetail.confirmedAtLabel}
                     </span>
@@ -958,29 +1001,37 @@ export function WalletClient({
               {selectedLedger.sourceDetail?.kind === "BINARY_PAIRING" && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Settlement No</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "结算单号" : "Settlement No"}
+                    </span>
                     <strong className="font-mono-sgt text-[#F2F0EB]">
                       {selectedLedger.sourceDetail.settlementNo}
                     </strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">SGT Date</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "SGT 结算日" : "SGT Date"}
+                    </span>
                     <span className="font-mono-sgt text-[#F2F0EB]">
                       {selectedLedger.sourceDetail.settlementDate} SGT
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Pairs Settled</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "结算对碰组数" : "Pairs Settled"}
+                    </span>
                     <strong className="text-emerald-400">
                       {selectedLedger.sourceDetail.pairsCount} (
-                      {selectedLedger.sourceDetail.triggerType})
+                      {formatTriggerTypeLabel(selectedLedger.sourceDetail.triggerType, locale)})
                     </strong>
                   </div>
                   <div className="flex justify-between border-t border-white/[0.08] pt-2">
-                    <span className="text-[#A7AEBC]">BV Deducted</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "双边扣减 BV" : "BV Deducted"}
+                    </span>
                     <span className="tabular-nums text-[#F2F0EB]">
-                      L {selectedLedger.sourceDetail.leftBvBefore} →{" "}
-                      {selectedLedger.sourceDetail.leftBvAfter} · R{" "}
+                      {locale === "zh-CN" ? "左" : "L"} {selectedLedger.sourceDetail.leftBvBefore} →{" "}
+                      {selectedLedger.sourceDetail.leftBvAfter} · {locale === "zh-CN" ? "右" : "R"}{" "}
                       {selectedLedger.sourceDetail.rightBvBefore} →{" "}
                       {selectedLedger.sourceDetail.rightBvAfter}
                     </span>
@@ -990,27 +1041,36 @@ export function WalletClient({
               {selectedLedger.sourceDetail?.kind === "WITHDRAWAL" && (
                 <>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Withdrawal No</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "提现单号" : "Withdrawal No"}
+                    </span>
                     <strong className="font-mono-sgt text-[#F2F0EB]">
                       {selectedLedger.sourceDetail.withdrawalNo}
                     </strong>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Status</span>
-                    <span className="text-[#CBB487]">{selectedLedger.sourceDetail.status}</span>
+                    <span className="text-[#A7AEBC]">{t.common.status}</span>
+                    <span className="text-[#CBB487]">
+                      {formatWithdrawalStatusLabel(selectedLedger.sourceDetail.status, locale)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#A7AEBC]">Breakdown</span>
+                    <span className="text-[#A7AEBC]">
+                      {locale === "zh-CN" ? "金额明细" : "Breakdown"}
+                    </span>
                     <span className="tabular-nums text-[#F2F0EB]">
-                      Req {formatU(selectedLedger.sourceDetail.requestedPointsCents)} U · Fee{" "}
-                      {formatU(selectedLedger.sourceDetail.feePointsCents)} U · Net{" "}
-                      {formatU(selectedLedger.sourceDetail.netPointsCents)} U
+                      {locale === "zh-CN"
+                        ? `申请 ${formatU(selectedLedger.sourceDetail.requestedPointsCents)} U · 手续费 ${formatU(selectedLedger.sourceDetail.feePointsCents)} U · 实得 ${formatU(selectedLedger.sourceDetail.netPointsCents)} U`
+                        : `Req ${formatU(selectedLedger.sourceDetail.requestedPointsCents)} U · Fee ${formatU(selectedLedger.sourceDetail.feePointsCents)} U · Net ${formatU(selectedLedger.sourceDetail.netPointsCents)} U`}
                     </span>
                   </div>
                 </>
               )}
               {!selectedLedger.sourceDetail && (
-                <div>{selectedLedger.note ?? "System ledger entry"}</div>
+                <div>
+                  {selectedLedger.note ??
+                    (locale === "zh-CN" ? "系统账本自动记账条目" : "System ledger entry")}
+                </div>
               )}
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp } from "@/lib/sgt";
 import { getOrCreateConfigTx } from "@/lib/settlement/engine";
 import { AdminDepositsClient } from "@/components/admin/AdminDepositsClient";
@@ -12,6 +13,7 @@ export default async function AdminDepositsPage({
   searchParams: Promise<{ q?: string; status?: string }>;
 }) {
   await requireAdmin();
+  const locale = await getServerLocale();
   const params = await searchParams;
   const q = params.q?.trim() || "";
   const statusFilter = params.status?.trim() || "ALL";
@@ -171,6 +173,7 @@ export default async function AdminDepositsPage({
 
   return (
     <AdminDepositsClient
+      locale={locale}
       initialQuery={q}
       initialStatus={statusFilter}
       minConfirmations={config.usdtMinConfirmations}

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp } from "@/lib/sgt";
 import { pointsCentsToUsdtMicros } from "@/lib/money";
 import { getOrCreateConfigTx } from "@/lib/settlement/engine";
@@ -13,6 +14,7 @@ export default async function AdminWithdrawalsPage({
   searchParams: Promise<{ sort?: string }>;
 }) {
   const admin = await requireAdmin();
+  const locale = await getServerLocale();
   const params = await searchParams;
   const sortMode = params.sort === "newest" ? "newest" : "deadline";
   const nowMs = Date.now();
@@ -51,6 +53,7 @@ export default async function AdminWithdrawalsPage({
 
   return (
     <AdminWithdrawalsClient
+      locale={locale}
       currentAdminId={admin.id}
       sortMode={sortMode}
       productionPayoutEnabled={config.productionPayoutEnabled}

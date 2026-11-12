@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getServerLocale } from "@/lib/i18n-server";
 import { formatSgtTimestamp, getSgtDateString } from "@/lib/sgt";
 import { AdminLedgersClient } from "@/components/admin/AdminLedgersClient";
 
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminLedgersPage() {
   await requireAdmin();
+  const locale = await getServerLocale();
 
   const [walletLedgers, bvLedgers] = await Promise.all([
     prisma.walletLedger.findMany({
@@ -31,6 +33,7 @@ export default async function AdminLedgersPage() {
 
   return (
     <AdminLedgersClient
+      locale={locale}
       walletRows={walletLedgers.map((w) => ({
         id: w.id,
         ledgerNo: w.ledgerNo,

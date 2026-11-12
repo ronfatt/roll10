@@ -14,7 +14,7 @@ export default async function LedgersPage({
   searchParams: Promise<{ tab?: string; leg?: string }>;
 }) {
   const member = await requireMember();
-  const { t } = await getServerT();
+  const { locale, t } = await getServerT();
   const params = await searchParams;
   const initialTab =
     params.tab === "bv" ? "bv" : params.tab === "pairing" ? "pairing" : "direct";
@@ -62,6 +62,7 @@ export default async function LedgersPage({
   return (
     <LedgersClient
       t={t}
+      locale={locale}
       initialTab={initialTab}
       initialLeg={initialLeg}
       eodPreview={{
