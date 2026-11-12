@@ -5,12 +5,16 @@ import { prisma } from "@/lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  secret:
+    process.env.AUTH_SECRET ||
+    process.env.NEXTAUTH_SECRET ||
+    "binary-member-portal-dev-secret-change-in-prod-2026",
   session: {
     strategy: "jwt",
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   providers: [
     Credentials({
