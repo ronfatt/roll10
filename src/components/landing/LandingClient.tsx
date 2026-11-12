@@ -15,6 +15,7 @@ import type { Locale } from "@/lib/i18n";
 import { LocaleToggle } from "@/components/LocaleToggle";
 import { Roll10Logo } from "@/components/Roll10Logo";
 import { MarbleRaceLoader } from "@/components/MarbleRaceLoader";
+import { DIRECT_LOGIN_ENABLED } from "@/lib/app-config";
 
 interface PosterSlide {
   id: string;
@@ -58,7 +59,7 @@ const VISUAL_CARDS = [
     metaEn: "20:00 SGT · 10 Lanes",
     metaZh: "20:00 SGT · 10 赛道",
     hrefMember: "/entering",
-    hrefGuest: "/login",
+    hrefGuest: "/login?auto=1",
   },
   {
     id: "vip",
@@ -131,7 +132,11 @@ export function LandingClient({
   }, [previewRaceOpen]);
 
   const activeSlide = HERO_POSTERS[slideIdx];
-  const loginHref = isAuthenticated ? "/entering" : "/login";
+  const loginHref = isAuthenticated
+    ? "/entering"
+    : DIRECT_LOGIN_ENABLED
+      ? "/login?auto=1"
+      : "/login";
   const activeNoticeObj = NOTICES.find((n) => n.id === selectedNotice);
 
   return (
