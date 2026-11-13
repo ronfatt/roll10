@@ -25,15 +25,15 @@ import { SignOutButton } from "./SignOutButton";
 
 interface AppShellProps {
   children: React.ReactNode;
-  member: {
+  member?: {
     memberCode: string;
     displayName: string;
-    role: "MEMBER" | "ADMIN";
+    role: "MEMBER" | "ADMIN" | string;
     currentPackageCode: string | null;
-  };
+  } | null;
   locale: Locale;
   t: Dictionary;
-  sgtTimeLabel: string;
+  sgtTimeLabel?: string;
   mode?: "member" | "admin";
 }
 
@@ -65,14 +65,14 @@ export function AppShell({
   member,
   locale,
   t,
-  sgtTimeLabel,
+  sgtTimeLabel = "",
   mode = "member",
 }: AppShellProps) {
   const pathname = usePathname();
-  const isAdmin = member.role === "ADMIN";
+  const isAdmin = member?.role === "ADMIN";
 
   const memberLinks = [
-    { href: "/dashboard", label: t.nav.home, icon: Home },
+    { href: member ? "/dashboard" : "/", label: t.nav.home, icon: Home },
     { href: "/tree", label: t.nav.team, icon: GitBranch },
     { href: "/arcade", label: t.nav.arcade, icon: ArcadeNavIcon, isCustomIcon: true },
     { href: "/packages", label: t.nav.packages, icon: Layers },
@@ -104,7 +104,12 @@ export function AppShell({
           { href: "/admin/config", label: t.adminNav.config, icon: Settings, matchPrefix: ["/admin/config"] },
         ]
       : [
-          { href: "/dashboard", label: t.nav.home, icon: Home, matchPrefix: ["/dashboard"] },
+          {
+            href: member ? "/dashboard" : "/",
+            label: t.nav.home,
+            icon: Home,
+            matchPrefix: ["/dashboard", "/"],
+          },
           {
             href: "/tree",
             label: t.nav.team,
@@ -130,7 +135,9 @@ export function AppShell({
   const activeIndex = Math.max(
     0,
     mobileBottomLinks.findIndex((item) =>
-      item.matchPrefix.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+      item.matchPrefix.some((p) =>
+        p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(`${p}/`)
+      )
     )
   );
 
@@ -141,10 +148,10 @@ export function AppShell({
       {/* Desktop Left Sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-[#2B3D4D] bg-[#101B27] lg:flex">
         <div className="border-b border-[#2B3D4D] px-5 py-4">
-          <Link href="/dashboard" className="block">
+          <Link href={member ? "/dashboard" : "/"} className="block">
             <Roll10Logo className="h-7 w-auto" />
             <div className="mt-1.5 tabular-nums text-[11px] text-[#AAB8C7]">
-              {member.memberCode} · {member.currentPackageCode ?? t.overview.pendingActivation}
+              {member ? `${member.memberCode} · ${member.currentPackageCode ?? t.overview.pendingActivation}` : (locale === "zh-CN" ? "公开访客模式" : "Public Guest Mode")}
             </div>
           </Link>
         </div>
@@ -212,10 +219,21 @@ export function AppShell({
 
         <div className="space-y-2 border-t border-[#2B3D4D] p-3">
           <div className="flex items-center justify-between px-2 py-1">
-            <span className="truncate text-xs text-[#AAB8C7]">{member.displayName}</span>
+            <span className="truncate text-xs text-[#AAB8C7]">
+              {member ? member.displayName : (locale === "zh-CN" ? "公开访客" : "Guest")}
+            </span>
             <LocaleToggle locale={locale} />
           </div>
-          <SignOutButton label={t.nav.signOut} />
+          {member ? (
+            <SignOutButton label={t.nav.signOut} />
+          ) : (
+            <Link
+              href="/login"
+              className="flex min-h-[36px] w-full items-center justify-center rounded-xl bg-[#51E7FA] text-xs font-semibold text-[#0A101A] transition hover:bg-[#74edfc]"
+            >
+              {locale === "zh-CN" ? "会员登录" : "Sign In"}
+            </Link>
+          )}
         </div>
       </aside>
 
