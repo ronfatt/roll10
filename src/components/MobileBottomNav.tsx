@@ -85,7 +85,7 @@ export function MobileBottomNav({
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-[#2B3D4D] bg-[#0A101A]/96 backdrop-blur-xl pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_30px_rgba(0,0,0,0.85)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-[#29363D] bg-[#070B0D]/96 backdrop-blur-xl pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_30px_rgba(0,0,0,0.85)] lg:hidden"
     >
       <div className="relative mx-auto grid max-w-md grid-cols-5">
         {navItems.map((item, idx) => {
@@ -95,14 +95,14 @@ export function MobileBottomNav({
             <Link
               key={item.key}
               href={item.href}
-              className={`relative flex min-h-[58px] flex-col items-center justify-center gap-1 px-1 py-1.5 text-[11px] font-medium outline-none transition-all duration-150 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-[#51E7FA] focus-visible:ring-inset ${
-                active ? "text-[#51E7FA]" : "text-[#889AA8] hover:text-[#F4F8FC]"
+              className={`relative flex min-h-[58px] flex-col items-center justify-center gap-1 px-1 py-1.5 text-[11px] font-medium outline-none transition-all duration-150 active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-[#00D9DF] focus-visible:ring-inset ${
+                active ? "text-[#00D9DF]" : "text-[#829098] hover:text-[#F4F6F7]"
               }`}
             >
               {active && (
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-x-1 top-0 bottom-0.5 rounded-t-2xl border-t border-x border-[#51E7FA]/35 bg-gradient-to-b from-[#51E7FA]/[0.15] via-[#51E7FA]/[0.03] to-transparent shadow-[inset_0_1px_0_rgba(165,246,255,0.25)]"
+                  className="pointer-events-none absolute inset-x-1 top-0 bottom-0.5 rounded-t-2xl border-t border-x border-[#00D9DF]/35 bg-gradient-to-b from-[#00D9DF]/[0.15] via-[#00D9DF]/[0.03] to-transparent shadow-[inset_0_1px_0_rgba(0,217,223,0.25)]"
                 />
               )}
               {"isCustomIcon" in item && item.isCustomIcon ? (
@@ -110,7 +110,7 @@ export function MobileBottomNav({
               ) : (
                 <Icon
                   className={`relative z-10 h-5 w-5 transition-transform ${
-                    active ? "drop-shadow-[0_0_8px_rgba(81,231,250,0.6)]" : ""
+                    active ? "drop-shadow-[0_0_8px_rgba(0,217,223,0.6)]" : ""
                   }`}
                   strokeWidth={active ? 2 : 1.6}
                 />
@@ -120,7 +120,7 @@ export function MobileBottomNav({
           );
         })}
 
-        {/* Smooth Sliding Ice-Blue Bottom Bar (200ms) */}
+        {/* Smooth Sliding Cyan Bottom Bar (200ms) */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute bottom-1 left-0 transition-transform duration-200 ease-out motion-reduce:transition-none"
@@ -129,7 +129,7 @@ export function MobileBottomNav({
             transform: `translateX(${activeIndex * 100}%)`,
           }}
         >
-          <div className="mx-auto h-[2.5px] w-7 rounded-full bg-gradient-to-r from-[#18C5DC] via-[#51E7FA] to-[#A5F6FF] shadow-[0_0_10px_rgba(81,231,250,0.85)]" />
+          <div className="mx-auto h-[2.5px] w-7 rounded-full bg-gradient-to-r from-[#00A3A8] via-[#00D9DF] to-[#70F4F8] shadow-[0_0_10px_rgba(0,217,223,0.85)]" />
         </div>
       </div>
     </nav>

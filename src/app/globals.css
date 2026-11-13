@@ -2,26 +2,30 @@
 
 :root {
   color-scheme: dark;
-  --r10-bg: #0a101a;
-  --r10-panel: #101b27;
-  --r10-border: #2b3d4d;
-  --r10-text: #f4f8fc;
-  --r10-muted: #aab8c7;
-  --r10-cyan: #51e7fa;
-  --r10-cyan-glow: rgba(81, 231, 250, 0.4);
-  --r10-purple: #b79cff;
-  --r10-purple-glow: rgba(183, 156, 255, 0.4);
-  --r10-gold: #f2cd7e;
-  --r10-gold-dark: #c8a858;
-  --r10-gold-glow: rgba(242, 205, 126, 0.25);
+  --r10-bg: #070B0D;
+  --r10-panel: #10171B;
+  --r10-panel-pop: #172126;
+  --r10-border: #29363D;
+  --r10-text: #F4F6F7;
+  --r10-muted: #B0BBC2;
+  --r10-dim: #829098;
+  --r10-cyan: #00D9DF;
+  --r10-cyan-glow: rgba(0, 217, 223, 0.4);
+  --r10-gold: #E9C66B;
+  --r10-gold-light: #FFE8A3;
+  --r10-gold-dark: #9B7433;
+  --r10-gold-glow: rgba(233, 198, 107, 0.3);
+  --r10-purple: #B79CFF;
+  --r10-success: #52C898;
+  --r10-error: #F17A7A;
 }
 
 body {
-  background-color: #0a101a;
+  background-color: #070B0D;
   background-image:
-    radial-gradient(90% 45% at 15% 0%, rgba(81, 231, 250, 0.08) 0%, transparent 60%),
-    radial-gradient(70% 40% at 88% 8%, rgba(183, 156, 255, 0.05) 0%, transparent 60%);
-  color: #f4f8fc;
+    radial-gradient(85% 45% at 50% 0%, rgba(0, 217, 223, 0.06) 0%, transparent 60%),
+    radial-gradient(60% 40% at 85% 8%, rgba(233, 198, 107, 0.04) 0%, transparent 60%);
+  color: #F4F6F7;
   font-family: "Geist", "Instrument Sans", "Inter", -apple-system, BlinkMacSystemFont,
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -29,76 +33,190 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Unified Obsidian Gold-Cyan Surface Depth & Borders */
+.r10-card-dark {
+  background: #10171B;
+  border: 1px solid #29363D;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.65);
+}
+
+.r10-card-emphasis {
+  background: #172126;
+  border: 1px solid #29363D;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.75);
+}
+
+.r10-card-gold-accent {
+  background: linear-gradient(165deg, #172126 0%, #10171B 100%);
+  border: 1px solid rgba(233, 198, 107, 0.45);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 232, 163, 0.15),
+    0 16px 36px -10px rgba(0, 0, 0, 0.8),
+    0 0 16px -4px rgba(233, 198, 107, 0.18);
+}
+
+/* Primary Champagne Gold Action Button */
+.r10-btn-gold {
+  background: linear-gradient(180deg, #FFE8A3 0%, #E9C66B 50%, #D4AC4B 100%);
+  border: 1px solid rgba(255, 245, 200, 0.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 0 rgba(155, 116, 51, 0.5),
+    0 8px 20px -4px rgba(233, 198, 107, 0.45);
+  color: #070B0D;
+  font-weight: 700;
+  transition: all 180ms ease;
+}
+
+.r10-btn-gold:hover {
+  filter: brightness(1.06);
+  transform: translateY(-0.5px);
+}
+
+.r10-btn-gold:active {
+  transform: translateY(0.5px);
+  filter: brightness(0.96);
+}
+
+/* Secondary Dark Surface Button */
+.r10-btn-dark {
+  background: #10171B;
+  border: 1px solid #29363D;
+  color: #F4F6F7;
+  transition: all 180ms ease;
+}
+
+.r10-btn-dark:hover {
+  background: #172126;
+  border-color: #3d505c;
+}
+
+/* Primary Cyan Accent Button / Badge */
+.r10-btn-cyan {
+  background: #00D9DF;
+  border: 1px solid rgba(165, 246, 255, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 6px 18px -4px rgba(0, 217, 223, 0.45);
+  color: #070B0D;
+  font-weight: 700;
+  transition: all 180ms ease;
+}
+
+.r10-btn-cyan:hover {
+  filter: brightness(1.08);
+}
+
+/* Custom interactive slider for CP registration payment */
+input[type=range].r10-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #172126;
+  border-radius: 9999px;
+  height: 8px;
+  outline: none;
+  border: 1px solid #29363D;
+}
+
+input[type=range].r10-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #FFE8A3 0%, #E9C66B 100%);
+  border: 2px solid #070B0D;
+  box-shadow: 0 0 10px rgba(233, 198, 107, 0.7);
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+input[type=range].r10-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type=range].r10-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #FFE8A3 0%, #E9C66B 100%);
+  border: 2px solid #070B0D;
+  box-shadow: 0 0 10px rgba(233, 198, 107, 0.7);
+  cursor: pointer;
+}
+
 /* 3D Sculpted Brushed Titanium Surface Depth & Borders */
 .r10-card-titanium {
-  background: linear-gradient(165deg, rgba(19, 32, 47, 0.96) 0%, rgba(16, 27, 39, 0.98) 55%, rgba(10, 16, 26, 0.99) 100%);
-  border: 1px solid #2b3d4d;
+  background: linear-gradient(165deg, rgba(23, 33, 38, 0.96) 0%, rgba(16, 23, 27, 0.98) 55%, rgba(7, 11, 13, 0.99) 100%);
+  border: 1px solid #29363D;
   box-shadow:
-    inset 0 1px 0 rgba(244, 248, 252, 0.08),
+    inset 0 1px 0 rgba(244, 246, 247, 0.08),
     inset 0 -1px 0 rgba(0, 0, 0, 0.65),
-    0 16px 36px -12px rgba(0, 0, 0, 0.85),
-    0 2px 8px rgba(0, 0, 0, 0.45);
+    0 16px 36px -12px rgba(0, 0, 0, 0.85);
 }
 
 .r10-card-3d {
-  background: linear-gradient(165deg, rgba(19, 32, 47, 0.96) 0%, rgba(16, 27, 39, 0.98) 55%, rgba(10, 16, 26, 0.99) 100%);
-  border: 1px solid #2b3d4d;
+  background: linear-gradient(165deg, rgba(23, 33, 38, 0.96) 0%, rgba(16, 23, 27, 0.98) 55%, rgba(7, 11, 13, 0.99) 100%);
+  border: 1px solid #29363D;
   box-shadow:
-    inset 0 1px 0 rgba(244, 248, 252, 0.08),
+    inset 0 1px 0 rgba(244, 246, 247, 0.08),
     inset 0 -1px 0 rgba(0, 0, 0, 0.65),
-    0 16px 36px -12px rgba(0, 0, 0, 0.85),
-    0 2px 8px rgba(0, 0, 0, 0.45);
+    0 16px 36px -12px rgba(0, 0, 0, 0.85);
 }
 
 .r10-hero-titanium,
 .r10-hero-3d {
   background:
-    radial-gradient(75% 75% at 8% 5%, rgba(81, 231, 250, 0.12) 0%, transparent 65%),
-    linear-gradient(155deg, #182635 0%, #101b27 50%, #0a111a 100%);
-  border: 1px solid #2b3d4d;
+    radial-gradient(75% 75% at 8% 5%, rgba(0, 217, 223, 0.1) 0%, transparent 65%),
+    linear-gradient(155deg, #172126 0%, #10171B 50%, #070B0D 100%);
+  border: 1px solid #29363D;
   box-shadow:
-    inset 0 1px 0 rgba(244, 248, 252, 0.18),
+    inset 0 1px 0 rgba(244, 246, 247, 0.15),
     inset 0 -1px 0 rgba(0, 0, 0, 0.75),
     0 24px 48px -12px rgba(0, 0, 0, 0.9),
-    0 0 32px -8px rgba(81, 231, 250, 0.15);
+    0 0 32px -8px rgba(0, 217, 223, 0.12);
 }
 
 .r10-referral-3d {
   background:
-    radial-gradient(60% 100% at 75% 100%, rgba(81, 231, 250, 0.08) 0%, transparent 70%),
-    linear-gradient(165deg, #162331 0%, #101b27 60%, #090e17 100%);
-  border: 1px solid #2b3d4d;
+    radial-gradient(60% 100% at 75% 100%, rgba(0, 217, 223, 0.08) 0%, transparent 70%),
+    linear-gradient(165deg, #172126 0%, #10171B 60%, #070B0D 100%);
+  border: 1px solid #29363D;
   box-shadow:
-    inset 0 1px 0 rgba(244, 248, 252, 0.1),
+    inset 0 1px 0 rgba(244, 246, 247, 0.1),
     0 16px 32px -12px rgba(0, 0, 0, 0.85);
 }
 
 /* Primary Brushed Titanium Button (e.g. 提现 ↗) */
 .r10-btn-titanium {
-  background: linear-gradient(180deg, #ffffff 0%, #dbe5ee 50%, #b0c2d3 100%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: linear-gradient(180deg, #FFE8A3 0%, #E9C66B 50%, #D4AC4B 100%);
+  border: 1px solid rgba(255, 245, 200, 0.8);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -2px 0 rgba(70, 88, 107, 0.4),
-    0 6px 18px -4px rgba(176, 194, 211, 0.35);
-  color: #0a101a;
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 0 rgba(155, 116, 51, 0.5),
+    0 6px 18px -4px rgba(233, 198, 107, 0.4);
+  color: #070B0D;
+  font-weight: 700;
 }
 
 /* Luxury Racing Champagne Gold Rim Card */
 .r10-card-gold-rim {
-  background: linear-gradient(165deg, #131b26 0%, #0e1520 55%, #080c14 100%);
-  border: 1px solid rgba(242, 205, 126, 0.35);
+  background: linear-gradient(165deg, #172126 0%, #10171B 55%, #070B0D 100%);
+  border: 1px solid rgba(233, 198, 107, 0.35);
   box-shadow:
     inset 0 1px 0 rgba(255, 248, 220, 0.16),
     inset 0 -1px 0 rgba(0, 0, 0, 0.7),
     0 16px 36px -12px rgba(0, 0, 0, 0.9),
-    0 0 16px -4px rgba(242, 205, 126, 0.12);
+    0 0 16px -4px rgba(233, 198, 107, 0.15);
 }
 
 /* Slanted Champagne Gold Ribbon Badge (as in Design Draft Slide 02) */
 .r10-badge-gold-ribbon {
-  background: linear-gradient(135deg, rgba(200, 168, 88, 0.28) 0%, rgba(242, 205, 126, 0.1) 100%);
-  border: 1px solid rgba(242, 205, 126, 0.45);
+  background: linear-gradient(135deg, rgba(233, 198, 107, 0.28) 0%, rgba(233, 198, 107, 0.1) 100%);
+  border: 1px solid rgba(233, 198, 107, 0.45);
   box-shadow:
     inset 0 1px 0 rgba(255, 245, 215, 0.35),
     inset 0 -1px 0 rgba(0, 0, 0, 0.5),
@@ -122,44 +240,23 @@ body {
 
 /* Racing Champagne Gold Metallic Text */
 .r10-text-gold {
-  background: linear-gradient(180deg, #fff0ca 0%, #f2cd7e 50%, #c8a858 100%);
+  background: linear-gradient(180deg, #FFE8A3 0%, #E9C66B 50%, #9B7433 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* Cyan Glowing Circuit Guide Line */
 .r10-guide-line-cyan {
-  background: linear-gradient(90deg, transparent 0%, #51e7fa 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, #00D9DF 50%, transparent 100%);
   height: 1px;
-  box-shadow: 0 0 8px rgba(81, 231, 250, 0.8);
-}
-
-.r10-btn-titanium:hover {
-  filter: brightness(1.05);
-}
-
-/* Primary Ice-Blue Glowing Button / Pill */
-.r10-btn-cyan,
-.r10-btn-gold-3d {
-  background: linear-gradient(180deg, #7cf0fd 0%, #51e7fa 55%, #18c5dc 100%);
-  border: 1px solid rgba(165, 246, 255, 0.65);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    inset 0 -2px 0 rgba(14, 115, 129, 0.45),
-    0 6px 20px -3px rgba(81, 231, 250, 0.45);
-  color: #071118;
-}
-
-.r10-btn-cyan:hover,
-.r10-btn-gold-3d:hover {
-  filter: brightness(1.06);
+  box-shadow: 0 0 8px rgba(0, 217, 223, 0.8);
 }
 
 .r10-pill-dark-3d {
-  background: linear-gradient(180deg, #182535 0%, #0d1520 100%);
-  border: 1px solid #2b3d4d;
+  background: linear-gradient(180deg, #172126 0%, #10171B 100%);
+  border: 1px solid #29363D;
   box-shadow:
-    inset 0 1px 0 rgba(244, 248, 252, 0.12),
+    inset 0 1px 0 rgba(244, 246, 247, 0.1),
     0 4px 12px rgba(0, 0, 0, 0.55);
 }
 

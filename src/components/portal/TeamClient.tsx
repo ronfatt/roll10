@@ -9,6 +9,7 @@ import {
   Eye,
   GitBranch,
   Info,
+  Layers,
   Loader2,
   Minus,
   Plus,
@@ -16,6 +17,7 @@ import {
   RotateCcw,
   Search,
   Share2,
+  Trophy,
   Users,
   X,
 } from "lucide-react";
@@ -792,25 +794,12 @@ export function TeamClient({
         </div>
       </div>
 
-      {/* Top Segmented Tabs: Referral Tree (Default) / Placement Tree */}
+      {/* Top Segmented Tabs: Placement Team (安置团队) / Referral Relationship (推荐关系) */}
       <div
         role="tablist"
         aria-label={t.tree.title}
-        className="grid grid-cols-2 gap-1.5 rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)]"
+        className="grid grid-cols-2 gap-1.5 rounded-2xl border border-[#29363D] bg-[#10171B] p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)]"
       >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === "referral"}
-          onClick={() => handleTabSwitch("referral")}
-          className={`min-h-[44px] rounded-xl text-xs font-bold transition-all duration-150 ${
-            activeTab === "referral"
-              ? "bg-[#51E7FA] text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)]"
-              : "text-[#AAB8C7] hover:text-[#F4F8FC]"
-          }`}
-        >
-          {t.tree.tabReferral}
-        </button>
         <button
           type="button"
           role="tab"
@@ -818,11 +807,24 @@ export function TeamClient({
           onClick={() => handleTabSwitch("placement")}
           className={`min-h-[44px] rounded-xl text-xs font-bold transition-all duration-150 ${
             activeTab === "placement"
-              ? "bg-[#51E7FA] text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)]"
-              : "text-[#AAB8C7] hover:text-[#F4F8FC]"
+              ? "bg-[#00D9DF] text-[#070B0D] shadow-[0_0_12px_rgba(0,217,223,0.35)]"
+              : "text-[#B0BBC2] hover:text-[#F4F6F7]"
           }`}
         >
-          {t.tree.tabPlacement}
+          {locale === "zh-CN" ? "安置团队" : t.tree.tabPlacement}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "referral"}
+          onClick={() => handleTabSwitch("referral")}
+          className={`min-h-[44px] rounded-xl text-xs font-bold transition-all duration-150 ${
+            activeTab === "referral"
+              ? "bg-[#00D9DF] text-[#070B0D] shadow-[0_0_12px_rgba(0,217,223,0.35)]"
+              : "text-[#B0BBC2] hover:text-[#F4F6F7]"
+          }`}
+        >
+          {locale === "zh-CN" ? "推荐关系" : t.tree.tabReferral}
         </button>
       </div>
 
@@ -1059,46 +1061,34 @@ export function TeamClient({
       {/* ==================== TAB 2: PLACEMENT TREE ==================== */}
       {activeTab === "placement" && (
         <section className="space-y-4">
-          {/* Root Member Own Left / Right Remaining BV & Headcount Overview with Gold Rim */}
+          {/* Root Member Own Left / Right Points Overview */}
           {placeRootOverview && (
-            <div className="r10-card-gold-rim overflow-hidden rounded-2xl shadow-md">
-              <div className="border-b border-[#2B3D4D] px-4 py-2 text-[11px] font-semibold text-[#CAD7E6]">
-                {t.tree.rootOverviewLabel}
-              </div>
-              <div className="grid grid-cols-2 divide-x divide-[#2B3D4D]">
-                <div className="p-3.5">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-[#51E7FA] text-[11px] font-bold text-[#0A101A]">
-                      L
-                    </span>
-                    <span className="text-xs text-[#CAD7E6]">
-                      {t.common.left} ({placeRootOverview.leftCount})
-                    </span>
-                    <span className="ml-auto h-2 w-2 rounded-full bg-[#51E7FA] shadow-[0_0_6px_#51E7FA]" />
-                  </div>
-                  <div className="mt-2 tabular-nums text-xl font-black text-[#F4F8FC]">
-                    {placeRootOverview.leftBv.toLocaleString("en-US")}{" "}
-                    <span className="text-xs font-semibold text-[#CAD7E6]">
-                      {locale === "zh-CN" ? "积分" : "pts"}
-                    </span>
-                  </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* Left Points */}
+              <div className="r10-card-dark p-3.5 border-l-2 border-l-[#00D9DF]">
+                <div className="flex items-center gap-1.5 text-xs text-[#00D9DF]">
+                  <Layers className="h-4 w-4" />
+                  <span className="font-semibold">{locale === "zh-CN" ? "左区积分" : "Left Points"}</span>
                 </div>
-                <div className="p-3.5">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#FFF0CA] via-[#F2CD7E] to-[#C8A858] text-[11px] font-bold text-[#0A101A]">
-                      R
-                    </span>
-                    <span className="text-xs text-[#CAD7E6]">
-                      {t.common.right} ({placeRootOverview.rightCount})
-                    </span>
-                    <span className="ml-auto h-2 w-2 rounded-full bg-[#F2CD7E] shadow-[0_0_6px_#F2CD7E]" />
-                  </div>
-                  <div className="mt-2 tabular-nums text-xl font-black text-[#F4F8FC]">
-                    {placeRootOverview.rightBv.toLocaleString("en-US")}{" "}
-                    <span className="text-xs font-semibold text-[#CAD7E6]">
-                      {locale === "zh-CN" ? "积分" : "pts"}
-                    </span>
-                  </div>
+                <div className="mt-2 text-2xl font-black tabular-nums text-[#F4F6F7]">
+                  {placeRootOverview.leftBv.toLocaleString("en-US")}
+                </div>
+                <div className="mt-0.5 text-[11px] text-[#829098]">
+                  {placeRootOverview.leftCount} {locale === "zh-CN" ? "人" : "members"}
+                </div>
+              </div>
+
+              {/* Right Points */}
+              <div className="r10-card-dark p-3.5 border-l-2 border-l-[#E9C66B]">
+                <div className="flex items-center gap-1.5 text-xs text-[#E9C66B]">
+                  <Layers className="h-4 w-4" />
+                  <span className="font-semibold">{locale === "zh-CN" ? "右区积分" : "Right Points"}</span>
+                </div>
+                <div className="mt-2 text-2xl font-black tabular-nums text-[#F4F6F7]">
+                  {placeRootOverview.rightBv.toLocaleString("en-US")}
+                </div>
+                <div className="mt-0.5 text-[11px] text-[#829098]">
+                  {placeRootOverview.rightCount} {locale === "zh-CN" ? "人" : "members"}
                 </div>
               </div>
             </div>
@@ -1235,21 +1225,21 @@ export function TeamClient({
                 )}
               </div>
 
-              {/* Fork Connector Lines to Left & Right Slots: Left Ice-Blue, Right Lavender */}
+              {/* Fork Connector Lines to Left & Right Slots: Left Cyan, Right Champagne Gold */}
               <div aria-hidden="true" className="mx-auto max-w-md px-12 sm:px-20">
-                <div className="mx-auto h-4 w-px bg-[#2B3D4D]" />
-                <div className="h-px w-full bg-[#2B3D4D]" />
+                <div className="mx-auto h-4 w-px bg-[#29363D]" />
+                <div className="h-px w-full bg-[#29363D]" />
                 <div className="flex justify-between">
-                  <div className="h-4 w-[2px] bg-[#51E7FA] shadow-[0_0_6px_rgba(81,231,250,0.8)]" />
-                  <div className="h-4 w-[2px] bg-[#B79CFF] shadow-[0_0_6px_rgba(183,156,255,0.8)]" />
+                  <div className="h-4 w-[2px] bg-[#00D9DF] shadow-[0_0_6px_rgba(0,217,223,0.8)]" />
+                  <div className="h-4 w-[2px] bg-[#E9C66B] shadow-[0_0_6px_rgba(233,198,107,0.8)]" />
                 </div>
               </div>
 
               {/* Side-by-Side L / R Immediate Children */}
               <div className="mx-auto grid max-w-2xl grid-cols-2 gap-2.5 sm:gap-4">
                 {[
-                  { leg: "LEFT" as const, label: "L", pillBg: "bg-[#51E7FA]", dot: "bg-[#51E7FA]", node: placeLeft, textAccent: "text-[#51E7FA]" },
-                  { leg: "RIGHT" as const, label: "R", pillBg: "bg-[#B79CFF]", dot: "bg-[#B79CFF]", node: placeRight, textAccent: "text-[#B79CFF]" },
+                  { leg: "LEFT" as const, label: "L", pillBg: "bg-[#00D9DF]", dot: "bg-[#00D9DF]", node: placeLeft, textAccent: "text-[#00D9DF]" },
+                  { leg: "RIGHT" as const, label: "R", pillBg: "bg-[#E9C66B]", dot: "bg-[#E9C66B]", node: placeRight, textAccent: "text-[#E9C66B]" },
                 ].map((slot) =>
                   slot.node ? (
                     <div
@@ -1333,6 +1323,49 @@ export function TeamClient({
               </div>
             </div>
           ) : null}
+
+          {/* Bottom Placement & Matching Summary Card (Screen 2 Concept) */}
+          {placeRootOverview && (
+            <div className="r10-card-dark p-4 space-y-3 mt-4">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 text-[#B0BBC2]">
+                  <Trophy className="h-4 w-4 text-[#E9C66B]" />
+                  <span>{locale === "zh-CN" ? "今日对碰奖励" : "Today Pairing Bonus"}</span>
+                </div>
+                <span className="font-mono-sgt font-bold text-[#E9C66B]">
+                  {Math.min(placeRootOverview.leftBv, placeRootOverview.rightBv) > 0
+                    ? Math.floor(Math.min(placeRootOverview.leftBv, placeRootOverview.rightBv) / 100) * 10
+                    : 0}{" "}
+                  CP
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between text-xs border-t border-[#29363D]/60 pt-2.5">
+                <div className="flex items-center gap-2 text-[#B0BBC2]">
+                  <Layers className="h-4 w-4 text-[#00D9DF]" />
+                  <span>{locale === "zh-CN" ? "每日对碰上限" : "Daily Matching Cap"}</span>
+                </div>
+                <span className="font-mono-sgt font-bold text-[#F4F6F7]">
+                  1,000 CP
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between text-xs border-t border-[#29363D]/60 pt-2.5">
+                <div className="flex items-center gap-2 text-[#B0BBC2]">
+                  <Layers className="h-4 w-4 text-[#829098]" />
+                  <span>{locale === "zh-CN" ? "大区剩余积分" : "Strong Leg Remaining"}</span>
+                </div>
+                <span className="font-mono-sgt font-bold text-[#00D9DF]">
+                  {Math.abs(placeRootOverview.leftBv - placeRootOverview.rightBv).toLocaleString()}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-[11px] text-[#829098] border-t border-[#29363D]/60 pt-2">
+                <Info className="h-3.5 w-3.5 shrink-0 text-[#00D9DF]" />
+                <span>{locale === "zh-CN" ? "未使用积分持续保留结转，零清零" : "Unpaired points roll over 100%, zero flushed"}</span>
+              </div>
+            </div>
+          )}
         </section>
       )}
 

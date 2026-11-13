@@ -37,6 +37,7 @@ export interface PortalHomePayload {
     directRatePercent: number;
     cpBalanceCents: number;
     rpBalanceCents: number;
+    usdtBalanceCents: number;
     directReferralCount: number;
     directReferralActiveCount: number;
     directReferralPendingCount: number;
@@ -325,6 +326,7 @@ export async function loadPortalHomeData(
       directRatePercent,
       cpBalanceCents: (member as { cpBalanceCents?: number }).cpBalanceCents ?? 0,
       rpBalanceCents: (member as { rpBalanceCents?: number }).rpBalanceCents ?? 0,
+      usdtBalanceCents: member.availablePointsCents,
       directReferralCount,
       directReferralActiveCount,
       directReferralPendingCount,
@@ -421,6 +423,7 @@ export function getFallbackHomeData(
       directRatePercent: isP1000 ? 35 : 25,
       cpBalanceCents: 20000,
       rpBalanceCents: 500000,
+      usdtBalanceCents: isP1000 ? 128000 : 50000,
       directReferralCount: isP1000 ? 2 : 8,
       directReferralActiveCount: isP1000 ? 2 : 8,
       directReferralPendingCount: 0,

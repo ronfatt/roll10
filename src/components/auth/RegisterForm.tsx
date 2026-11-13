@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, UserCheck } from "lucide-react";
+import { ArrowRight, Check, Eye, EyeOff, UserCheck } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { Roll10Logo } from "@/components/Roll10Logo";
 
@@ -87,25 +87,25 @@ export function RegisterForm({
   };
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-white/[0.1] bg-[#141619] p-6 shadow-2xl sm:p-8">
-      <div className="mb-6">
-        <div className="mb-4 flex items-center justify-between">
+    <div className="w-full max-w-md rounded-2xl border border-[#29363D] bg-[#10171B] p-5 shadow-2xl sm:p-7">
+      <div className="mb-5">
+        <div className="mb-3.5 flex items-center justify-between">
           <Roll10Logo className="h-6 w-auto" />
-          <span className="font-mono-sgt rounded-full border border-[#CBB487]/35 bg-[#CBB487]/10 px-2.5 py-0.5 text-[11px] font-medium text-[#CBB487]">
+          <span className="font-mono-sgt rounded-full border border-[#E9C66B]/35 bg-[#E9C66B]/10 px-2.5 py-0.5 text-[11px] font-medium text-[#E9C66B]">
             SGT
           </span>
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-[#F2F0EB]">
-          {t.auth.registerTitle}
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F4F6F7]">
+          {locale === "zh-CN" ? "配套注册" : t.auth.registerTitle}
         </h1>
-        <p className="mt-1 text-sm text-[#A7AEBC]">{t.auth.registerSubtitle}</p>
+        <p className="mt-1 text-xs text-[#B0BBC2]">{t.auth.registerSubtitle}</p>
       </div>
 
       {initialRef && (
-        <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-[#CBB487]/40 bg-[#CBB487]/10 px-3.5 py-2.5 text-xs text-[#F2F0EB]">
-          <UserCheck className="h-4 w-4 shrink-0 text-[#CBB487]" />
+        <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-[#00D9DF]/40 bg-[#00D9DF]/10 px-3.5 py-2.5 text-xs text-[#F4F6F7]">
+          <UserCheck className="h-4 w-4 shrink-0 text-[#00D9DF]" />
           <div>
-            <span className="font-semibold text-[#CBB487]">{t.auth.sponsorDetected}: </span>
+            <span className="font-semibold text-[#00D9DF]">{t.auth.sponsorDetected}: </span>
             <span className="tabular-nums font-medium">
               {sponsorDisplayName ? `${sponsorDisplayName} (${initialRef})` : initialRef}
             </span>
@@ -116,7 +116,7 @@ export function RegisterForm({
       {error && (
         <div
           role="alert"
-          className="mb-4 rounded-xl border border-rose-500/35 bg-rose-500/10 px-3.5 py-2.5 text-sm text-rose-300"
+          className="mb-4 rounded-xl border border-[#F17A7A]/35 bg-[#F17A7A]/10 px-3.5 py-2.5 text-xs text-[#F17A7A]"
         >
           {error}
         </div>
@@ -124,7 +124,7 @@ export function RegisterForm({
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#F2F0EB]">
+          <label className="mb-1.5 block text-xs font-medium text-[#F4F6F7]">
             {t.auth.sponsorCodeLabel}
           </label>
           <input
@@ -132,13 +132,13 @@ export function RegisterForm({
             required
             value={sponsorCode}
             onChange={(e) => setSponsorCode(e.target.value.toUpperCase())}
-            placeholder="BM100002"
-            className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] px-3.5 py-2.5 text-sm uppercase text-[#F2F0EB] placeholder-[#A7AEBC]/45 outline-none focus:border-[#CBB487]"
+            placeholder="BM100001"
+            className="min-h-[44px] w-full rounded-xl border border-[#29363D] bg-[#070B0D] px-3.5 py-2.5 text-sm uppercase text-[#F4F6F7] placeholder-[#829098]/45 outline-none focus:border-[#00D9DF]"
           />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#F2F0EB]">
+          <label className="mb-1.5 block text-xs font-medium text-[#F4F6F7]">
             {t.auth.displayNameLabel}
           </label>
           <input
@@ -146,13 +146,13 @@ export function RegisterForm({
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            placeholder={locale === "zh-CN" ? "请输入会员昵称或姓名" : "Full name"}
-            className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] px-3.5 py-2.5 text-sm text-[#F2F0EB] placeholder-[#A7AEBC]/45 outline-none focus:border-[#CBB487]"
+            placeholder={locale === "zh-CN" ? "请输入会员昵称" : "Member name"}
+            className="min-h-[44px] w-full rounded-xl border border-[#29363D] bg-[#070B0D] px-3.5 py-2.5 text-sm text-[#F4F6F7] placeholder-[#829098]/45 outline-none focus:border-[#00D9DF]"
           />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#F2F0EB]">
+          <label className="mb-1.5 block text-xs font-medium text-[#F4F6F7]">
             {t.auth.emailLabel}
           </label>
           <input
@@ -160,13 +160,13 @@ export function RegisterForm({
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@company.com"
-            className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] px-3.5 py-2.5 text-sm text-[#F2F0EB] placeholder-[#A7AEBC]/45 outline-none focus:border-[#CBB487]"
+            placeholder="member@binaryportal.io"
+            className="min-h-[44px] w-full rounded-xl border border-[#29363D] bg-[#070B0D] px-3.5 py-2.5 text-sm text-[#F4F6F7] placeholder-[#829098]/45 outline-none focus:border-[#00D9DF]"
           />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#F2F0EB]">
+          <label className="mb-1.5 block text-xs font-medium text-[#F4F6F7]">
             {t.auth.passwordLabel}
           </label>
           <div className="relative">
@@ -177,175 +177,165 @@ export function RegisterForm({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={locale === "zh-CN" ? "至少 6 位字符" : "Min 6 characters"}
-              className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] pl-3.5 pr-11 py-2.5 text-sm text-[#F2F0EB] placeholder-[#A7AEBC]/45 outline-none focus:border-[#CBB487]"
+              className="min-h-[44px] w-full rounded-xl border border-[#29363D] bg-[#070B0D] pl-3.5 pr-11 py-2.5 text-sm text-[#F4F6F7] placeholder-[#829098]/45 outline-none focus:border-[#00D9DF]"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              aria-label={
-                showPassword
-                  ? locale === "zh-CN"
-                    ? "隐藏密码"
-                    : "Hide password"
-                  : locale === "zh-CN"
-                    ? "显示密码"
-                    : "Show password"
-              }
-              className="absolute right-1 top-0.5 flex min-h-[40px] min-w-[40px] items-center justify-center rounded-lg text-[#A7AEBC] transition hover:text-[#F2F0EB]"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-1 top-0.5 flex min-h-[40px] min-w-[40px] items-center justify-center rounded-lg text-[#829098] transition hover:text-[#F4F6F7]"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#F2F0EB]">
-            {t.auth.initialPlanLabel}
-          </label>
+        {/* Section 1: 选择配套 (Select Package) */}
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold text-[#F4F6F7]">
+              {locale === "zh-CN" ? "选择配套" : t.auth.initialPlanLabel}
+            </label>
+          </div>
           <div className="grid grid-cols-3 gap-2">
             {[
               {
                 code: "P100" as const,
                 price: "100 U",
-                points: locale === "zh-CN" ? "100 积分" : "100 pts",
                 direct: "25%",
-                cap: "100 CP",
               },
               {
                 code: "P500" as const,
                 price: "500 U",
-                points: locale === "zh-CN" ? "500 积分" : "500 pts",
                 direct: "30%",
-                cap: "500 CP",
               },
               {
                 code: "P1000" as const,
                 price: "1,000 U",
-                points: locale === "zh-CN" ? "1,000 积分" : "1,000 pts",
                 direct: "35%",
-                cap: "1,000 CP",
               },
-            ].map((pkg) => (
-              <button
-                key={pkg.code}
-                type="button"
-                onClick={() => {
-                  setPackageCode(pkg.code);
-                  setCpAmount("0");
-                }}
-                className={`min-h-[72px] rounded-xl border p-2 text-left transition ${
-                  packageCode === pkg.code
-                    ? "border-[#51E7FA] bg-[#51E7FA]/15 text-[#F2F0EB]"
-                    : "border-white/[0.08] bg-[#08090B] text-[#A7AEBC] hover:border-[#51E7FA]/40"
-                }`}
-              >
-                <div className="tabular-nums text-xs font-bold text-[#F2CD7E]">
-                  {pkg.price}
-                </div>
-                <div className="tabular-nums text-[11px] font-medium text-[#F2F0EB]">
-                  {pkg.points}
-                </div>
-                <div className="tabular-nums text-[10px] text-[#51E7FA]">
-                  {locale === "zh-CN" ? `直推 ${pkg.direct}` : `Dir ${pkg.direct}`}
-                </div>
-                <div className="tabular-nums text-[9.5px] text-[#A7AEBC]">
-                  {locale === "zh-CN" ? `封顶 ${pkg.cap}` : `Cap ${pkg.cap}`}
-                </div>
-              </button>
-            ))}
+            ].map((pkg) => {
+              const selected = packageCode === pkg.code;
+              return (
+                <button
+                  key={pkg.code}
+                  type="button"
+                  onClick={() => {
+                    setPackageCode(pkg.code);
+                    setCpAmount("0");
+                  }}
+                  className={`relative min-h-[68px] rounded-xl border p-2.5 text-center transition-all ${
+                    selected
+                      ? "border-[#E9C66B] bg-[#172126] text-[#F4F6F7] shadow-[0_0_12px_rgba(233,198,107,0.25)]"
+                      : "border-[#29363D] bg-[#070B0D] text-[#B0BBC2] hover:border-[#29363D]/80"
+                  }`}
+                >
+                  {selected && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#E9C66B] text-[#070B0D] shadow">
+                      <Check className="h-2.5 w-2.5 stroke-[3]" />
+                    </span>
+                  )}
+                  <div className="tabular-nums text-sm font-bold text-[#F4F6F7]">
+                    {pkg.price}
+                  </div>
+                  <div className="tabular-nums text-xs font-semibold text-[#829098] mt-0.5">
+                    {pkg.direct}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <div className="text-[10.5px] text-[#829098]">
+            {locale === "zh-CN" ? "① 自身配套对应直推比例" : "① Rate determined by own active tier"}
           </div>
         </div>
 
+        {/* Section 2: 支付明细 (Payment Breakdown) */}
         {submitPaymentNow && (
-          <div className="rounded-xl border border-white/[0.1] bg-[#0E1722]/80 p-3.5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#CAD7E6]">
-                {locale === "zh-CN" ? "支付组合明细" : "Payment Breakdown"}
-              </span>
-              <span className="rounded bg-[#51E7FA]/15 px-2 py-0.5 text-[10px] font-bold text-[#51E7FA]">
-                {locale === "zh-CN" ? `总额 ${packagePrice} U` : `Total ${packagePrice} U`}
-              </span>
+          <div className="rounded-xl border border-[#29363D] bg-[#070B0D] p-3.5 space-y-3">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[#B0BBC2]">{locale === "zh-CN" ? "配套金额" : "Package Price"}</span>
+              <span className="font-bold text-[#F4F6F7] tabular-nums">{packagePrice} U</span>
             </div>
 
             {/* RP Display */}
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#AAB8C7]">
-                {locale === "zh-CN" ? "固定 50% RP：" : "Fixed 50% RP:"}
+              <span className="text-[#B0BBC2]">
+                {locale === "zh-CN" ? "Register Point" : "Register Point"}
               </span>
-              <span className="font-bold tabular-nums text-[#F2CD7E]">{fixedRp} RP</span>
+              <span className="font-bold tabular-nums text-[#00D9DF]">{fixedRp} RP</span>
             </div>
 
-            {/* CP Input with Max Button */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-[11px] font-medium text-[#CAD7E6]">
-                  {locale === "zh-CN" ? "自选抵扣 CP (0%–50%)" : "Optional CP (0%–50%)"}
-                </label>
+            {/* CP Input with interactive slider */}
+            <div className="space-y-1.5 border-t border-[#29363D]/60 pt-2.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#B0BBC2]">{locale === "zh-CN" ? "Cash Point" : "Cash Point"}</span>
                 <button
                   type="button"
                   onClick={() => setCpAmount(String(maxCp))}
-                  className="text-[10.5px] font-semibold text-[#51E7FA] hover:underline"
+                  className="font-bold text-[#E9C66B] hover:underline tabular-nums"
                 >
-                  {locale === "zh-CN" ? "使用最大可用 CP" : "Use Max CP"}
+                  {numCp} CP
                 </button>
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Slider 0% to 50% */}
+              <div className="space-y-1">
                 <input
-                  type="number"
+                  type="range"
                   min="0"
                   max={maxCp}
                   step="1"
-                  value={cpAmount}
+                  value={numCp}
                   onChange={(e) => setCpAmount(e.target.value)}
-                  className="min-h-[40px] flex-1 rounded-xl border border-white/[0.1] bg-[#08090B] px-3 text-xs text-[#F2F0EB] tabular-nums outline-none focus:border-[#51E7FA]"
+                  className="r10-slider w-full"
                 />
-                <span className="rounded-lg border border-[#51E7FA]/30 bg-[#51E7FA]/10 px-2.5 py-2 text-xs font-bold text-[#51E7FA] tabular-nums">
-                  {cpPercent}% CP
-                </span>
+                <div className="flex justify-between text-[10px] text-[#829098]">
+                  <span>0%</span>
+                  <button
+                    type="button"
+                    onClick={() => setCpAmount(String(maxCp))}
+                    className="text-[#00D9DF] hover:underline font-semibold"
+                  >
+                    {locale === "zh-CN" ? "最大可用 (50%)" : "Max (50%)"}
+                  </button>
+                  <span>50%</span>
+                </div>
               </div>
             </div>
 
             {/* Remaining USDT */}
-            <div className="flex items-center justify-between border-t border-white/[0.08] pt-2 text-xs">
-              <span className="text-[#CAD7E6]">
-                {locale === "zh-CN" ? "剩余补足 USDT：" : "Payable USDT remainder:"}
+            <div className="flex items-center justify-between border-t border-[#29363D]/60 pt-2.5 text-xs">
+              <span className="text-[#B0BBC2]">
+                {locale === "zh-CN" ? "USDT 补足" : "USDT Remainder"}
               </span>
-              <span className="text-sm font-black tabular-nums text-[#51E7FA]">
+              <span className="text-sm font-bold tabular-nums text-[#52C898]">
                 {remainingUsdt} USDT
               </span>
             </div>
 
-            <p className="text-[10px] text-[#889AA8] leading-relaxed">
-              💡 {locale === "zh-CN"
-                ? "说明：CP 最高抵扣配套金额的 50%。1 RP = 1 U，1 CP = 1 U。"
-                : "Notice: CP offsets max 50% of package. 1 RP = 1 U, 1 CP = 1 U."}
-            </p>
+            {/* Footnotes */}
+            <div className="space-y-1 border-t border-[#29363D]/60 pt-2 text-[10.5px] text-[#829098] leading-tight">
+              <div>① 固定 50% RP，CP 可选 0–50%，其余 USDT 补足。</div>
+              <div>② RP 由公司出售。</div>
+            </div>
           </div>
         )}
 
-        <label className="flex min-h-[44px] items-center gap-2.5 rounded-xl border border-white/[0.08] bg-[#08090B] px-3 py-2 text-xs text-[#D6D3CC]">
-          <input
-            type="checkbox"
-            checked={submitPaymentNow}
-            onChange={(e) => setSubmitPaymentNow(e.target.checked)}
-            className="h-4 w-4 accent-[#51E7FA]"
-          />
-          <span>{t.auth.confirmOrderOnSignup}</span>
-        </label>
-
+        {/* Action Button: 确认注册 (Solid Champagne Gold Button) */}
         <button
           type="submit"
           disabled={loading}
-          className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-[#CBB487] px-4 py-2.5 text-sm font-semibold text-[#08090B] transition-all duration-100 hover:bg-[#D8C49B] active:scale-[0.98] disabled:opacity-50"
+          className="r10-btn-gold flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl text-sm font-bold text-[#070B0D] transition-all disabled:opacity-50"
         >
-          <span>{loading ? t.common.loading : t.auth.registerBtn}</span>
-          <ArrowRight className="h-4 w-4" />
+          <span>{loading ? t.common.loading : (locale === "zh-CN" ? "确认注册" : t.auth.registerBtn)}</span>
+          <ArrowRight className="h-4 w-4 stroke-[2.5]" />
         </button>
       </form>
 
-      <p className="mt-5 text-center text-xs text-[#A7AEBC]">
+      <p className="mt-4 text-center text-xs text-[#829098]">
         {t.auth.hasAccount}{" "}
-        <Link href="/login" className="font-medium text-[#CBB487] hover:underline">
+        <Link href="/login" className="font-semibold text-[#00D9DF] hover:underline">
           {t.auth.signInBtn}
         </Link>
       </p>

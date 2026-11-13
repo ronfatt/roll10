@@ -2,7 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, AlertTriangle, CheckCircle2, Info, Lock, Wallet } from "lucide-react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowUpRight,
+  CheckCircle2,
+  Coins,
+  Gift,
+  Info,
+  Layers,
+  Lock,
+  Wallet,
+} from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import {
   formatEntryTypeLabel,
@@ -203,6 +214,7 @@ export function WalletClient({
   ledgers: WalletLedgerItem[];
 }) {
   const router = useRouter();
+  const [selectedAsset, setSelectedAsset] = useState<"USDT" | "RP" | "CP">("CP");
   const [showWithdrawForm, setShowWithdrawForm] = useState(initialMode === "withdraw");
   const [filter, setFilter] = useState<
     "ALL" | "DIRECT_USDT" | "DIRECT" | "PAIRING" | "WITHDRAW"
@@ -367,96 +379,179 @@ export function WalletClient({
         subtitle={t.wallet.subtitle}
       />
 
-      {/* Top Balances Brushed Titanium Racetrack Card with Luxury Gold Rim */}
-      <div className="r10-card-gold-rim relative overflow-hidden rounded-[22px] p-4 sm:p-5">
-        {/* Cyan racetrack streak */}
+      {/* 1. Asset Segmented Switcher (USDT | RP | CP) */}
+      <div className="grid grid-cols-3 gap-1.5 rounded-2xl border border-[#29363D] bg-[#10171B] p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)]">
+        {(["USDT", "RP", "CP"] as const).map((asset) => {
+          const active = selectedAsset === asset;
+          return (
+            <button
+              key={asset}
+              type="button"
+              onClick={() => setSelectedAsset(asset)}
+              className={`min-h-[42px] rounded-xl text-xs font-bold transition-all duration-150 ${
+                active
+                  ? "bg-[#00D9DF] text-[#070B0D] shadow-[0_0_12px_rgba(0,217,223,0.35)]"
+                  : "text-[#B0BBC2] hover:text-[#F4F6F7]"
+              }`}
+            >
+              {asset}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 2. Hero Asset Card */}
+      <div className="r10-card-dark relative overflow-hidden p-5 space-y-4 border border-[#29363D] bg-gradient-to-b from-[#172126] to-[#10171B]">
+        {/* Subtle racetrack curve highlight */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-[#51E7FA]/20 via-[#51E7FA]/5 to-transparent blur-2xl"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#51E7FA]/[0.08] to-transparent"
+          className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-[#00D9DF]/10 blur-2xl"
         />
 
-        <div className="relative flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-6 sm:gap-8">
-            <div>
-              <div className="text-xs font-medium text-[#AAB8C7]">{t.wallet.available}</div>
-              <div className="mt-1 tabular-nums text-2xl sm:text-3xl font-black italic text-[#F2CD7E] drop-shadow-[0_2px_8px_rgba(242,205,126,0.3)]">
-                {formatU(availablePointsCents)}{" "}
-                <span className="text-sm font-black italic text-[#F2CD7E]">U</span>
-              </div>
+        {selectedAsset === "CP" && (
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#E9C66B]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border border-[#E9C66B]/50 bg-[#E9C66B]/15 text-[10px] font-bold">
+                CP
+              </span>
+              <span>Cash Point</span>
             </div>
+            <div className="mt-2 font-mono-sgt text-3xl sm:text-4xl font-black text-[#E9C66B] drop-shadow-[0_2px_10px_rgba(233,198,107,0.35)]">
+              {formatU(cpBalanceCents)}{" "}
+              <span className="text-xl font-bold text-[#E9C66B]/80">CP</span>
+            </div>
+            <p className="mt-1 text-xs text-[#829098]">
+              {locale === "zh-CN" ? "直推、极差与对碰奖励账户" : "Direct, differential & matching rewards"}
+            </p>
 
-            <div className="h-8 w-px bg-white/10" aria-hidden="true" />
-
-            <div>
-              <div className="text-xs font-medium text-[#AAB8C7]">{t.wallet.locked}</div>
-              <div className="mt-1 tabular-nums text-2xl sm:text-3xl font-extrabold text-[#CAD7E6]">
-                {formatU(lockedPointsCents)}{" "}
-                <span className="text-sm font-medium text-[#AAB8C7]">U</span>
-              </div>
+            <div className="mt-4 flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => router.push("/register")}
+                className="r10-btn-gold min-h-[44px] flex-1 rounded-xl text-xs font-bold text-[#070B0D]"
+              >
+                {locale === "zh-CN" ? "用于注册抵扣" : "Use for Registration"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowWithdrawForm((s) => !s);
+                  setConfirmStep(false);
+                  setError(null);
+                }}
+                className="r10-btn-dark min-h-[44px] px-4 rounded-xl text-xs font-semibold text-[#F4F6F7]"
+              >
+                {t.overview.withdrawCta}
+              </button>
             </div>
           </div>
+        )}
 
-          <button
-            type="button"
-            onClick={() => {
-              setShowWithdrawForm((s) => !s);
-              setConfirmStep(false);
-              setError(null);
-            }}
-            className="r10-btn-titanium shrink-0 px-4 py-2 text-xs font-bold transition-all active:scale-95 shadow-md"
-          >
-            {showWithdrawForm ? t.common.cancel : t.overview.withdrawCta}
-          </button>
-        </div>
+        {selectedAsset === "RP" && (
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#00D9DF]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border border-[#00D9DF]/50 bg-[#00D9DF]/15 text-[10px] font-bold">
+                RP
+              </span>
+              <span>Register Point</span>
+            </div>
+            <div className="mt-2 font-mono-sgt text-3xl sm:text-4xl font-black text-[#00D9DF] drop-shadow-[0_2px_10px_rgba(0,217,223,0.35)]">
+              {formatU(rpBalanceCents)}{" "}
+              <span className="text-xl font-bold text-[#00D9DF]/80">RP</span>
+            </div>
+            <p className="mt-1 text-xs text-[#829098]">
+              {locale === "zh-CN" ? "注册点数 · 由公司出售（1 RP 抵扣 1 U）" : "Registration points issued by platform"}
+            </p>
 
-        <div className="relative mt-3 pt-3 border-t border-white/[0.08] flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-2 rounded-xl border border-[#51E7FA]/35 bg-[#0A101A] px-3 py-1.5 text-xs">
-            <span className="font-semibold text-[#51E7FA]">CP (Cash Point):</span>
-            <span className="font-bold tabular-nums text-[#F4F8FC]">{formatU(cpBalanceCents)} CP</span>
+            <div className="mt-4 flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => router.push("/register")}
+                className="r10-btn-cyan min-h-[44px] flex-1 rounded-xl text-xs font-bold text-[#070B0D]"
+              >
+                {locale === "zh-CN" ? "立即用于注册" : "Use for Registration"}
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/account")}
+                className="r10-btn-dark min-h-[44px] px-4 rounded-xl text-xs font-semibold text-[#F4F6F7]"
+              >
+                {locale === "zh-CN" ? "购买 RP" : "Buy RP"}
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-[#CBB487]/35 bg-[#0A101A] px-3 py-1.5 text-xs">
-            <span className="font-semibold text-[#F2CD7E]">RP (Register Point):</span>
-            <span className="font-bold tabular-nums text-[#F4F8FC]">{formatU(rpBalanceCents)} RP</span>
+        )}
+
+        {selectedAsset === "USDT" && (
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#52C898]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border border-[#52C898]/50 bg-[#52C898]/15 text-[10px] font-bold">
+                ₮
+              </span>
+              <span>Tether (TRC20)</span>
+            </div>
+            <div className="mt-2 font-mono-sgt text-3xl sm:text-4xl font-black text-[#F4F6F7]">
+              {formatU(availablePointsCents)}{" "}
+              <span className="text-xl font-bold text-[#52C898]">U</span>
+            </div>
+            <p className="mt-1 text-xs text-[#829098]">
+              {locale === "zh-CN" ? "可提现余额 · 72h 链上自动出款" : "Withdrawable balance · 72h on-chain payout"}
+            </p>
+
+            <div className="mt-4 flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowWithdrawForm((s) => !s);
+                  setConfirmStep(false);
+                  setError(null);
+                }}
+                className="r10-btn-gold min-h-[44px] flex-1 rounded-xl text-xs font-bold text-[#070B0D]"
+              >
+                {showWithdrawForm ? t.common.cancel : t.wallet.requestTitle}
+              </button>
+            </div>
           </div>
+        )}
+
+        {/* Footnote */}
+        <div className="border-t border-[#29363D] pt-2 text-[11px] text-[#829098]">
+          <span>① 注册最多可使用 50% CP · 固定 50% RP ＋ USDT 补足余额</span>
         </div>
       </div>
 
       {/* Post-Submit Detail Card */}
       {submittedWithdrawal && (
-        <div className="rounded-2xl border border-emerald-500/35 bg-[#101B27] p-4 text-xs">
+        <div className="rounded-2xl border border-emerald-500/35 bg-[#10171B] p-4 text-xs">
           <div className="flex items-center gap-2 font-semibold text-emerald-400">
             <CheckCircle2 className="h-4 w-4" />
             <span>
               {t.wallet.submittedTitle}: {submittedWithdrawal.withdrawalNo}
             </span>
           </div>
-          <div className="mt-2 space-y-1 text-[#AAB8C7]">
+          <div className="mt-2 space-y-1 text-[#B0BBC2]">
             <div>
               {t.common.status}:{" "}
-              <strong className="text-[#51E7FA]">
+              <strong className="text-[#00D9DF]">
                 {getWithdrawalStatusLabel(submittedWithdrawal.status, t)}
               </strong>{" "}
               · {locale === "zh-CN" ? "锁定：" : "Locked: "}
-              <strong className="tabular-nums text-[#F4F8FC]">
+              <strong className="tabular-nums text-[#F4F6F7]">
                 {formatU(submittedWithdrawal.requestedPointsCents)} {t.common.points}
               </strong>
             </div>
             <div>
               {locale === "zh-CN" ? "实际出款：" : "Net Payout: "}
-              <strong className="tabular-nums text-[#51E7FA]">
+              <strong className="tabular-nums text-[#00D9DF]">
                 {formatUsdtMicros(submittedWithdrawal.payoutAmountUsdtMicros)}
               </strong>{" "}
               ({formatNetworkLabel(submittedWithdrawal.payoutNetwork)})
             </div>
-            <div className="break-all font-mono-sgt text-[11px] text-[#CAD7E6]">
+            <div className="break-all font-mono-sgt text-[11px] text-[#F4F6F7]">
               {submittedWithdrawal.payoutDestination}
             </div>
             {submittedWithdrawal.processingDeadlineLabel && (
-              <div className="font-mono-sgt text-[11px] text-[#AAB8C7]">
+              <div className="font-mono-sgt text-[11px] text-[#829098]">
                 {t.wallet.deadlineLabel}: {submittedWithdrawal.processingDeadlineLabel}
               </div>
             )}
@@ -466,14 +561,14 @@ export function WalletClient({
 
       {/* Withdrawal Form */}
       {showWithdrawForm && (
-        <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-5 shadow-lg">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-[#F4F8FC]">{t.wallet.requestTitle}</h2>
+        <div className="r10-card-dark p-5 shadow-lg space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#29363D] pb-3">
+            <h2 className="text-sm font-semibold text-[#F4F6F7]">{t.wallet.requestTitle}</h2>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="rounded-full border border-[#51E7FA]/35 bg-[#51E7FA]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#51E7FA]">
+              <span className="rounded-full border border-[#00D9DF]/40 bg-[#00D9DF]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#00D9DF]">
                 {formatNetworkLabel(usdtNetwork)}
               </span>
-              <span className="font-mono-sgt rounded-full border border-[#2B3D4D] bg-[#0A101A] px-2.5 py-0.5 text-[11px] text-[#AAB8C7]">
+              <span className="font-mono-sgt rounded-full border border-[#29363D] bg-[#070B0D] px-2.5 py-0.5 text-[11px] text-[#B0BBC2]">
                 1 U = {formatRateMicros(quote.usdRateMicros)} USDT
               </span>
             </div>
@@ -492,7 +587,7 @@ export function WalletClient({
               {error && (
                 <div
                   role="alert"
-                  className="mb-3 flex items-center gap-2 rounded-xl border border-rose-500/35 bg-rose-500/10 px-3.5 py-2.5 text-xs text-rose-300"
+                  className="flex items-center gap-2 rounded-xl border border-rose-500/35 bg-rose-500/10 px-3.5 py-2.5 text-xs text-rose-300"
                 >
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{error}</span>
@@ -501,7 +596,7 @@ export function WalletClient({
 
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-[#F4F8FC]">
+                  <label className="mb-1.5 block text-xs font-medium text-[#F4F6F7]">
                     {t.wallet.amountLabel}
                   </label>
                   <input
@@ -511,13 +606,13 @@ export function WalletClient({
                     min="1"
                     value={amountInput}
                     onChange={(e) => setAmountInput(e.target.value)}
-                    className="min-h-[44px] w-full rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3.5 py-2.5 tabular-nums text-sm text-[#F4F8FC] outline-none focus:border-[#51E7FA]"
+                    className="min-h-[44px] w-full rounded-xl border border-[#29363D] bg-[#070B0D] px-3.5 py-2.5 tabular-nums text-sm text-[#F4F6F7] outline-none focus:border-[#00D9DF]"
                   />
                 </div>
 
                 {savedAddresses.length > 0 && (
                   <div>
-                    <div className="mb-1.5 text-[11px] font-medium text-[#AAB8C7]">
+                    <div className="mb-1.5 text-[11px] font-medium text-[#B0BBC2]">
                       {t.wallet.savedAddressesLabel}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
@@ -528,8 +623,8 @@ export function WalletClient({
                           onClick={() => setDestination(sa.address)}
                           className={`min-h-[34px] rounded-xl border px-3 text-[11px] transition-colors ${
                             destination.trim() === sa.address
-                              ? "border-[#51E7FA] bg-[#51E7FA]/15 text-[#51E7FA]"
-                              : "border-[#2B3D4D] bg-[#0A101A] text-[#CAD7E6] hover:border-[#51E7FA]/50"
+                              ? "border-[#00D9DF] bg-[#00D9DF]/15 text-[#00D9DF]"
+                              : "border-[#29363D] bg-[#070B0D] text-[#B0BBC2] hover:border-[#00D9DF]/50"
                           }`}
                         >
                           {sa.label} ({sa.address.slice(0, 6)}...{sa.address.slice(-4)})
@@ -540,7 +635,7 @@ export function WalletClient({
                 )}
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-[#F4F8FC]">
+                  <label className="mb-1.5 block text-xs font-medium text-[#F4F6F7]">
                     {t.wallet.destinationLabel}
                   </label>
                   <input
@@ -548,18 +643,18 @@ export function WalletClient({
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
                     placeholder={t.wallet.destinationPlaceholder}
-                    className="font-mono-sgt min-h-[44px] w-full rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3.5 py-2.5 text-xs text-[#F4F8FC] placeholder-[#AAB8C7]/45 outline-none focus:border-[#51E7FA]"
+                    className="font-mono-sgt min-h-[44px] w-full rounded-xl border border-[#29363D] bg-[#070B0D] px-3.5 py-2.5 text-xs text-[#F4F6F7] placeholder-[#829098]/60 outline-none focus:border-[#00D9DF]"
                   />
-                  <p className="mt-1 text-[11px] text-[#AAB8C7]">{t.wallet.addressHint}</p>
+                  <p className="mt-1 text-[11px] text-[#829098]">{t.wallet.addressHint}</p>
                 </div>
 
-                <div className="space-y-2 rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3 text-xs">
-                  <label className="flex items-center gap-2 text-[#CAD7E6]">
+                <div className="space-y-2 rounded-xl border border-[#29363D] bg-[#070B0D] p-3 text-xs">
+                  <label className="flex items-center gap-2 text-[#B0BBC2]">
                     <input
                       type="checkbox"
                       checked={saveAddress}
                       onChange={(e) => setSaveAddress(e.target.checked)}
-                      className="h-4 w-4 accent-[#51E7FA]"
+                      className="h-4 w-4 accent-[#00D9DF]"
                     />
                     <span>{t.wallet.saveAddressOption}</span>
                   </label>
@@ -569,7 +664,7 @@ export function WalletClient({
                       value={addressLabel}
                       onChange={(e) => setAddressLabel(e.target.value)}
                       placeholder={t.wallet.addressLabelPlaceholder}
-                      className="min-h-[38px] w-full rounded-lg border border-[#2B3D4D] bg-[#101B27] px-3 text-xs text-[#F4F8FC] placeholder:text-[#687080] outline-none focus:border-[#51E7FA]"
+                      className="min-h-[38px] w-full rounded-lg border border-[#29363D] bg-[#10171B] px-3 text-xs text-[#F4F6F7] placeholder:text-[#829098] outline-none focus:border-[#00D9DF]"
                     />
                   )}
                 </div>
@@ -577,47 +672,47 @@ export function WalletClient({
                 {quoteError ? (
                   <div
                     role="alert"
-                    className="rounded-xl border border-rose-500/35 bg-[#0A101A] p-3.5 text-xs text-rose-300"
+                    className="rounded-xl border border-rose-500/35 bg-[#070B0D] p-3.5 text-xs text-rose-300"
                   >
                     {quoteError}
                   </div>
                 ) : (
-                  <div className="space-y-2 rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3.5 text-xs">
+                  <div className="space-y-2 rounded-xl border border-[#29363D] bg-[#070B0D] p-3.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-[#AAB8C7]">{t.wallet.amountLabel}</span>
-                      <span className="tabular-nums font-medium text-[#F4F8FC]">
+                      <span className="text-[#B0BBC2]">{t.wallet.amountLabel}</span>
+                      <span className="tabular-nums font-medium text-[#F4F6F7]">
                         {formatU(quote.requestedPointsCents)} {t.common.points}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#AAB8C7]">{t.wallet.feeLabel}</span>
-                      <span className="tabular-nums font-medium text-[#51E7FA]">
+                      <span className="text-[#B0BBC2]">{t.wallet.feeLabel}</span>
+                      <span className="tabular-nums font-medium text-[#00D9DF]">
                         -{formatU(quote.feePointsCents)} {t.common.points}
                       </span>
                     </div>
-                    <div className="flex justify-between border-t border-[#2B3D4D] pt-2">
-                      <span className="text-[#F4F8FC]">{t.wallet.netLabel}</span>
-                      <span className="tabular-nums font-semibold text-[#F4F8FC]">
+                    <div className="flex justify-between border-t border-[#29363D] pt-2">
+                      <span className="text-[#F4F6F7]">{t.wallet.netLabel}</span>
+                      <span className="tabular-nums font-semibold text-[#F4F6F7]">
                         {formatU(quote.netPointsCents)} {t.common.points}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#AAB8C7]">{t.wallet.rateLabel}</span>
-                      <span className="font-mono-sgt text-[#AAB8C7]">
+                      <span className="text-[#829098]">{t.wallet.rateLabel}</span>
+                      <span className="font-mono-sgt text-[#829098]">
                         1 U = {formatRateMicros(quote.usdRateMicros)} USDT
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#AAB8C7]">{t.wallet.deadlineLabel}</span>
-                      <span className="font-mono-sgt text-[#AAB8C7]">
+                      <span className="text-[#829098]">{t.wallet.deadlineLabel}</span>
+                      <span className="font-mono-sgt text-[#829098]">
                         {quote.processingDeadlineLabel ?? `${processingHours}h SGT`}
                       </span>
                     </div>
-                    <div className="flex justify-between border-t border-[#2B3D4D] pt-2 text-sm">
-                      <span className="font-medium text-[#F4F8FC]">
+                    <div className="flex justify-between border-t border-[#29363D] pt-2 text-sm">
+                      <span className="font-medium text-[#F4F6F7]">
                         {t.wallet.estimatedUsdLabel}
                       </span>
-                      <span className="tabular-nums font-bold text-[#51E7FA]">
+                      <span className="tabular-nums font-bold text-[#00D9DF]">
                         {quoteLoading ? "..." : formatUsdtMicros(quote.payoutAmountUsdtMicros)}
                       </span>
                     </div>
@@ -645,7 +740,7 @@ export function WalletClient({
                     setError(null);
                     setConfirmStep(true);
                   }}
-                  className="min-h-[44px] w-full rounded-xl bg-[#51E7FA] px-4 text-sm font-bold text-[#0A101A] transition-all hover:brightness-110 active:scale-[0.99] disabled:opacity-50 shadow-[0_0_12px_rgba(81,231,250,0.3)]"
+                  className="r10-btn-gold min-h-[44px] w-full rounded-xl px-4 text-sm font-bold text-[#070B0D] transition-all disabled:opacity-50"
                 >
                   {t.wallet.reviewBtn}
                 </button>
@@ -672,8 +767,8 @@ export function WalletClient({
             onClick={() => setFilter(item.key)}
             className={`min-h-[40px] rounded-full px-4 text-xs font-bold transition-all ${
               filter === item.key
-                ? "bg-[#51E7FA] text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)]"
-                : "border border-[#2B3D4D] bg-[#101B27] text-[#CAD7E6] hover:text-[#F4F8FC]"
+                ? "bg-[#00D9DF] text-[#070B0D] shadow-[0_0_12px_rgba(0,217,223,0.35)]"
+                : "border border-[#29363D] bg-[#10171B] text-[#B0BBC2] hover:text-[#F4F6F7]"
             }`}
           >
             {item.label}
@@ -683,26 +778,26 @@ export function WalletClient({
 
       {/* Direct USDT Rewards Ledger View (when Direct USDT filter selected) */}
       {filter === "DIRECT_USDT" ? (
-        <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2B3D4D] pb-3">
+        <div className="r10-card-dark p-4 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#29363D] pb-3">
             <div>
-              <h2 className="text-sm font-semibold text-[#F4F8FC]">
+              <h2 className="text-sm font-semibold text-[#F4F6F7]">
                 {t.wallet.filterDirectUsdt}
               </h2>
-              <div className="mt-0.5 text-[11px] text-[#AAB8C7]">{t.overview.usdtUnitNote}</div>
+              <div className="mt-0.5 text-[11px] text-[#829098]">{t.overview.usdtUnitNote}</div>
             </div>
             <div className="text-right">
-              <div className="text-[11px] text-[#AAB8C7]">
+              <div className="text-[11px] text-[#829098]">
                 {t.overview.referralRewardsEarnedLabel}
               </div>
-              <div className="tabular-nums text-lg font-bold text-[#51E7FA]">
+              <div className="tabular-nums text-lg font-bold text-[#E9C66B]">
                 {formatUsdtMicros(directUsdtEarnedMicros, "U")}
               </div>
             </div>
           </div>
 
           {!directUsdtWithdrawalsEnabled && (
-            <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3.5 py-2.5 text-[11px] text-[#AAB8C7]">
+            <div className="rounded-xl border border-[#29363D] bg-[#070B0D] px-3.5 py-2.5 text-[11px] text-[#829098]">
               {locale === "zh-CN"
                 ? "直推奖励 U 独立提现规则（门槛/手续费）待平台最终确认；当前展示实时入账与待确认明细，钱包余额提现仍按 20% 手续费规则以 USDT 提交。"
                 : "Standalone direct referral U withdrawal eligibility & fee rules are pending final confirmation; credited & pending referral U ledgers remain tracked separately while wallet balance withdraws in USDT with the configured 20% fee."}
@@ -710,7 +805,7 @@ export function WalletClient({
           )}
 
           {directUsdtItems.length === 0 ? (
-            <p className="py-6 text-center text-xs text-[#AAB8C7]">{t.common.noData}</p>
+            <p className="py-6 text-center text-xs text-[#829098]">{t.common.noData}</p>
           ) : (
             <div className="space-y-2">
               {directUsdtItems.map((item) => {
@@ -718,10 +813,10 @@ export function WalletClient({
                 return (
                   <div
                     key={item.id}
-                    className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3.5 text-xs space-y-1.5"
+                    className="rounded-xl border border-[#29363D] bg-[#070B0D] p-3.5 text-xs space-y-1.5"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-[#F4F8FC]">
+                      <span className="font-semibold text-[#F4F6F7]">
                         {item.sourceMember}
                       </span>
                       <span
@@ -745,7 +840,7 @@ export function WalletClient({
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono-sgt text-[11px] text-[#AAB8C7]">
+                      <span className="font-mono-sgt text-[11px] text-[#829098]">
                         {item.orderNo} · {item.packageCode} ({item.baseBv} U ×{" "}
                         {item.rateBps / 100}%)
                       </span>
@@ -755,14 +850,14 @@ export function WalletClient({
                             ? "text-rose-300"
                             : item.status === "PENDING"
                               ? "text-amber-300"
-                              : "text-[#51E7FA]"
+                              : "text-[#E9C66B]"
                         }`}
                       >
                         {amtBig > 0n ? "+" : ""}
                         {formatUsdtMicros(amtBig, "U")}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[10px] text-[#AAB8C7]">
+                    <div className="flex items-center justify-between text-[10px] text-[#829098]">
                       <span className="font-mono-sgt">{item.rewardNo}</span>
                       <span className="font-mono-sgt">{item.timeLabel}</span>
                     </div>
@@ -774,22 +869,22 @@ export function WalletClient({
         </div>
       ) : (
         /* Wallet Ledger List (Mobile-Friendly Cards, Clickable for Bonus Source Drawer) */
-        <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4">
+        <div className="r10-card-dark p-4">
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
-                className="h-3.5 w-[2.5px] rounded-full bg-[#51E7FA] shadow-[0_0_8px_rgba(81,231,250,0.8)]"
+                className="h-3.5 w-[2.5px] rounded-full bg-[#00D9DF] shadow-[0_0_8px_rgba(0,217,223,0.8)]"
                 aria-hidden="true"
               />
-              <h2 className="text-sm font-semibold text-[#F4F8FC]">{t.wallet.ledgerTitle}</h2>
+              <h2 className="text-sm font-semibold text-[#F4F6F7]">{t.wallet.ledgerTitle}</h2>
             </div>
-            <span className="text-[11px] text-[#AAB8C7]">
+            <span className="text-[11px] text-[#829098]">
               {locale === "zh-CN" ? "点击条目查看更多详情" : "Tap item for source detail"}
             </span>
           </div>
 
           {filteredLedgers.length === 0 ? (
-            <p className="py-6 text-center text-xs text-[#AAB8C7]">{t.common.noData}</p>
+            <p className="py-6 text-center text-xs text-[#829098]">{t.common.noData}</p>
           ) : (
             <div className="space-y-2">
               {filteredLedgers.map((l) => (
@@ -797,26 +892,26 @@ export function WalletClient({
                   key={l.id}
                   type="button"
                   onClick={() => setSelectedLedger(l)}
-                  className="flex min-h-[56px] w-full items-center justify-between gap-3 rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3.5 py-3 text-left text-xs transition-colors hover:border-[#51E7FA]/60"
+                  className="flex min-h-[56px] w-full items-center justify-between gap-3 rounded-xl border border-[#29363D] bg-[#070B0D] px-3.5 py-3 text-left text-xs transition-colors hover:border-[#00D9DF]/60"
                 >
                   <div className="min-w-0">
-                    <div className="font-semibold text-[#F4F8FC]">
+                    <div className="font-semibold text-[#F4F6F7]">
                       {formatEntryTypeLabel(l.entryType, locale)}
                     </div>
-                    <div className="font-mono-sgt mt-0.5 truncate text-[11px] text-[#AAB8C7]">
+                    <div className="font-mono-sgt mt-0.5 truncate text-[11px] text-[#829098]">
                       {(l.refNo && l.refNo.length > 22 ? l.refNo.slice(0, 20) + "..." : l.refNo) ?? l.ledgerNo} · {l.createdAtLabel}
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
                     <div
                       className={`tabular-nums font-bold ${
-                        l.deltaAvailableCents >= 0 ? "text-[#51E7FA]" : "text-rose-300"
+                        l.deltaAvailableCents >= 0 ? "text-[#E9C66B]" : "text-rose-300"
                       }`}
                     >
                       {l.deltaAvailableCents >= 0 ? "+" : ""}
                       {formatU(l.deltaAvailableCents)} {t.common.points}
                     </div>
-                    <div className="tabular-nums text-[10px] text-[#AAB8C7]">
+                    <div className="tabular-nums text-[10px] text-[#829098]">
                       {locale === "zh-CN" ? "余额: " : "Bal: "}
                       {formatU(l.availableAfterCents)} U
                     </div>
@@ -829,25 +924,25 @@ export function WalletClient({
       )}
 
       {/* Withdrawal History */}
-      <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4">
+      <div className="r10-card-dark p-4">
         <div className="mb-3 flex items-center gap-2">
           <span
-            className="h-3.5 w-[2.5px] rounded-full bg-[#51E7FA] shadow-[0_0_8px_rgba(81,231,250,0.8)]"
+            className="h-3.5 w-[2.5px] rounded-full bg-[#00D9DF] shadow-[0_0_8px_rgba(0,217,223,0.8)]"
             aria-hidden="true"
           />
-          <h2 className="text-sm font-semibold text-[#F4F8FC]">{t.wallet.historyTitle}</h2>
+          <h2 className="text-sm font-semibold text-[#F4F6F7]">{t.wallet.historyTitle}</h2>
         </div>
         {withdrawals.length === 0 ? (
-          <p className="py-6 text-center text-xs text-[#AAB8C7]">{t.common.noData}</p>
+          <p className="py-6 text-center text-xs text-[#829098]">{t.common.noData}</p>
         ) : (
           <div className="space-y-2.5">
             {withdrawals.map((w) => (
               <div
                 key={w.id}
-                className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3.5 text-xs space-y-1.5"
+                className="rounded-xl border border-[#29363D] bg-[#070B0D] p-3.5 text-xs space-y-1.5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono-sgt font-semibold text-[#51E7FA]">
+                  <span className="font-mono-sgt font-semibold text-[#00D9DF]">
                     {w.withdrawalNo}
                   </span>
                   <span
@@ -858,17 +953,17 @@ export function WalletClient({
                     {getWithdrawalStatusLabel(w.status, t)}
                   </span>
                 </div>
-                <div className="flex justify-between text-[#AAB8C7]">
+                <div className="flex justify-between text-[#829098]">
                   <span>
                     {locale === "zh-CN"
                       ? `申请 ${formatU(w.requestedPointsCents)} U · 手续费 ${formatU(w.feePointsCents)} U`
                       : `Req ${formatU(w.requestedPointsCents)} U · Fee ${formatU(w.feePointsCents)} U`}
                   </span>
-                  <span className="tabular-nums font-semibold text-[#51E7FA]">
+                  <span className="tabular-nums font-semibold text-[#00D9DF]">
                     {formatUsdtMicros(w.payoutAmountUsdtMicros)}
                   </span>
                 </div>
-                <div className="break-all font-mono-sgt text-[11px] text-[#CAD7E6]">
+                <div className="break-all font-mono-sgt text-[11px] text-[#F4F6F7]">
                   {formatNetworkLabel(w.payoutNetwork)}: {w.payoutDestination}
                 </div>
                 {w.payoutTxRef && (
@@ -879,7 +974,7 @@ export function WalletClient({
                 {w.rejectionReason && (
                   <div className="text-[11px] text-rose-300">{w.rejectionReason}</div>
                 )}
-                <div className="flex flex-wrap justify-between gap-2 text-[10px] text-[#AAB8C7]">
+                <div className="flex flex-wrap justify-between gap-2 text-[10px] text-[#829098]">
                   <span>
                     {locale === "zh-CN" ? "提交时间：" : "Submitted: "}
                     {w.createdAtLabel}
