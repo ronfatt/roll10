@@ -65,7 +65,7 @@ function getVerifyBadgeStyle(status: string): string {
       return "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
     case "VERIFYING":
     case "MANUAL_REVIEW":
-      return "border-[#CBB487]/50 bg-[#CBB487]/15 text-[#CBB487]";
+      return "border-[#51E7FA]/50 bg-[#51E7FA]/15 text-[#51E7FA]";
     case "FAILED_MISMATCH":
       return "border-rose-500/40 bg-rose-500/10 text-rose-300";
     default:
@@ -261,50 +261,50 @@ export function UsdtOrderPaymentClient({
           <ArrowLeft className="h-4 w-4" />
           <span>{t.deposit.goPackagesBtn}</span>
         </Link>
-        <span className="font-mono-sgt rounded-full border border-[#CBB487]/35 bg-[#141619] px-3 py-1 text-[11px] font-medium text-[#CBB487]">
+        <span className="font-mono-sgt rounded-full border border-[#51E7FA]/35 bg-[#101B27] px-3 py-1 text-[11px] font-medium text-[#51E7FA]">
           {order.orderNo}
         </span>
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-[#F2F0EB]">
+        <h1 className="text-2xl font-semibold tracking-tight text-[#F4F8FC]">
           {t.deposit.title}
         </h1>
-        <p className="mt-0.5 text-xs text-[#A7AEBC]">{t.deposit.subtitle}</p>
+        <p className="mt-0.5 text-xs text-[#AAB8C7]">{t.deposit.subtitle}</p>
       </div>
 
       {/* Confirmed Banner */}
       {isConfirmed && (
-        <div className="r10-enter rounded-2xl border border-emerald-500/40 bg-[#141619] p-4 text-xs">
+        <div className="r10-enter rounded-2xl border border-emerald-500/40 bg-[#101B27] p-4 text-xs">
           <div className="flex items-center gap-2 text-sm font-semibold text-emerald-400">
             <CheckCircle2 className="h-5 w-5" />
             <span>
               {locale === "zh-CN" ? "订单已确认生效" : "Order Confirmed & Active"}
             </span>
           </div>
-          <div className="mt-2 space-y-1 text-[#A7AEBC]">
+          <div className="mt-2 space-y-1 text-[#AAB8C7]">
             <div>
               {t.deposit.tierLabel}:{" "}
-              <strong className="text-[#F2F0EB]">
+              <strong className="text-[#F4F8FC]">
                 {order.targetPackageCode} ({order.bvAmount} BV)
               </strong>
             </div>
             {order.confirmedAtLabel && (
               <div>
                 {locale === "zh-CN" ? "确认时间 (SGT)：" : "Confirmed (SGT): "}
-                <strong className="font-mono-sgt text-[#F2F0EB]">{order.confirmedAtLabel}</strong>
+                <strong className="font-mono-sgt text-[#F4F8FC]">{order.confirmedAtLabel}</strong>
               </div>
             )}
             {order.effectiveAtLabel && (
               <div>
                 {locale === "zh-CN" ? "生效时间 (SGT)：" : "Effective (SGT): "}
-                <strong className="font-mono-sgt text-[#CBB487]">{order.effectiveAtLabel}</strong>
+                <strong className="font-mono-sgt text-[#51E7FA]">{order.effectiveAtLabel}</strong>
               </div>
             )}
           </div>
           <Link
             href="/dashboard?activated=1"
-            className="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[#CBB487] px-5 text-xs font-semibold text-[#08090B]"
+            className="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[#51E7FA] px-5 text-xs font-semibold text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)] hover:bg-[#74edfc]"
           >
             {t.deposit.goHomeBtn}
           </Link>
@@ -315,7 +315,7 @@ export function UsdtOrderPaymentClient({
       {!serviceAvailable && !isConfirmed && (
         <div
           role="alert"
-          className="rounded-2xl border border-amber-500/40 bg-[#141619] p-4 text-xs text-amber-200"
+          className="rounded-2xl border border-amber-500/40 bg-[#101B27] p-4 text-xs text-amber-200"
         >
           <div className="flex items-center gap-2 font-semibold">
             <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
@@ -326,19 +326,19 @@ export function UsdtOrderPaymentClient({
 
       {/* Order Summary & Deposit Payment Panel */}
       {serviceAvailable && order.usdtDepositAddress && order.expectedUsdtMicros && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#141619] p-4 sm:p-5 space-y-4">
+        <section className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5 space-y-4">
           {/* Status Row */}
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2B3D4D] pb-3">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-[#A7AEBC]">
+              <div className="text-[11px] uppercase tracking-wider text-[#AAB8C7]">
                 {formatOrderType(order.orderType, locale)} · {order.targetPackageCode}
               </div>
-              <div className="mt-0.5 text-sm font-semibold text-[#F2F0EB]">
+              <div className="mt-0.5 text-sm font-semibold text-[#F4F8FC]">
                 {order.tierName} · {order.bvAmount} BV
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="rounded-full border border-[#CBB487]/40 bg-[#CBB487]/15 px-2.5 py-0.5 text-[11px] font-semibold text-[#CBB487]">
+              <span className="rounded-full border border-[#51E7FA]/40 bg-[#51E7FA]/15 px-2.5 py-0.5 text-[11px] font-semibold text-[#51E7FA]">
                 {formatNetworkLabel(order.usdtNetwork)}
               </span>
               <span
@@ -355,13 +355,13 @@ export function UsdtOrderPaymentClient({
           <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
             <div className="space-y-3 min-w-0">
               {/* Payable USDT */}
-              <div className="rounded-xl border border-[#CBB487]/35 bg-[#08090B] p-3.5">
+              <div className="rounded-xl border border-[#51E7FA]/35 bg-[#0A101A] p-3.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-[#A7AEBC]">{t.deposit.amountLabel}</span>
+                  <span className="text-xs text-[#AAB8C7]">{t.deposit.amountLabel}</span>
                   <button
                     type="button"
                     onClick={() => void copyText(expectedUsdtRawCopy, "amount")}
-                    className="inline-flex min-h-[32px] items-center gap-1 rounded-lg border border-white/[0.1] bg-[#141619] px-2.5 text-[11px] font-medium text-[#CBB487] hover:border-[#CBB487]"
+                    className="inline-flex min-h-[32px] items-center gap-1 rounded-lg border border-[#2B3D4D] bg-[#101B27] px-2.5 text-[11px] font-medium text-[#51E7FA] hover:border-[#51E7FA]"
                   >
                     {copiedField === "amount" ? (
                       <>
@@ -376,20 +376,20 @@ export function UsdtOrderPaymentClient({
                     )}
                   </button>
                 </div>
-                <div className="mt-1 tabular-nums text-2xl font-bold tracking-tight text-[#CBB487]">
+                <div className="mt-1 tabular-nums text-2xl font-bold tracking-tight text-[#51E7FA]">
                   {expectedUsdtFormatted}
                 </div>
-                <p className="mt-1 text-[11px] text-[#A7AEBC]">{t.deposit.exactAmountHint}</p>
+                <p className="mt-1 text-[11px] text-[#AAB8C7]">{t.deposit.exactAmountHint}</p>
               </div>
 
               {/* Company Deposit Address */}
-              <div className="rounded-xl border border-white/[0.08] bg-[#08090B] p-3.5">
+              <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-[#A7AEBC]">{t.deposit.addressLabel}</span>
+                  <span className="text-xs text-[#AAB8C7]">{t.deposit.addressLabel}</span>
                   <button
                     type="button"
                     onClick={() => void copyText(order.usdtDepositAddress || "", "address")}
-                    className="inline-flex min-h-[32px] items-center gap-1 rounded-lg border border-[#CBB487]/40 bg-[#CBB487]/10 px-2.5 text-[11px] font-semibold text-[#CBB487] hover:bg-[#CBB487]/20"
+                    className="inline-flex min-h-[32px] items-center gap-1 rounded-lg border border-[#51E7FA]/40 bg-[#51E7FA]/10 px-2.5 text-[11px] font-semibold text-[#51E7FA] hover:bg-[#51E7FA]/20"
                   >
                     {copiedField === "address" ? (
                       <>
@@ -404,7 +404,7 @@ export function UsdtOrderPaymentClient({
                     )}
                   </button>
                 </div>
-                <div className="mt-1.5 break-all font-mono-sgt text-xs font-medium text-[#F2F0EB]">
+                <div className="mt-1.5 break-all font-mono-sgt text-xs font-medium text-[#F4F8FC]">
                   {order.usdtDepositAddress}
                 </div>
               </div>
@@ -412,15 +412,15 @@ export function UsdtOrderPaymentClient({
               {/* USDT Contract Address */}
               {order.usdtContractAddress && (
                 <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-[#08090B] px-3 py-2 text-[11px]">
-                  <span className="text-[#A7AEBC]">{t.deposit.contractLabel}</span>
+                  <span className="text-[#AAB8C7]">{t.deposit.contractLabel}</span>
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-mono-sgt truncate max-w-[190px] sm:max-w-none text-[#D6D3CC]">
+                    <span className="font-mono-sgt truncate max-w-[190px] sm:max-w-none text-[#F4F8FC]">
                       {order.usdtContractAddress}
                     </span>
                     <button
                       type="button"
                       onClick={() => void copyText(order.usdtContractAddress || "", "contract")}
-                      className="text-[#CBB487] hover:underline shrink-0"
+                      className="text-[#51E7FA] hover:underline shrink-0"
                     >
                       {copiedField === "contract" ? t.common.copied : t.common.copy}
                     </button>
@@ -430,9 +430,9 @@ export function UsdtOrderPaymentClient({
             </div>
 
             {/* QR Code */}
-            <div className="flex flex-col items-center justify-center rounded-xl border border-white/[0.08] bg-[#08090B] p-3.5">
+            <div className="flex flex-col items-center justify-center rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3.5">
               <QrCodeSvg value={order.usdtDepositAddress} size={156} />
-              <span className="mt-2 text-[11px] font-medium text-[#A7AEBC]">
+              <span className="mt-2 text-[11px] font-medium text-[#AAB8C7]">
                 {t.deposit.qrLabel}
               </span>
             </div>
@@ -448,10 +448,10 @@ export function UsdtOrderPaymentClient({
 
       {/* TxID Submission & Chain Status */}
       {!isConfirmed && serviceAvailable && (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#141619] p-4 sm:p-5 space-y-4">
+        <section className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5 space-y-4">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[#F2F0EB]">
-              <ShieldCheck className="h-4 w-4 text-[#CBB487]" />
+            <div className="flex items-center gap-2 text-sm font-semibold text-[#F4F8FC]">
+              <ShieldCheck className="h-4 w-4 text-[#51E7FA]" />
               <span>{t.deposit.txIdLabel}</span>
             </div>
             {order.submittedTxId && (
@@ -459,7 +459,7 @@ export function UsdtOrderPaymentClient({
                 type="button"
                 disabled={polling || submitting}
                 onClick={() => void handleSubmitTx()}
-                className="inline-flex min-h-[34px] items-center gap-1.5 rounded-lg border border-white/[0.12] bg-[#08090B] px-3 text-[11px] font-medium text-[#CBB487] hover:border-[#CBB487]"
+                className="inline-flex min-h-[34px] items-center gap-1.5 rounded-lg border border-[#2B3D4D] bg-[#0A101A] px-3 text-[11px] font-medium text-[#51E7FA] hover:border-[#51E7FA]"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${polling ? "animate-spin" : ""}`} />
                 <span>{t.deposit.retryVerifyBtn}</span>
@@ -478,11 +478,11 @@ export function UsdtOrderPaymentClient({
           )}
 
           {order.depositVerifyStatus === "VERIFYING" && (
-            <div className="flex items-start gap-2 rounded-xl border border-[#CBB487]/35 bg-[#CBB487]/10 p-3 text-xs text-[#F2F0EB]">
-              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#CBB487]" />
+            <div className="flex items-start gap-2 rounded-xl border border-[#51E7FA]/35 bg-[#51E7FA]/10 p-3 text-xs text-[#F4F8FC]">
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#51E7FA]" />
               <div>
-                <div className="font-semibold text-[#CBB487]">{t.deposit.waitingConfirmation}</div>
-                <div className="mt-0.5 tabular-nums text-[#A7AEBC]">
+                <div className="font-semibold text-[#51E7FA]">{t.deposit.waitingConfirmation}</div>
+                <div className="mt-0.5 tabular-nums text-[#AAB8C7]">
                   {locale === "zh-CN"
                     ? `区块确认数: ${order.confirmationsObserved} / ${order.minConfirmations}`
                     : `Confirmations: ${order.confirmationsObserved} / ${order.minConfirmations}`}
@@ -503,8 +503,8 @@ export function UsdtOrderPaymentClient({
           )}
 
           {order.depositVerifyStatus === "MANUAL_REVIEW" && (
-            <div className="flex items-start gap-2 rounded-xl border border-[#CBB487]/40 bg-[#CBB487]/10 p-3 text-xs text-[#F2F0EB]">
-              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#CBB487]" />
+            <div className="flex items-start gap-2 rounded-xl border border-[#51E7FA]/40 bg-[#51E7FA]/10 p-3 text-xs text-[#F4F8FC]">
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#51E7FA]" />
               <span>
                 {locale === "zh-CN"
                   ? "检测到多事件或多笔待匹配订单，已进入财务人工复核队列。"
@@ -530,7 +530,7 @@ export function UsdtOrderPaymentClient({
 
           <form onSubmit={handleSubmitTx} className="space-y-3">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-[#F2F0EB]">
+              <label className="mb-1.5 block text-xs font-medium text-[#F4F8FC]">
                 {t.deposit.txIdLabel}
               </label>
               <input
@@ -539,12 +539,12 @@ export function UsdtOrderPaymentClient({
                 onChange={(e) => setTxId(e.target.value)}
                 disabled={!canSubmitTx || submitting}
                 placeholder={t.deposit.txIdPlaceholder}
-                className="font-mono-sgt min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] px-3.5 text-xs text-[#F2F0EB] placeholder:text-[#687080] focus:border-[#CBB487] focus:outline-none"
+                className="font-mono-sgt min-h-[44px] w-full rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3.5 text-xs text-[#F4F8FC] placeholder:text-[#687080] focus:border-[#51E7FA] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-[#F2F0EB]">
+              <label className="mb-1.5 block text-xs font-medium text-[#F4F8FC]">
                 {t.deposit.proofLabel}
               </label>
               <input
@@ -553,14 +553,14 @@ export function UsdtOrderPaymentClient({
                 onChange={(e) => setProofNote(e.target.value)}
                 disabled={!canSubmitTx || submitting}
                 placeholder={t.deposit.proofPlaceholder}
-                className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#08090B] px-3.5 text-xs text-[#F2F0EB] placeholder:text-[#687080] focus:border-[#CBB487] focus:outline-none"
+                className="min-h-[44px] w-full rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3.5 text-xs text-[#F4F8FC] placeholder:text-[#687080] focus:border-[#51E7FA] focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={!canSubmitTx || submitting}
-              className="flex min-h-[46px] w-full items-center justify-center rounded-xl bg-[#CBB487] px-4 text-sm font-semibold text-[#08090B] transition-transform duration-100 hover:bg-[#D8C49B] active:scale-[0.99] disabled:opacity-50"
+              className="flex min-h-[46px] w-full items-center justify-center rounded-xl bg-[#51E7FA] px-4 text-sm font-semibold text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)] transition-transform duration-100 hover:bg-[#74edfc] active:scale-[0.99] disabled:opacity-50"
             >
               {submitting ? t.common.loading : t.deposit.submitTxBtn}
             </button>
@@ -568,29 +568,29 @@ export function UsdtOrderPaymentClient({
 
           {/* Observed Chain Events */}
           {order.events.length > 0 && (
-            <div className="border-t border-white/[0.08] pt-3 space-y-2">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#A7AEBC]">
+            <div className="border-t border-[#2B3D4D] pt-3 space-y-2">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#AAB8C7]">
                 {t.deposit.chainObservedTitle}
               </div>
               {order.events.map((ev) => (
                 <div
                   key={ev.id}
-                  className="rounded-xl border border-white/[0.07] bg-[#08090B] p-3 text-[11px] space-y-1"
+                  className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3 text-[11px] space-y-1"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono-sgt text-[#CBB487]">
+                    <span className="font-mono-sgt text-[#51E7FA]">
                       {locale === "zh-CN" ? `事件 #${ev.eventIndex}` : `Event #${ev.eventIndex}`} ·{" "}
                       {formatUsdtMicros(ev.amountMicros)}
                     </span>
-                    <span className="tabular-nums text-[#A7AEBC]">
+                    <span className="tabular-nums text-[#AAB8C7]">
                       {locale === "zh-CN"
                         ? `${ev.confirmations} 次确认 · ${ev.chainSuccess ? "成功" : "失败"}`
                         : `${ev.confirmations} confs · ${ev.chainSuccess ? "SUCCESS" : "FAILED"}`}
                     </span>
                   </div>
-                  <div className="font-mono-sgt break-all text-[#A7AEBC]">
+                  <div className="font-mono-sgt break-all text-[#AAB8C7]">
                     {locale === "zh-CN" ? "接收地址: " : "To: "}
-                    <span className="text-[#F2F0EB]">{ev.toAddress}</span>
+                    <span className="text-[#F4F8FC]">{ev.toAddress}</span>
                   </div>
                 </div>
               ))}

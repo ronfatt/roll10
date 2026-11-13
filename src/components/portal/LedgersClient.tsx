@@ -134,8 +134,8 @@ export function LedgersClient({
             onClick={() => setTab(item.key)}
             className={`min-h-[40px] rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-150 ${
               tab === item.key
-                ? "bg-[#CBB487] text-[#08090B]"
-                : "border border-white/[0.1] bg-[#141619] text-[#A7AEBC] hover:border-[#CBB487]/50 hover:text-[#F2F0EB]"
+                ? "bg-[#51E7FA] text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)]"
+                : "border border-[#2B3D4D] bg-[#101B27] text-[#AAB8C7] hover:border-[#51E7FA]/50 hover:text-[#F4F8FC]"
             }`}
           >
             {item.label}
@@ -144,13 +144,13 @@ export function LedgersClient({
       </div>
 
       {tab === "direct" && (
-        <div className="rounded-2xl border border-white/[0.08] bg-[#141619] p-4 sm:p-5">
+        <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5">
           {directItems.length === 0 ? (
-            <p className="py-8 text-center text-xs text-[#A7AEBC]">{t.common.noData}</p>
+            <p className="py-8 text-center text-xs text-[#AAB8C7]">{t.common.noData}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="border-b border-white/[0.1] text-[#A7AEBC]">
+                <thead className="border-b border-[#2B3D4D] text-[#AAB8C7]">
                   <tr>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "流水号" : "Ledger No"}</th>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "来源订单" : "Source Order"}</th>
@@ -162,17 +162,17 @@ export function LedgersClient({
                 <tbody className="divide-y divide-white/[0.06]">
                   {directItems.map((row) => (
                     <tr key={row.id}>
-                      <td className="font-mono-sgt py-2.5 pr-3 text-[#D6D3CC]">
+                      <td className="font-mono-sgt py-2.5 pr-3 text-[#F4F8FC]">
                         {row.ledgerNo}
                       </td>
-                      <td className="font-mono-sgt py-2.5 pr-3 text-[#CBB487]">
+                      <td className="font-mono-sgt py-2.5 pr-3 text-[#51E7FA]">
                         {row.orderNo ?? "—"}
                       </td>
-                      <td className="py-2.5 pr-3 text-[#D6D3CC]">{row.note}</td>
+                      <td className="py-2.5 pr-3 text-[#AAB8C7]">{row.note}</td>
                       <td className="py-2.5 pr-3 tabular-nums font-semibold text-emerald-400">
                         +{formatU(row.amountCents)} {t.common.points}
                       </td>
-                      <td className="font-mono-sgt py-2.5 pr-3 text-[#A7AEBC]">
+                      <td className="font-mono-sgt py-2.5 pr-3 text-[#AAB8C7]">
                         {row.createdAtLabel}
                       </td>
                     </tr>
@@ -185,13 +185,13 @@ export function LedgersClient({
       )}
 
       {tab === "pairing" && (
-        <div className="rounded-2xl border border-white/[0.08] bg-[#141619] p-4 sm:p-5">
+        <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5">
           {pairingItems.length === 0 ? (
-            <p className="py-8 text-center text-xs text-[#A7AEBC]">{t.common.noData}</p>
+            <p className="py-8 text-center text-xs text-[#AAB8C7]">{t.common.noData}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="border-b border-white/[0.1] text-[#A7AEBC]">
+                <thead className="border-b border-[#2B3D4D] text-[#AAB8C7]">
                   <tr>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "结算单号" : "Settlement No"}</th>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "SGT 日期" : "SGT Date"}</th>
@@ -206,29 +206,29 @@ export function LedgersClient({
                 <tbody className="divide-y divide-white/[0.06]">
                   {pairingItems.map((row) => (
                     <tr key={row.id}>
-                      <td className="font-mono-sgt py-2.5 pr-3 text-[#CBB487]">
+                      <td className="font-mono-sgt py-2.5 pr-3 text-[#51E7FA]">
                         {row.settlementNo}
                       </td>
-                      <td className="font-mono-sgt py-2.5 pr-3 text-[#D6D3CC]">
+                      <td className="font-mono-sgt py-2.5 pr-3 text-[#F4F8FC]">
                         {row.settlementDate}
                       </td>
-                      <td className="py-2.5 pr-3 text-[#D6D3CC]">
+                      <td className="py-2.5 pr-3 text-[#AAB8C7]">
                         {formatTriggerTypeLabel(row.triggerType, locale)}
                       </td>
-                      <td className="py-2.5 pr-3 tabular-nums font-semibold text-[#F2F0EB]">
+                      <td className="py-2.5 pr-3 tabular-nums font-semibold text-[#F4F8FC]">
                         {row.pairsCount}
                       </td>
-                      <td className="py-2.5 pr-3 tabular-nums text-[#D6D3CC]">
+                      <td className="py-2.5 pr-3 tabular-nums text-[#AAB8C7]">
                         L -{row.bvDeductedPerLeg} / R -{row.bvDeductedPerLeg}
                       </td>
                       <td className="py-2.5 pr-3 tabular-nums font-semibold text-emerald-400">
                         +{formatU(row.pointsAwardedCents)} {t.common.points}
                       </td>
-                      <td className="py-2.5 pr-3 tabular-nums text-[#A7AEBC]">
+                      <td className="py-2.5 pr-3 tabular-nums text-[#AAB8C7]">
                         {formatU(row.dailyPairedAfterCents)} /{" "}
                         {formatU(row.dailyCapPointsCents)} {t.common.points}
                       </td>
-                      <td className="font-mono-sgt py-2.5 pr-3 text-[#A7AEBC]">
+                      <td className="font-mono-sgt py-2.5 pr-3 text-[#AAB8C7]">
                         {row.createdAtLabel}
                       </td>
                     </tr>
@@ -243,9 +243,9 @@ export function LedgersClient({
       {tab === "bv" && (
         <div className="space-y-5">
           {/* Estimated Midnight 00:00 SGT Carryover Preview */}
-          <div className="rounded-2xl border border-[#CBB487]/30 bg-[#141619] p-4 sm:p-5">
+          <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-sm font-semibold text-[#F2F0EB]">
+              <h2 className="text-sm font-semibold text-[#F4F8FC]">
                 {locale === "zh-CN" ? (
                   <>
                     下次 <span className="font-mono-sgt">00:00 SGT</span> 日结结转预估
@@ -256,45 +256,45 @@ export function LedgersClient({
                   </>
                 )}
               </h2>
-              <span className="rounded border border-white/[0.1] px-2 py-0.5 text-[10px] font-semibold text-[#CBB487]">
+              <span className="rounded border border-[#51E7FA]/40 bg-[#51E7FA]/10 px-2 py-0.5 text-[10px] font-semibold text-[#51E7FA]">
                 {t.common.estimatedBadge}
               </span>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2.5 text-xs sm:grid-cols-4">
-              <div className="rounded-xl border border-white/[0.06] bg-[#08090B] p-3">
-                <div className="text-[#A7AEBC]">
+              <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
+                <div className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "当前左 / 右区 BV" : "Current L / R BV"}
                 </div>
-                <div className="mt-1 tabular-nums font-semibold text-[#F2F0EB]">
+                <div className="mt-1 tabular-nums font-semibold text-[#F4F8FC]">
                   {eodPreview.leftBv} / {eodPreview.rightBv}
                 </div>
               </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#08090B] p-3">
-                <div className="text-[#A7AEBC]">
+              <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
+                <div className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "活跃人数（左 / 右）" : "Active Count (L / R)"}
                 </div>
-                <div className="mt-1 tabular-nums font-semibold text-[#F2F0EB]">
+                <div className="mt-1 tabular-nums font-semibold text-[#F4F8FC]">
                   {eodPreview.leftCount} / {eodPreview.rightCount}
                 </div>
               </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#08090B] p-3">
-                <div className="text-[#A7AEBC]">
+              <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
+                <div className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "预估保留区" : "Est. Retained Side"}
                 </div>
                 <div className="mt-1 font-semibold text-emerald-400">
                   {formatLegLabel(eodPreview.retainedSide, locale)}
                 </div>
               </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#08090B] p-3">
-                <div className="text-[#A7AEBC]">
+              <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
+                <div className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "预估清零 BV" : "Est. Flushed BV"}
                 </div>
-                <div className="mt-1 tabular-nums font-semibold text-[#CBB487]">
+                <div className="mt-1 tabular-nums font-semibold text-[#51E7FA]">
                   {formatBv(eodPreview.flushedBv)}
                 </div>
               </div>
             </div>
-            <p className="mt-2.5 text-[11px] text-[#A7AEBC]">
+            <p className="mt-2.5 text-[11px] text-[#AAB8C7]">
               {locale === "zh-CN" ? (
                 <>
                   按当前余额测算（{formatDecisionBasisLabel(eodPreview.decisionBasis, locale)}）。实际{" "}
@@ -311,8 +311,8 @@ export function LedgersClient({
           </div>
 
           {/* Midnight 00:00 SGT EOD Carryover Summary */}
-          <div id="eod" className="rounded-2xl border border-white/[0.08] bg-[#141619] p-4 sm:p-5">
-            <h2 className="mb-3 text-sm font-semibold text-[#F2F0EB]">
+          <div id="eod" className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5">
+            <h2 className="mb-3 text-sm font-semibold text-[#F4F8FC]">
               {locale === "zh-CN" ? (
                 <>
                   <span className="font-mono-sgt">00:00 SGT</span> 午夜清零与结转历史
@@ -324,7 +324,7 @@ export function LedgersClient({
               )}
             </h2>
             {eodItems.length === 0 ? (
-              <p className="py-4 text-xs text-[#A7AEBC]">
+              <p className="py-4 text-xs text-[#AAB8C7]">
                 {locale === "zh-CN"
                   ? "暂无已执行的午夜日结记录。"
                   : "No midnight EOD settlements recorded yet."}
@@ -332,7 +332,7 @@ export function LedgersClient({
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b border-white/[0.1] text-[#A7AEBC]">
+                  <thead className="border-b border-[#2B3D4D] text-[#AAB8C7]">
                     <tr>
                       <th className="py-2 pr-3">{locale === "zh-CN" ? "SGT 日期" : "SGT Date"}</th>
                       <th className="py-2 pr-3">
@@ -352,25 +352,25 @@ export function LedgersClient({
                   <tbody className="divide-y divide-white/[0.06]">
                     {eodItems.map((e) => (
                       <tr key={e.id}>
-                        <td className="font-mono-sgt py-2.5 pr-3 font-medium text-[#CBB487]">
+                        <td className="font-mono-sgt py-2.5 pr-3 font-medium text-[#51E7FA]">
                           {e.settlementDate}
                         </td>
-                        <td className="py-2.5 pr-3 tabular-nums text-[#F2F0EB]">
+                        <td className="py-2.5 pr-3 tabular-nums text-[#F4F8FC]">
                           {e.leftBvBefore} / {e.rightBvBefore}
                         </td>
-                        <td className="py-2.5 pr-3 tabular-nums text-[#D6D3CC]">
+                        <td className="py-2.5 pr-3 tabular-nums text-[#AAB8C7]">
                           {e.leftMemberCount} / {e.rightMemberCount}
                         </td>
                         <td className="py-2.5 pr-3 font-medium text-emerald-400">
                           {formatLegLabel(e.retainedSide, locale)}
                         </td>
-                        <td className="py-2.5 pr-3 tabular-nums text-[#CBB487]">
+                        <td className="py-2.5 pr-3 tabular-nums text-[#51E7FA]">
                           {formatBv(e.flushedBv)}
                         </td>
-                        <td className="py-2.5 pr-3 tabular-nums text-[#F2F0EB]">
+                        <td className="py-2.5 pr-3 tabular-nums text-[#F4F8FC]">
                           {e.leftBvAfter} / {e.rightBvAfter}
                         </td>
-                        <td className="py-2.5 pr-3 text-[11px] text-[#A7AEBC]">
+                        <td className="py-2.5 pr-3 text-[11px] text-[#AAB8C7]">
                           {formatDecisionBasisLabel(e.decisionBasis, locale)}
                         </td>
                       </tr>
@@ -382,13 +382,13 @@ export function LedgersClient({
           </div>
 
           {/* Detailed BV Ledger */}
-          <div className="rounded-2xl border border-white/[0.08] bg-[#141619] p-4 sm:p-5">
+          <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h2 className="text-sm font-semibold text-[#F2F0EB]">
+                <h2 className="text-sm font-semibold text-[#F4F8FC]">
                   {locale === "zh-CN" ? "BV 流水明细" : "BV Ledger"}
                 </h2>
-                <span className="text-[11px] text-[#A7AEBC]">
+                <span className="text-[11px] text-[#AAB8C7]">
                   {locale === "zh-CN" ? (
                     <>
                       点击任意 <span className="font-mono-sgt">00:00 SGT</span> 日结记录可查看结转判定详情
@@ -409,8 +409,8 @@ export function LedgersClient({
                     onClick={() => setLegFilter(lf)}
                     className={`min-h-[36px] rounded-full px-3 text-[11px] font-semibold transition-colors ${
                       legFilter === lf
-                        ? "bg-[#CBB487] text-[#08090B]"
-                        : "border border-white/[0.1] bg-[#08090B] text-[#A7AEBC]"
+                        ? "bg-[#51E7FA] text-[#0A101A]"
+                        : "border border-[#2B3D4D] bg-[#0A101A] text-[#AAB8C7]"
                     }`}
                   >
                     {lf === "ALL"
@@ -456,10 +456,10 @@ export function LedgersClient({
                             {formatLegLabel(row.leg, locale)}
                           </span>
                         </td>
-                        <td className="py-2.5 pr-3 text-[#D6D3CC]">
+                        <td className="py-2.5 pr-3 text-[#AAB8C7]">
                           {formatBvEventType(row.entryType, locale)}
                           {row.eodDetail && (
-                            <span className="ml-1.5 rounded bg-[#CBB487]/15 px-1.5 py-0.5 text-[10px] text-[#CBB487]">
+                            <span className="ml-1.5 rounded bg-[#51E7FA]/15 px-1.5 py-0.5 text-[10px] text-[#51E7FA]">
                               {locale === "zh-CN" ? "详情" : "Details"}
                             </span>
                           )}
@@ -469,18 +469,18 @@ export function LedgersClient({
                             row.deltaBv > 0
                               ? "text-emerald-400"
                               : row.deltaBv < 0
-                                ? "text-[#CBB487]"
-                                : "text-[#A7AEBC]"
+                                ? "text-[#51E7FA]"
+                                : "text-[#AAB8C7]"
                           }`}
                         >
                           {row.deltaBv > 0 ? "+" : ""}
                           {formatBv(row.deltaBv)}
                         </td>
-                        <td className="py-2.5 pr-3 tabular-nums text-[#F2F0EB]">
+                        <td className="py-2.5 pr-3 tabular-nums text-[#F4F8FC]">
                           {formatBv(row.balanceAfterBv)}
                         </td>
-                        <td className="py-2.5 pr-3 text-[#A7AEBC]">{row.note}</td>
-                        <td className="font-mono-sgt py-2.5 pr-3 text-[#A7AEBC]">
+                        <td className="py-2.5 pr-3 text-[#AAB8C7]">{row.note}</td>
+                        <td className="font-mono-sgt py-2.5 pr-3 text-[#AAB8C7]">
                           {row.createdAtLabel}
                         </td>
                       </tr>
@@ -509,30 +509,30 @@ export function LedgersClient({
       >
         {selectedEod && (
           <div className="space-y-3 text-xs">
-            <div className="flex items-center gap-2 font-mono-sgt text-[#CBB487]">
+            <div className="flex items-center gap-2 font-mono-sgt text-[#51E7FA]">
               <Info className="h-4 w-4" />
               <span>{selectedEod.settlementNo}</span>
             </div>
 
-            <div className="rounded-xl border border-white/[0.08] bg-[#08090B] p-4 space-y-2.5 text-[#D6D3CC]">
+            <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-4 space-y-2.5 text-[#F4F8FC]">
               <div className="flex justify-between">
-                <span className="text-[#A7AEBC]">
+                <span className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "日结前 BV" : "BV Before EOD"}
                 </span>
-                <span className="tabular-nums font-semibold text-[#F2F0EB]">
+                <span className="tabular-nums font-semibold text-[#F4F8FC]">
                   L {formatBv(selectedEod.leftBvBefore)} / R {formatBv(selectedEod.rightBvBefore)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#A7AEBC]">
+                <span className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "双边活跃人数" : "Active Headcount"}
                 </span>
-                <span className="tabular-nums font-semibold text-[#F2F0EB]">
+                <span className="tabular-nums font-semibold text-[#F4F8FC]">
                   L {selectedEod.leftMemberCount} / R {selectedEod.rightMemberCount}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#A7AEBC]">
+                <span className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "保留区" : "Retained Side"}
                 </span>
                 <span className="font-semibold text-emerald-400">
@@ -540,26 +540,26 @@ export function LedgersClient({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#A7AEBC]">
+                <span className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "清零 BV" : "Flushed"}
                 </span>
-                <span className="tabular-nums font-semibold text-[#CBB487]">
+                <span className="tabular-nums font-semibold text-[#51E7FA]">
                   {formatBv(selectedEod.flushedBv)} ({formatLegLabel(selectedEod.flushedSide, locale)})
                 </span>
               </div>
-              <div className="flex justify-between border-t border-white/[0.08] pt-2">
-                <span className="text-[#A7AEBC]">
+              <div className="flex justify-between border-t border-[#2B3D4D] pt-2">
+                <span className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "结转判定依据" : "Decision Basis"}
                 </span>
-                <span className="font-semibold text-[#CBB487]">
+                <span className="font-semibold text-[#51E7FA]">
                   {formatDecisionBasisLabel(selectedEod.decisionBasis, locale)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#A7AEBC]">
+                <span className="text-[#AAB8C7]">
                   {locale === "zh-CN" ? "执行时间 (SGT)" : "Executed (SGT)"}
                 </span>
-                <span className="font-mono-sgt text-[#F2F0EB]">
+                <span className="font-mono-sgt text-[#F4F8FC]">
                   {selectedEod.executedAtLabel}
                 </span>
               </div>

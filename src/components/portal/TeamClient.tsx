@@ -30,6 +30,7 @@ import type {
   ReferralSearchHit,
 } from "@/lib/tree-queries";
 import { BottomDrawer } from "@/components/MotionPrimitives";
+import { SubpageHeaderTitle } from "@/components/Roll10Logo";
 
 interface ReferralPageState {
   children: ReferralNodeDto[];
@@ -46,10 +47,10 @@ function StatusBadge({ status, locale }: { status: string; locale: Locale }) {
   const active = status === "ACTIVE";
   return (
     <span
-      className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+      className={`rounded px-1.5 py-0.5 text-[10px] font-medium border ${
         active
-          ? "bg-emerald-500/15 text-emerald-300"
-          : "bg-amber-500/15 text-amber-300"
+          ? "border-[#51E7FA]/40 bg-[#51E7FA]/12 text-[#51E7FA]"
+          : "border-amber-500/40 bg-amber-500/15 text-amber-300"
       }`}
     >
       {formatMemberStatus(status, locale)}
@@ -107,26 +108,26 @@ function DesktopReferralBranch({
         <button
           type="button"
           onClick={() => onOpenDetail(node)}
-          className={`group relative w-52 rounded-xl border bg-[#141619] px-3.5 py-2.5 text-left transition-all duration-150 hover:border-[#CBB487]/70 ${
+          className={`group relative w-52 rounded-xl border bg-[#101B27] px-3.5 py-2.5 text-left transition-all duration-150 hover:border-[#51E7FA]/70 ${
             isRoot || isHighlighted
-              ? "border-[#CBB487]"
-              : "border-white/[0.1]"
+              ? "border-[#51E7FA] shadow-[0_0_15px_rgba(81,231,250,0.35)]"
+              : "border-[#2B3D4D]"
           } ${isHighlighted ? "r10-node-highlight" : ""}`}
         >
           <div className="flex items-center justify-between gap-1.5">
-            <span className="font-mono-sgt text-[11px] font-bold text-[#CBB487]">
+            <span className="font-mono-sgt text-[11px] font-bold text-[#51E7FA]">
               {node.memberCode}
             </span>
-            <span className="rounded border border-white/[0.08] bg-[#08090B] px-1.5 py-0.5 text-[10px] font-medium text-[#F2F0EB]">
+            <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-1.5 py-0.5 text-[10px] font-medium text-[#F4F8FC]">
               {node.packageCode ?? "—"}
             </span>
           </div>
-          <div className="mt-1 truncate text-sm font-semibold text-[#F2F0EB]">
+          <div className="mt-1 truncate text-sm font-semibold text-[#F4F8FC]">
             {node.displayName}
           </div>
           <div className="mt-1.5 flex items-center justify-between gap-2">
             <StatusBadge status={node.status} locale={locale} />
-            <span className="tabular-nums text-[10px] text-[#A7AEBC]">
+            <span className="tabular-nums text-[10px] text-[#AAB8C7]">
               {node.directCount} {t.tree.directsUnit}
             </span>
           </div>
@@ -137,7 +138,7 @@ function DesktopReferralBranch({
           <div className="flex items-center shrink-0">
             <span
               aria-hidden="true"
-              className="h-px w-4 bg-[#CBB487]/45"
+              className="h-px w-4 bg-[#2B3D4D]"
             />
             <button
               type="button"
@@ -146,8 +147,8 @@ function DesktopReferralBranch({
               aria-expanded={isExpanded}
               className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] transition-colors ${
                 isExpanded
-                  ? "border-[#CBB487]/65 bg-[#141619] text-[#CBB487] hover:bg-[#CBB487] hover:text-[#08090B]"
-                  : "border-white/25 bg-[#141619] text-[#F2F0EB] hover:border-[#CBB487] hover:text-[#CBB487]"
+                  ? "border-[#51E7FA]/70 bg-[#101B27] text-[#51E7FA] hover:bg-[#51E7FA] hover:text-[#0A101A]"
+                  : "border-[#2B3D4D] bg-[#0A101A] text-[#CAD7E6] hover:border-[#51E7FA] hover:text-[#51E7FA]"
               }`}
             >
               {isLoading ? (
@@ -161,7 +162,7 @@ function DesktopReferralBranch({
             {isExpanded && page && branchItemsCount > 0 && (
               <span
                 aria-hidden="true"
-                className="h-px w-4 bg-[#CBB487]/45"
+                className="h-px w-4 bg-[#2B3D4D]"
               />
             )}
           </div>
@@ -182,12 +183,12 @@ function DesktopReferralBranch({
                   className="relative w-6 shrink-0 self-stretch"
                 >
                   {!isFirst && (
-                    <span className="absolute left-0 top-0 bottom-1/2 w-px bg-[#CBB487]/45" />
+                    <span className="absolute left-0 top-0 bottom-1/2 w-px bg-[#2B3D4D]" />
                   )}
                   {!isLast && (
-                    <span className="absolute left-0 top-1/2 bottom-0 w-px bg-[#CBB487]/45" />
+                    <span className="absolute left-0 top-1/2 bottom-0 w-px bg-[#2B3D4D]" />
                   )}
-                  <span className="absolute left-0 right-0 top-1/2 h-px bg-[#CBB487]/45" />
+                  <span className="absolute left-0 right-0 top-1/2 h-px bg-[#2B3D4D]" />
                 </div>
 
                 <DesktopReferralBranch
@@ -214,14 +215,14 @@ function DesktopReferralBranch({
                 aria-hidden="true"
                 className="relative w-6 shrink-0 self-stretch"
               >
-                <span className="absolute left-0 top-0 bottom-1/2 w-px bg-[#CBB487]/45" />
-                <span className="absolute left-0 right-0 top-1/2 h-px bg-[#CBB487]/45" />
+                <span className="absolute left-0 top-0 bottom-1/2 w-px bg-[#2B3D4D]" />
+                <span className="absolute left-0 right-0 top-1/2 h-px bg-[#2B3D4D]" />
               </div>
               <button
                 type="button"
                 disabled={isLoading}
                 onClick={() => onLoadMore(node.id)}
-                className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-[#CBB487]/45 bg-[#141619] px-3.5 text-xs font-medium text-[#CBB487] transition hover:border-[#CBB487] hover:bg-[#CBB487]/10 disabled:opacity-50"
+                className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-[#51E7FA]/50 bg-[#101B27] px-3.5 text-xs font-semibold text-[#51E7FA] transition hover:border-[#51E7FA] hover:bg-[#51E7FA]/10 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -285,10 +286,10 @@ function MobileReferralBranch({
   return (
     <div data-node-id={`ref-mobile-${node.id}`} className="relative">
       <div
-        className={`flex items-stretch gap-2 rounded-2xl border bg-[#141619] p-3 transition-all duration-150 ${
+        className={`flex items-stretch gap-2 rounded-2xl border bg-[#101B27] p-3 transition-all duration-150 ${
           isRoot || isHighlighted
-            ? "border-[#CBB487]"
-            : "border-white/[0.08]"
+            ? "border-[#51E7FA] shadow-[0_0_15px_rgba(81,231,250,0.35)]"
+            : "border-[#2B3D4D]"
         } ${isHighlighted ? "r10-node-highlight" : ""}`}
       >
         <button
@@ -298,23 +299,23 @@ function MobileReferralBranch({
         >
           <div className="flex flex-wrap items-center gap-1.5">
             {depth > 2 && (
-              <span className="font-mono-sgt rounded bg-[#CBB487]/15 px-1.5 py-0.5 text-[10px] font-semibold text-[#CBB487]">
+              <span className="font-mono-sgt rounded bg-[#51E7FA]/15 px-1.5 py-0.5 text-[10px] font-semibold text-[#51E7FA]">
                 L{depth}
               </span>
             )}
-            <span className="font-mono-sgt text-xs font-bold text-[#CBB487]">
+            <span className="font-mono-sgt text-xs font-bold text-[#51E7FA]">
               {node.memberCode}
             </span>
-            <span className="rounded border border-white/[0.08] bg-[#08090B] px-2 py-0.5 text-[10px] font-medium text-[#F2F0EB]">
+            <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-2 py-0.5 text-[10px] font-medium text-[#F4F8FC]">
               {node.packageCode ?? "—"}
             </span>
             <StatusBadge status={node.status} locale={locale} />
           </div>
           <div className="mt-1 flex items-center justify-between gap-2">
-            <span className="truncate text-sm font-semibold text-[#F2F0EB]">
+            <span className="truncate text-sm font-semibold text-[#F4F8FC]">
               {node.displayName}
             </span>
-            <span className="shrink-0 tabular-nums text-[11px] text-[#A7AEBC]">
+            <span className="shrink-0 tabular-nums text-[11px] text-[#AAB8C7]">
               {node.directCount} {t.tree.directsUnit}
             </span>
           </div>
@@ -328,8 +329,8 @@ function MobileReferralBranch({
             aria-expanded={isExpanded}
             className={`flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-xl border transition-colors ${
               isExpanded
-                ? "border-[#CBB487]/55 bg-[#CBB487]/12 text-[#CBB487]"
-                : "border-white/[0.1] bg-[#08090B] text-[#F2F0EB] hover:border-[#CBB487]/60"
+                ? "border-[#51E7FA]/65 bg-[#51E7FA]/15 text-[#51E7FA]"
+                : "border-[#2B3D4D] bg-[#0A101A] text-[#CAD7E6] hover:border-[#51E7FA]/60"
             }`}
           >
             {isLoading ? (
@@ -346,10 +347,10 @@ function MobileReferralBranch({
       {/* Expanded Vertical Children with Branch Spine */}
       {isExpanded && page && (
         <div
-          className={`r10-branch-enter mt-2 space-y-2 border-l border-[#CBB487]/35 ${childWrapperIndent}`}
+          className={`r10-branch-enter mt-2 space-y-2 border-l border-[#51E7FA]/35 ${childWrapperIndent}`}
         >
           {page.children.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-white/[0.1] px-3 py-2 text-[11px] text-[#A7AEBC]">
+            <div className="rounded-xl border border-dashed border-[#2B3D4D] px-3 py-2 text-[11px] text-[#AAB8C7]">
               {t.tree.noChildren}
             </div>
           ) : (
@@ -357,7 +358,7 @@ function MobileReferralBranch({
               <div key={child.id} className="relative">
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute -left-3 top-6 h-px w-3 bg-[#CBB487]/40"
+                  className="pointer-events-none absolute -left-3 top-6 h-px w-3 bg-[#51E7FA]/40"
                 />
                 <MobileReferralBranch
                   node={child}
@@ -381,13 +382,13 @@ function MobileReferralBranch({
             <div className="relative pt-0.5">
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -left-3 top-5 h-px w-3 bg-[#CBB487]/40"
+                className="pointer-events-none absolute -left-3 top-5 h-px w-3 bg-[#51E7FA]/40"
               />
               <button
                 type="button"
                 disabled={isLoading}
                 onClick={() => onLoadMore(node.id)}
-                className="flex min-h-[42px] w-full items-center justify-center gap-1.5 rounded-xl border border-[#CBB487]/45 bg-[#141619] px-3 text-xs font-semibold text-[#CBB487] transition hover:border-[#CBB487] disabled:opacity-50"
+                className="flex min-h-[42px] w-full items-center justify-center gap-1.5 rounded-xl border border-[#51E7FA] bg-[#101B27] px-3 text-xs font-semibold text-[#51E7FA] transition hover:bg-[#51E7FA]/10 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -765,30 +766,28 @@ export function TeamClient({
   return (
     <div className="space-y-4 pb-4">
       {/* Header + Compact Referral Link Action */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-[#F2F0EB]">
-            {t.tree.title}
-          </h1>
-          <p className="mt-0.5 text-xs text-[#A7AEBC]">{t.tree.subtitle}</p>
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <SubpageHeaderTitle
+          title={t.tree.title}
+          subtitle={t.tree.subtitle}
+        />
 
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => void handleCopyLink()}
-            className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-[#CBB487]/35 bg-[#141619] px-3 text-xs font-medium text-[#CBB487] transition hover:border-[#CBB487]"
+            className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-[#2B3D4D] bg-[#101B27] px-3 text-xs font-semibold text-[#CAD7E6] transition hover:border-[#51E7FA] hover:text-[#51E7FA] active:scale-95"
           >
-            {copiedMsg ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            {copiedMsg ? <Check className="h-3.5 w-3.5 text-[#51E7FA]" /> : <Copy className="h-3.5 w-3.5 text-[#51E7FA]" />}
             <span>{copiedMsg ?? t.common.copy}</span>
           </button>
           <button
             type="button"
             onClick={() => void handleShareLink()}
             aria-label={t.common.share}
-            className="inline-flex min-h-[38px] min-w-[38px] items-center justify-center rounded-xl border border-white/[0.1] bg-[#141619] text-[#F2F0EB] transition hover:border-[#CBB487]/60"
+            className="inline-flex min-h-[38px] min-w-[38px] items-center justify-center rounded-xl border border-[#2B3D4D] bg-[#101B27] text-[#CAD7E6] transition hover:border-[#51E7FA] hover:text-[#51E7FA] active:scale-95"
           >
-            <Share2 className="h-3.5 w-3.5 text-[#CBB487]" />
+            <Share2 className="h-3.5 w-3.5 text-[#51E7FA]" />
           </button>
         </div>
       </div>
@@ -797,17 +796,17 @@ export function TeamClient({
       <div
         role="tablist"
         aria-label={t.tree.title}
-        className="grid grid-cols-2 gap-1.5 rounded-2xl border border-white/[0.08] bg-[#141619] p-1"
+        className="grid grid-cols-2 gap-1.5 rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)]"
       >
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === "referral"}
           onClick={() => handleTabSwitch("referral")}
-          className={`min-h-[44px] rounded-xl text-xs font-semibold transition-all duration-150 ${
+          className={`min-h-[44px] rounded-xl text-xs font-bold transition-all duration-150 ${
             activeTab === "referral"
-              ? "bg-[#CBB487] text-[#08090B]"
-              : "text-[#A7AEBC] hover:text-[#F2F0EB]"
+              ? "bg-[#51E7FA] text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)]"
+              : "text-[#AAB8C7] hover:text-[#F4F8FC]"
           }`}
         >
           {t.tree.tabReferral}
@@ -817,10 +816,10 @@ export function TeamClient({
           role="tab"
           aria-selected={activeTab === "placement"}
           onClick={() => handleTabSwitch("placement")}
-          className={`min-h-[44px] rounded-xl text-xs font-semibold transition-all duration-150 ${
+          className={`min-h-[44px] rounded-xl text-xs font-bold transition-all duration-150 ${
             activeTab === "placement"
-              ? "bg-[#CBB487] text-[#08090B]"
-              : "text-[#A7AEBC] hover:text-[#F2F0EB]"
+              ? "bg-[#51E7FA] text-[#0A101A] shadow-[0_0_12px_rgba(81,231,250,0.35)]"
+              : "text-[#AAB8C7] hover:text-[#F4F8FC]"
           }`}
         >
           {t.tree.tabPlacement}
@@ -832,19 +831,19 @@ export function TeamClient({
         <div className="flex flex-wrap items-center gap-2">
           <form onSubmit={handleSearch} className="flex min-w-0 flex-1 items-center gap-2">
             <div className="relative min-w-0 flex-1">
-              <Search className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-[#A7AEBC]" />
+              <Search className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-[#AAB8C7]" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={t.tree.locatePlaceholder}
-                className="min-h-[44px] w-full rounded-xl border border-white/[0.1] bg-[#141619] pl-9 pr-3 text-xs text-[#F2F0EB] placeholder-[#A7AEBC]/60 outline-none transition focus:border-[#CBB487]"
+                className="min-h-[44px] w-full rounded-xl border border-[#2B3D4D] bg-[#101B27] pl-9 pr-3 text-xs text-[#F4F8FC] placeholder-[#AAB8C7]/60 outline-none transition focus:border-[#51E7FA]"
               />
             </div>
             <button
               type="submit"
               disabled={searching}
-              className="min-h-[44px] shrink-0 rounded-xl bg-[#CBB487] px-3.5 text-xs font-semibold text-[#08090B] transition active:scale-[0.98] disabled:opacity-60"
+              className="min-h-[44px] shrink-0 rounded-xl bg-[#51E7FA] px-4 text-xs font-bold text-[#0A101A] transition hover:brightness-110 active:scale-[0.98] disabled:opacity-60 shadow-[0_0_10px_rgba(81,231,250,0.25)]"
             >
               {searching ? "..." : t.tree.locateBtn}
             </button>
@@ -853,9 +852,9 @@ export function TeamClient({
           <button
             type="button"
             onClick={handleBackToMe}
-            className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-xl border border-white/[0.1] bg-[#141619] px-3 text-xs font-medium text-[#F2F0EB] transition hover:border-[#CBB487]/60"
+            className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-xl border border-[#2B3D4D] bg-[#101B27] px-3.5 text-xs font-medium text-[#F4F8FC] transition hover:border-[#51E7FA]/70"
           >
-            <RotateCcw className="h-3.5 w-3.5 text-[#CBB487]" />
+            <RotateCcw className="h-3.5 w-3.5 text-[#51E7FA]" />
             <span>{t.tree.backToMe}</span>
           </button>
         </div>
@@ -864,13 +863,13 @@ export function TeamClient({
         {searchError && (
           <div
             role="alert"
-            className="flex items-center justify-between rounded-xl border border-rose-500/35 bg-[#141619] px-3.5 py-2.5 text-xs text-rose-300"
+            className="flex items-center justify-between rounded-xl border border-rose-500/35 bg-[#101B27] px-3.5 py-2.5 text-xs text-rose-300"
           >
             <span>{searchError}</span>
             <button
               type="button"
               onClick={() => setSearchError(null)}
-              className="text-[#A7AEBC] hover:text-[#F2F0EB]"
+              className="text-[#AAB8C7] hover:text-[#F4F8FC]"
             >
               <X className="h-4 w-4" />
             </button>
@@ -879,8 +878,8 @@ export function TeamClient({
 
         {/* Referral Search Dropdown Results */}
         {activeTab === "referral" && refSearchResults !== null && (
-          <div className="rounded-2xl border border-[#CBB487]/35 bg-[#141619] p-3 text-xs">
-            <div className="mb-2 flex items-center justify-between text-[11px] text-[#A7AEBC]">
+          <div className="rounded-2xl border border-[#51E7FA]/35 bg-[#101B27] p-3 text-xs shadow-lg">
+            <div className="mb-2 flex items-center justify-between text-[11px] text-[#AAB8C7]">
               <span>
                 {refSearchResults.length > 0
                   ? locale === "zh-CN"
@@ -891,7 +890,7 @@ export function TeamClient({
               <button
                 type="button"
                 onClick={() => setRefSearchResults(null)}
-                className="text-[#A7AEBC] hover:text-[#F2F0EB]"
+                className="text-[#AAB8C7] hover:text-[#F4F8FC]"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -903,16 +902,16 @@ export function TeamClient({
                     key={hit.id}
                     type="button"
                     onClick={() => void locateInReferralTree(hit.id)}
-                    className="flex min-h-[42px] w-full items-center justify-between gap-2 rounded-xl border border-white/[0.08] bg-[#08090B] px-3 py-2 text-left transition hover:border-[#CBB487]"
+                    className="flex min-h-[42px] w-full items-center justify-between gap-2 rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3 py-2 text-left transition hover:border-[#51E7FA]"
                   >
                     <div className="min-w-0">
-                      <span className="font-semibold text-[#F2F0EB]">{hit.displayName}</span>
-                      <span className="font-mono-sgt ml-2 text-[#CBB487]">{hit.memberCode}</span>
+                      <span className="font-semibold text-[#F4F8FC]">{hit.displayName}</span>
+                      <span className="font-mono-sgt ml-2 text-[#51E7FA]">{hit.memberCode}</span>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#A7AEBC]">
+                    <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#AAB8C7]">
                       <span>L{hit.depth}</span>
                       <span>{hit.packageCode ?? formatMemberStatus(hit.status, locale)}</span>
-                      <ChevronRight className="h-3.5 w-3.5 text-[#CBB487]" />
+                      <ChevronRight className="h-3.5 w-3.5 text-[#51E7FA]" />
                     </div>
                   </button>
                 ))}
@@ -923,8 +922,8 @@ export function TeamClient({
 
         {/* Placement Search Dropdown Results */}
         {activeTab === "placement" && placeSearchResults !== null && (
-          <div className="rounded-2xl border border-[#CBB487]/35 bg-[#141619] p-3 text-xs">
-            <div className="mb-2 flex items-center justify-between text-[11px] text-[#A7AEBC]">
+          <div className="rounded-2xl border border-[#51E7FA]/35 bg-[#101B27] p-3 text-xs shadow-lg">
+            <div className="mb-2 flex items-center justify-between text-[11px] text-[#AAB8C7]">
               <span>
                 {placeSearchResults.length > 0
                   ? locale === "zh-CN"
@@ -935,7 +934,7 @@ export function TeamClient({
               <button
                 type="button"
                 onClick={() => setPlaceSearchResults(null)}
-                className="text-[#A7AEBC] hover:text-[#F2F0EB]"
+                className="text-[#AAB8C7] hover:text-[#F4F8FC]"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -950,13 +949,13 @@ export function TeamClient({
                       setPlaceSearchResults(null);
                       void loadPlacementFocus(hit.id, true);
                     }}
-                    className="flex min-h-[42px] w-full items-center justify-between gap-2 rounded-xl border border-white/[0.08] bg-[#08090B] px-3 py-2 text-left transition hover:border-[#CBB487]"
+                    className="flex min-h-[42px] w-full items-center justify-between gap-2 rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-3 py-2 text-left transition hover:border-[#51E7FA]"
                   >
                     <div className="min-w-0">
-                      <span className="font-semibold text-[#F2F0EB]">{hit.displayName}</span>
-                      <span className="font-mono-sgt ml-2 text-[#CBB487]">{hit.memberCode}</span>
+                      <span className="font-semibold text-[#F4F8FC]">{hit.displayName}</span>
+                      <span className="font-mono-sgt ml-2 text-[#51E7FA]">{hit.memberCode}</span>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#A7AEBC]">
+                    <div className="flex shrink-0 items-center gap-2 text-[11px] text-[#AAB8C7]">
                       <span>
                         {hit.placementLeg
                           ? locale === "zh-CN"
@@ -972,7 +971,7 @@ export function TeamClient({
                         · L{hit.depth}
                       </span>
                       <span>{hit.packageCode ?? formatMemberStatus(hit.status, locale)}</span>
-                      <ChevronRight className="h-3.5 w-3.5 text-[#CBB487]" />
+                      <ChevronRight className="h-3.5 w-3.5 text-[#51E7FA]" />
                     </div>
                   </button>
                 ))}
@@ -997,7 +996,7 @@ export function TeamClient({
               <button
                 type="button"
                 onClick={() => void loadReferralRoot()}
-                className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-lg border border-[#CBB487]/50 px-3 font-semibold text-[#CBB487]"
+                className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-lg border border-[#51E7FA]/50 px-3 font-semibold text-[#51E7FA]"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 <span>{t.common.retry}</span>
@@ -1006,8 +1005,8 @@ export function TeamClient({
           )}
 
           {refInitialLoading && !refRoot ? (
-            <div className="flex min-h-[160px] items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-[#141619] p-8 text-xs text-[#A7AEBC]">
-              <Loader2 className="h-4 w-4 animate-spin text-[#CBB487]" />
+            <div className="flex min-h-[160px] items-center justify-center gap-2 rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-8 text-xs text-[#AAB8C7]">
+              <Loader2 className="h-4 w-4 animate-spin text-[#51E7FA]" />
               <span>{t.common.loading}</span>
             </div>
           ) : refRoot ? (
@@ -1062,36 +1061,36 @@ export function TeamClient({
         <section className="space-y-4">
           {/* Root Member Own Left / Right Remaining BV & Headcount Overview */}
           {placeRootOverview && (
-            <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#141619]">
-              <div className="border-b border-white/[0.06] px-4 py-2 text-[11px] font-medium text-[#A7AEBC]">
+            <div className="overflow-hidden rounded-2xl border border-[#2B3D4D] bg-[#101B27] shadow-md">
+              <div className="border-b border-[#2B3D4D] px-4 py-2 text-[11px] font-semibold text-[#CAD7E6]">
                 {t.tree.rootOverviewLabel}
               </div>
-              <div className="grid grid-cols-2 divide-x divide-white/[0.1]">
+              <div className="grid grid-cols-2 divide-x divide-[#2B3D4D]">
                 <div className="p-3.5">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-[#CBB487] text-[11px] font-bold text-[#08090B]">
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-[#51E7FA] text-[11px] font-bold text-[#0A101A]">
                       L
                     </span>
-                    <span className="text-xs text-[#D6D3CC]">
+                    <span className="text-xs text-[#CAD7E6]">
                       {t.common.left} ({placeRootOverview.leftCount})
                     </span>
-                    <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#56C9DC]" />
+                    <span className="ml-auto h-2 w-2 rounded-full bg-[#51E7FA] shadow-[0_0_6px_#51E7FA]" />
                   </div>
-                  <div className="mt-2 tabular-nums text-lg font-bold text-[#F2F0EB]">
+                  <div className="mt-2 tabular-nums text-xl font-black text-[#F4F8FC]">
                     {formatBv(placeRootOverview.leftBv)}
                   </div>
                 </div>
                 <div className="p-3.5">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-[#CBB487] text-[11px] font-bold text-[#08090B]">
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-[#B79CFF] text-[11px] font-bold text-[#0A101A]">
                       R
                     </span>
-                    <span className="text-xs text-[#D6D3CC]">
+                    <span className="text-xs text-[#CAD7E6]">
                       {t.common.right} ({placeRootOverview.rightCount})
                     </span>
-                    <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#A799F7]" />
+                    <span className="ml-auto h-2 w-2 rounded-full bg-[#B79CFF] shadow-[0_0_6px_#B79CFF]" />
                   </div>
-                  <div className="mt-2 tabular-nums text-lg font-bold text-[#F2F0EB]">
+                  <div className="mt-2 tabular-nums text-xl font-black text-[#F4F8FC]">
                     {formatBv(placeRootOverview.rightBv)}
                   </div>
                 </div>
@@ -1103,25 +1102,25 @@ export function TeamClient({
           {placeBreadcrumbs.length > 0 && (
             <nav
               aria-label="Placement Path"
-              className="flex flex-wrap items-center gap-1 rounded-xl border border-white/[0.08] bg-[#141619] px-3 py-2 text-xs"
+              className="flex flex-wrap items-center gap-1 rounded-xl border border-[#2B3D4D] bg-[#101B27] px-3 py-2 text-xs"
             >
               {placeBreadcrumbs.map((crumb, idx) => {
                 const isLast = idx === placeBreadcrumbs.length - 1;
                 return (
                   <div key={crumb.id} className="flex items-center gap-1">
-                    {idx > 0 && <ChevronRight className="h-3.5 w-3.5 text-[#A7AEBC]" />}
+                    {idx > 0 && <ChevronRight className="h-3.5 w-3.5 text-[#AAB8C7]" />}
                     <button
                       type="button"
                       disabled={isLast}
                       onClick={() => void loadPlacementFocus(crumb.id, true)}
                       className={`inline-flex min-h-[32px] items-center gap-1 rounded-lg px-2 py-1 font-medium transition ${
                         isLast
-                          ? "bg-[#CBB487]/15 text-[#CBB487]"
-                          : "text-[#D6D3CC] hover:bg-white/[0.04] hover:text-[#F2F0EB]"
+                          ? "bg-[#51E7FA]/15 text-[#51E7FA]"
+                          : "text-[#CAD7E6] hover:bg-white/[0.04] hover:text-[#51E7FA]"
                       }`}
                     >
                       {crumb.leg && (
-                        <span className="font-mono-sgt text-[10px] text-[#A7AEBC]">
+                        <span className="font-mono-sgt text-[10px] text-[#AAB8C7]">
                           {crumb.leg === "LEFT" ? "L" : "R"}·
                         </span>
                       )}
@@ -1136,7 +1135,7 @@ export function TeamClient({
           {placeError && (
             <div
               role="alert"
-              className="flex items-center justify-between gap-3 rounded-2xl border border-rose-500/35 bg-[#141619] p-4 text-xs text-rose-300"
+              className="flex items-center justify-between gap-3 rounded-2xl border border-rose-500/35 bg-[#101B27] p-4 text-xs text-rose-300"
             >
               <span className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -1147,7 +1146,7 @@ export function TeamClient({
                 onClick={() =>
                   void loadPlacementFocus(placeFocus?.id ?? initialFocusId, false)
                 }
-                className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-lg border border-[#CBB487]/50 px-3 font-semibold text-[#CBB487]"
+                className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-lg border border-[#51E7FA]/50 px-3 font-semibold text-[#51E7FA]"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 <span>{t.common.retry}</span>
@@ -1156,16 +1155,16 @@ export function TeamClient({
           )}
 
           {placeLoading && !placeFocus ? (
-            <div className="flex min-h-[180px] items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-[#141619] p-8 text-xs text-[#A7AEBC]">
-              <Loader2 className="h-4 w-4 animate-spin text-[#CBB487]" />
+            <div className="flex min-h-[180px] items-center justify-center gap-2 rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-8 text-xs text-[#AAB8C7]">
+              <Loader2 className="h-4 w-4 animate-spin text-[#51E7FA]" />
               <span>{t.common.loading}</span>
             </div>
           ) : placeFocus ? (
             <div className="space-y-0">
-              {/* Focus Node Card (Center, Champagne Gold Border) */}
+              {/* Focus Node Card (Center, Ice Blue Glowing Border) */}
               <div
                 data-node-id={`place-${placeFocus.id}`}
-                className={`mx-auto max-w-md rounded-2xl border border-[#CBB487] bg-[#141619] p-4 transition-all ${
+                className={`mx-auto max-w-md rounded-2xl border border-[#51E7FA] bg-[#101B27] p-4 transition-all shadow-[0_0_15px_rgba(81,231,250,0.35)] ${
                   highlightedId === placeFocus.id ? "r10-node-highlight" : ""
                 }`}
               >
@@ -1177,19 +1176,23 @@ export function TeamClient({
                   >
                     <div className="flex flex-wrap items-center gap-1.5">
                       {placeFocus.placementLeg && (
-                        <span className="rounded bg-[#CBB487] px-1.5 py-0.5 text-[10px] font-bold text-[#08090B]">
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold text-[#0A101A] ${
+                            placeFocus.placementLeg === "LEFT" ? "bg-[#51E7FA]" : "bg-[#B79CFF]"
+                          }`}
+                        >
                           {placeFocus.placementLeg === "LEFT" ? "L" : "R"}
                         </span>
                       )}
-                      <span className="font-mono-sgt text-xs font-bold text-[#CBB487]">
+                      <span className="font-mono-sgt text-xs font-bold text-[#51E7FA]">
                         {placeFocus.memberCode}
                       </span>
-                      <span className="rounded border border-white/[0.08] bg-[#08090B] px-2 py-0.5 text-[10px] font-medium text-[#F2F0EB]">
+                      <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-2 py-0.5 text-[10px] font-medium text-[#F4F8FC]">
                         {placeFocus.packageCode ?? "—"}
                       </span>
                       <StatusBadge status={placeFocus.status} locale={locale} />
                     </div>
-                    <div className="mt-1.5 truncate text-base font-semibold text-[#F2F0EB]">
+                    <div className="mt-1.5 truncate text-base font-semibold text-[#F4F8FC]">
                       {placeFocus.displayName}
                     </div>
                   </button>
@@ -1197,7 +1200,7 @@ export function TeamClient({
                   <button
                     type="button"
                     onClick={() => setDetailModal({ source: "placement", node: placeFocus })}
-                    className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-xl border border-white/[0.1] bg-[#08090B] px-2.5 text-[11px] font-medium text-[#CBB487] hover:border-[#CBB487]"
+                    className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-xl border border-[#2B3D4D] bg-[#0A101A] px-2.5 text-[11px] font-medium text-[#51E7FA] hover:border-[#51E7FA]"
                   >
                     <Info className="h-3.5 w-3.5" />
                     <span>{t.tree.detailsBtn}</span>
@@ -1205,20 +1208,20 @@ export function TeamClient({
                 </div>
 
                 {placeFocus.leftBv !== null && placeFocus.rightBv !== null && (
-                  <div className="mt-3 grid grid-cols-2 divide-x divide-white/[0.1] rounded-xl border border-white/[0.07] bg-[#08090B] text-[11px]">
+                  <div className="mt-3 grid grid-cols-2 divide-x divide-[#2B3D4D] rounded-xl border border-[#2B3D4D] bg-[#0A101A] text-[11px]">
                     <div className="px-3 py-2">
-                      <div className="text-[#56C9DC]">
+                      <div className="text-[#51E7FA] font-medium">
                         {t.common.left} ({placeFocus.leftCount})
                       </div>
-                      <div className="tabular-nums font-semibold text-[#F2F0EB]">
+                      <div className="tabular-nums font-semibold text-[#F4F8FC]">
                         {formatBv(placeFocus.leftBv)}
                       </div>
                     </div>
                     <div className="px-3 py-2">
-                      <div className="text-[#A799F7]">
+                      <div className="text-[#B79CFF] font-medium">
                         {t.common.right} ({placeFocus.rightCount})
                       </div>
-                      <div className="tabular-nums font-semibold text-[#F2F0EB]">
+                      <div className="tabular-nums font-semibold text-[#F4F8FC]">
                         {formatBv(placeFocus.rightBv)}
                       </div>
                     </div>
@@ -1226,33 +1229,33 @@ export function TeamClient({
                 )}
               </div>
 
-              {/* Fork Connector Hairlines to Left & Right Slots */}
+              {/* Fork Connector Lines to Left & Right Slots: Left Ice-Blue, Right Lavender */}
               <div aria-hidden="true" className="mx-auto max-w-md px-12 sm:px-20">
-                <div className="mx-auto h-4 w-px bg-[#CBB487]/50" />
-                <div className="h-px w-full bg-[#CBB487]/50" />
+                <div className="mx-auto h-4 w-px bg-[#2B3D4D]" />
+                <div className="h-px w-full bg-[#2B3D4D]" />
                 <div className="flex justify-between">
-                  <div className="h-4 w-px bg-[#CBB487]/50" />
-                  <div className="h-4 w-px bg-[#CBB487]/50" />
+                  <div className="h-4 w-[2px] bg-[#51E7FA] shadow-[0_0_6px_rgba(81,231,250,0.8)]" />
+                  <div className="h-4 w-[2px] bg-[#B79CFF] shadow-[0_0_6px_rgba(183,156,255,0.8)]" />
                 </div>
               </div>
 
               {/* Side-by-Side L / R Immediate Children */}
               <div className="mx-auto grid max-w-2xl grid-cols-2 gap-2.5 sm:gap-4">
                 {[
-                  { leg: "LEFT" as const, label: "L", dot: "bg-[#56C9DC]", node: placeLeft },
-                  { leg: "RIGHT" as const, label: "R", dot: "bg-[#A799F7]", node: placeRight },
+                  { leg: "LEFT" as const, label: "L", pillBg: "bg-[#51E7FA]", dot: "bg-[#51E7FA]", node: placeLeft, textAccent: "text-[#51E7FA]" },
+                  { leg: "RIGHT" as const, label: "R", pillBg: "bg-[#B79CFF]", dot: "bg-[#B79CFF]", node: placeRight, textAccent: "text-[#B79CFF]" },
                 ].map((slot) =>
                   slot.node ? (
                     <div
                       key={slot.leg}
                       data-node-id={`place-${slot.node.id}`}
-                      className={`min-w-0 rounded-2xl border border-white/[0.1] bg-[#141619] p-3 transition hover:border-[#CBB487]/65 sm:p-4 ${
-                        highlightedId === slot.node.id ? "r10-node-highlight border-[#CBB487]" : ""
+                      className={`min-w-0 rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-3 transition hover:border-[#51E7FA]/70 sm:p-4 ${
+                        highlightedId === slot.node.id ? "r10-node-highlight border-[#51E7FA]" : ""
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1.5">
                         <div className="flex items-center gap-1.5">
-                          <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-[#CBB487] text-[11px] font-bold text-[#08090B]">
+                          <span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] ${slot.pillBg} text-[11px] font-bold text-[#0A101A]`}>
                             {slot.label}
                           </span>
                           <span className={`h-1.5 w-1.5 rounded-full ${slot.dot}`} />
@@ -1264,7 +1267,7 @@ export function TeamClient({
                             setDetailModal({ source: "placement", node: slot.node! })
                           }
                           aria-label={`${slot.node.displayName} ${t.tree.detailsBtn}`}
-                          className="inline-flex min-h-[32px] items-center gap-1 rounded-lg border border-white/[0.08] bg-[#08090B] px-2 text-[10px] font-medium text-[#CBB487] hover:border-[#CBB487]"
+                          className="inline-flex min-h-[32px] items-center gap-1 rounded-lg border border-[#2B3D4D] bg-[#0A101A] px-2 text-[10px] font-medium text-[#51E7FA] hover:border-[#51E7FA]"
                         >
                           <Info className="h-3 w-3" />
                           <span className="hidden sm:inline">{t.tree.detailsBtn}</span>
@@ -1276,28 +1279,28 @@ export function TeamClient({
                         onClick={() => void loadPlacementFocus(slot.node!.id, true)}
                         className="mt-2.5 block w-full min-w-0 text-left"
                       >
-                        <div className="font-mono-sgt truncate text-xs font-bold text-[#CBB487]">
+                        <div className={`font-mono-sgt truncate text-xs font-bold ${slot.textAccent}`}>
                           {slot.node.memberCode}
                         </div>
-                        <div className="mt-0.5 truncate text-sm font-semibold text-[#F2F0EB]">
+                        <div className="mt-0.5 truncate text-sm font-semibold text-[#F4F8FC]">
                           {slot.node.displayName}
                         </div>
                         <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                          <span className="rounded border border-white/[0.08] bg-[#08090B] px-1.5 py-0.5 text-[10px] text-[#F2F0EB]">
+                          <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-1.5 py-0.5 text-[10px] text-[#F4F8FC]">
                             {slot.node.packageCode ?? "—"}
                           </span>
                           <StatusBadge status={slot.node.status} locale={locale} />
                         </div>
 
                         {slot.node.leftBv !== null && slot.node.rightBv !== null && (
-                          <div className="mt-2.5 rounded-lg border border-white/[0.06] bg-[#08090B] px-2 py-1.5 text-[10px] tabular-nums text-[#A7AEBC]">
+                          <div className="mt-2.5 rounded-lg border border-[#2B3D4D] bg-[#0A101A] px-2 py-1.5 text-[10px] tabular-nums text-[#CAD7E6]">
                             {locale === "zh-CN"
                               ? `左 ${slot.node.leftCount} · 右 ${slot.node.rightCount}`
                               : `L ${slot.node.leftCount} · R ${slot.node.rightCount}`}
                           </div>
                         )}
 
-                        <div className="mt-2 flex items-center justify-between text-[11px] text-[#CBB487]">
+                        <div className={`mt-2 flex items-center justify-between text-[11px] font-medium ${slot.textAccent}`}>
                           <span className="truncate">{t.tree.drillDownHint}</span>
                           <ChevronRight className="h-3.5 w-3.5 shrink-0" />
                         </div>
@@ -1306,15 +1309,15 @@ export function TeamClient({
                   ) : (
                     <div
                       key={slot.leg}
-                      className="flex min-h-[140px] flex-col justify-between rounded-2xl border border-dashed border-white/[0.12] bg-[#141619]/40 p-3 sm:p-4"
+                      className="flex min-h-[140px] flex-col justify-between rounded-2xl border border-dashed border-[#2B3D4D] bg-[#101B27]/40 p-3 sm:p-4"
                     >
                       <div className="flex items-center gap-1.5">
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] border border-white/15 bg-[#08090B] text-[11px] font-bold text-[#A7AEBC]">
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] border border-white/15 bg-[#0A101A] text-[11px] font-bold text-[#AAB8C7]">
                           {slot.label}
                         </span>
                         <span className={`h-1.5 w-1.5 rounded-full opacity-50 ${slot.dot}`} />
                       </div>
-                      <div className="py-4 text-center text-xs text-[#A7AEBC]">
+                      <div className="py-4 text-center text-xs text-[#AAB8C7]">
                         {t.tree.emptySlot}
                       </div>
                       <div />
@@ -1335,22 +1338,22 @@ export function TeamClient({
       >
         {detailModal?.source === "referral" && (
           <div className="space-y-4 text-xs">
-            <div className="rounded-xl border border-[#CBB487]/35 bg-[#08090B] p-4">
+            <div className="rounded-xl border border-[#51E7FA]/35 bg-[#101B27] p-4">
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono-sgt text-sm font-bold text-[#CBB487]">
+                <span className="font-mono-sgt text-sm font-bold text-[#51E7FA]">
                   {detailModal.node.memberCode}
                 </span>
                 <StatusBadge status={detailModal.node.status} locale={locale} />
               </div>
-              <div className="mt-1 text-base font-semibold text-[#F2F0EB]">
+              <div className="mt-1 text-base font-semibold text-[#F4F8FC]">
                 {detailModal.node.displayName}
               </div>
             </div>
 
-            <div className="space-y-2.5 rounded-xl border border-white/[0.08] bg-[#08090B] p-4">
+            <div className="space-y-2.5 rounded-xl border border-[#2B3D4D] bg-[#101B27] p-4">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.sponsorLabel}</span>
-                <span className="font-medium text-[#F2F0EB]">
+                <span className="text-[#AAB8C7]">{t.tree.sponsorLabel}</span>
+                <span className="font-medium text-[#F4F8FC]">
                   {detailModal.node.sponsorCode
                     ? `${detailModal.node.sponsorCode} (${detailModal.node.sponsorName})`
                     : locale === "zh-CN"
@@ -1359,22 +1362,22 @@ export function TeamClient({
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.directCountLabel}</span>
-                <span className="inline-flex items-center gap-1 tabular-nums font-semibold text-[#CBB487]">
+                <span className="text-[#AAB8C7]">{t.tree.directCountLabel}</span>
+                <span className="inline-flex items-center gap-1 tabular-nums font-semibold text-[#51E7FA]">
                   <Users className="h-3.5 w-3.5" />
                   <span>{detailModal.node.directCount}</span>
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.packageStatusLabel}</span>
-                <span className="font-semibold text-[#F2F0EB]">
+                <span className="text-[#AAB8C7]">{t.tree.packageStatusLabel}</span>
+                <span className="font-semibold text-[#F4F8FC]">
                   {detailModal.node.packageCode ?? "—"} ·{" "}
                   {formatMemberStatus(detailModal.node.status, locale)}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.placementParentLabel}</span>
-                <span className="font-mono-sgt text-[#D6D3CC]">
+                <span className="text-[#AAB8C7]">{t.tree.placementParentLabel}</span>
+                <span className="font-mono-sgt text-[#CAD7E6]">
                   {detailModal.node.placementParentCode
                     ? `${detailModal.node.placementParentCode} (${formatLegLabel(detailModal.node.placementLeg, locale)})`
                     : locale === "zh-CN"
@@ -1382,9 +1385,9 @@ export function TeamClient({
                       : "Pending"}
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-2 border-t border-white/[0.08] pt-2">
-                <span className="text-[#A7AEBC]">{t.tree.joinedAtLabel}</span>
-                <span className="font-mono-sgt text-[#A7AEBC]">
+              <div className="flex items-center justify-between gap-2 border-t border-[#2B3D4D] pt-2">
+                <span className="text-[#AAB8C7]">{t.tree.joinedAtLabel}</span>
+                <span className="font-mono-sgt text-[#AAB8C7]">
                   {detailModal.node.joinedAtLabel}
                 </span>
               </div>
@@ -1394,22 +1397,22 @@ export function TeamClient({
 
         {detailModal?.source === "placement" && (
           <div className="space-y-4 text-xs">
-            <div className="rounded-xl border border-[#CBB487]/35 bg-[#08090B] p-4">
+            <div className="rounded-xl border border-[#51E7FA]/35 bg-[#101B27] p-4">
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono-sgt text-sm font-bold text-[#CBB487]">
+                <span className="font-mono-sgt text-sm font-bold text-[#51E7FA]">
                   {detailModal.node.memberCode}
                 </span>
                 <StatusBadge status={detailModal.node.status} locale={locale} />
               </div>
-              <div className="mt-1 text-base font-semibold text-[#F2F0EB]">
+              <div className="mt-1 text-base font-semibold text-[#F4F8FC]">
                 {detailModal.node.displayName}
               </div>
             </div>
 
-            <div className="space-y-2.5 rounded-xl border border-white/[0.08] bg-[#08090B] p-4">
+            <div className="space-y-2.5 rounded-xl border border-[#2B3D4D] bg-[#101B27] p-4">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.placementParentLabel}</span>
-                <span className="font-medium text-[#F2F0EB]">
+                <span className="text-[#AAB8C7]">{t.tree.placementParentLabel}</span>
+                <span className="font-medium text-[#F4F8FC]">
                   {detailModal.node.placementParentCode
                     ? `${detailModal.node.placementParentCode} (${detailModal.node.placementParentName})`
                     : locale === "zh-CN"
@@ -1418,8 +1421,8 @@ export function TeamClient({
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.placementLegLabel}</span>
-                <span className="font-mono-sgt font-semibold text-[#CBB487]">
+                <span className="text-[#AAB8C7]">{t.tree.placementLegLabel}</span>
+                <span className="font-mono-sgt font-semibold text-[#51E7FA]">
                   {detailModal.node.placementLeg
                     ? formatLegLabel(detailModal.node.placementLeg, locale)
                     : locale === "zh-CN"
@@ -1428,41 +1431,41 @@ export function TeamClient({
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.sponsorLabel}</span>
-                <span className="font-mono-sgt text-[#D6D3CC]">
+                <span className="text-[#AAB8C7]">{t.tree.sponsorLabel}</span>
+                <span className="font-mono-sgt text-[#CAD7E6]">
                   {detailModal.node.sponsorCode ?? (locale === "zh-CN" ? "顶点" : "Root")}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[#A7AEBC]">{t.tree.packageStatusLabel}</span>
-                <span className="font-semibold text-[#F2F0EB]">
+                <span className="text-[#AAB8C7]">{t.tree.packageStatusLabel}</span>
+                <span className="font-semibold text-[#F4F8FC]">
                   {detailModal.node.packageCode ?? "—"} ·{" "}
                   {formatMemberStatus(detailModal.node.status, locale)}
                 </span>
               </div>
               {detailModal.node.leftBv !== null && detailModal.node.rightBv !== null && (
-                <div className="grid grid-cols-2 gap-2 border-t border-white/[0.08] pt-2.5">
+                <div className="grid grid-cols-2 gap-2 border-t border-[#2B3D4D] pt-2.5">
                   <div>
-                    <div className="text-[#56C9DC]">
+                    <div className="text-[#51E7FA]">
                       {t.common.left} ({detailModal.node.leftCount})
                     </div>
-                    <div className="tabular-nums font-semibold text-[#F2F0EB]">
+                    <div className="tabular-nums font-semibold text-[#F4F8FC]">
                       {formatBv(detailModal.node.leftBv)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[#A799F7]">
+                    <div className="text-[#B79CFF]">
                       {t.common.right} ({detailModal.node.rightCount})
                     </div>
-                    <div className="tabular-nums font-semibold text-[#F2F0EB]">
+                    <div className="tabular-nums font-semibold text-[#F4F8FC]">
                       {formatBv(detailModal.node.rightBv)}
                     </div>
                   </div>
                 </div>
               )}
-              <div className="flex items-center justify-between gap-2 border-t border-white/[0.08] pt-2">
-                <span className="text-[#A7AEBC]">{t.tree.joinedAtLabel}</span>
-                <span className="font-mono-sgt text-[#A7AEBC]">
+              <div className="flex items-center justify-between gap-2 border-t border-[#2B3D4D] pt-2">
+                <span className="text-[#AAB8C7]">{t.tree.joinedAtLabel}</span>
+                <span className="font-mono-sgt text-[#AAB8C7]">
                   {detailModal.node.joinedAtLabel}
                 </span>
               </div>
@@ -1477,7 +1480,7 @@ export function TeamClient({
                   setActiveTab("referral");
                   void locateInReferralTree(targetId);
                 }}
-                className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-[#CBB487] text-sm font-semibold text-[#08090B] transition active:scale-[0.98]"
+                className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-[#51E7FA] text-sm font-bold text-[#0A101A] transition active:scale-[0.98] shadow-[0_0_12px_rgba(81,231,250,0.3)]"
               >
                 <GitBranch className="h-4 w-4" />
                 <span>{t.tree.viewInReferralTree}</span>
@@ -1492,9 +1495,9 @@ export function TeamClient({
                   setDetailModal(null);
                   void loadPlacementFocus(targetId, true);
                 }}
-                className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-white/[0.1] bg-[#08090B] text-xs font-medium text-[#F2F0EB] hover:border-[#CBB487]/60"
+                className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-[#2B3D4D] bg-[#101B27] text-xs font-medium text-[#F4F8FC] hover:border-[#51E7FA]/60"
               >
-                <Eye className="h-4 w-4 text-[#CBB487]" />
+                <Eye className="h-4 w-4 text-[#51E7FA]" />
                 <span>{t.tree.drillDownHint}</span>
               </button>
             )}

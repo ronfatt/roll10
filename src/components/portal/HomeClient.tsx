@@ -23,7 +23,7 @@ import {
   computeMidnightCountdownState,
   formatMemberCountText,
 } from "@/lib/rollover-clock";
-import { Roll10Logo } from "@/components/Roll10Logo";
+import { Roll10BrandCombo, Roll10Logo, Roll10OrbitalIcon } from "@/components/Roll10Logo";
 import {
   BottomDrawer,
   CheckeredFlagIcon,
@@ -257,30 +257,30 @@ export function HomeClient({
         </div>
       )}
 
-      {/* 1. Sculpted Top Header: ROLL10 Logo left · | 1,000 BV Plan right */}
+      {/* 1. Sculpted Top Header: 滚动星球 ROLL10 Logo left · | 1,000 BV Plan right */}
       <header className="r10-enter flex items-center justify-between gap-3 pt-0.5 lg:hidden">
         <Link href="/dashboard" className="inline-flex min-h-[38px] items-center">
-          <Roll10Logo className="h-[23px] w-auto drop-shadow-[0_2px_10px_rgba(231,201,142,0.18)]" />
+          <Roll10BrandCombo />
         </Link>
 
         <Link
           href={waitingUpgrade ? `/packages?orderId=${waitingUpgrade.orderId}` : "/packages"}
-          className="inline-flex min-h-[36px] items-center gap-2.5 pl-2 text-[13px] font-medium tracking-tight text-[#EDEAE2] transition-colors hover:text-[#E7C98E]"
+          className="inline-flex min-h-[36px] items-center gap-2.5 pl-2 text-[12.5px] font-medium tracking-tight text-[#CAD7E6] transition-colors hover:text-[#51E7FA]"
         >
           <span className="h-3.5 w-px bg-white/20" aria-hidden="true" />
-          <span className="whitespace-nowrap">{member.planBadge}</span>
+          <span className="whitespace-nowrap font-semibold">{member.planBadge}</span>
         </Link>
       </header>
 
       {/* Desktop Plan / Status Sub-bar */}
-      <div className="hidden items-center justify-between border-b border-[#6E512D]/30 pb-2.5 lg:flex">
+      <div className="hidden items-center justify-between border-b border-[#2B3D4D] pb-2.5 lg:flex">
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-semibold text-[#F2F0EB]">{member.displayName}</span>
-          <span className="font-mono-sgt text-xs text-[#9DA4B0]">{member.memberCode}</span>
+          <span className="font-semibold text-[#F4F8FC]">{member.displayName}</span>
+          <span className="font-mono-sgt text-xs text-[#AAB8C7]">{member.memberCode}</span>
         </div>
         <Link
           href={waitingUpgrade ? `/packages?orderId=${waitingUpgrade.orderId}` : "/packages"}
-          className="inline-flex min-h-[36px] items-center gap-2 rounded-full border border-[#6E512D]/55 bg-[#14171C] px-3.5 text-xs font-medium text-[#E7C98E] transition-colors hover:border-[#E7C98E]"
+          className="inline-flex min-h-[36px] items-center gap-2 rounded-full border border-[#2B3D4D] bg-[#101B27] px-3.5 text-xs font-medium text-[#51E7FA] transition-colors hover:border-[#51E7FA]"
         >
           <span>{member.planBadge}</span>
           <ChevronRight className="h-3.5 w-3.5" />
@@ -341,47 +341,47 @@ export function HomeClient({
         </section>
       )}
 
-      {/* 2. 3D Obsidian-Gold Motorsport Telemetry Hero Card */}
-      <section className="r10-enter r10-hero-3d relative overflow-hidden rounded-[22px]">
-        {/* Sweeping circuit curve, apex curbs & horizon champagne glow */}
+      {/* 2. Precision Titanium-Motorsport Telemetry Hero Card */}
+      <section className="r10-enter r10-hero-titanium relative overflow-hidden rounded-[22px]">
+        {/* Sweeping circuit curve, apex curbs & cyan horizon light streak */}
         <HeroRacetrackBackdrop />
 
         {/* Subtle top edge specular catchlight */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-[#F7E5BA]/70 via-[#E7C98E]/35 to-transparent"
+          className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-[#A5F6FF]/70 via-[#51E7FA]/35 to-transparent"
         />
 
         <div className="relative z-10 p-3.5 sm:p-5">
           {/* Two-column on >=380px, stacks countdown cleanly onto row 2 at 360px */}
           <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-[1.05fr_0.95fr] min-[380px]:items-center">
-            {/* Left: Withdrawable U Balance & 3D Gold CTA */}
+            {/* Left: Withdrawable U Balance & Titanium Brushed CTA */}
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <span
-                  className="h-3.5 w-[2.5px] rounded-full bg-gradient-to-b from-[#F7E5BA] to-[#B58A44] shadow-[0_0_8px_rgba(231,201,142,0.5)]"
+                  className="h-3.5 w-[2.5px] rounded-full bg-[#51E7FA] shadow-[0_0_8px_rgba(81,231,250,0.85)]"
                   aria-hidden="true"
                 />
-                <span className="whitespace-nowrap text-[11.5px] font-medium text-[#D6D8DE]">
+                <span className="whitespace-nowrap text-[11.5px] font-medium text-[#CAD7E6]">
                   {t.overview.withdrawableLabel}
                 </span>
               </div>
 
               <div
-                className={`mt-1.5 flex items-baseline gap-1.5 font-bold tracking-tight tabular-nums text-[#F8F6F1] drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] ${
-                  longBalance ? "text-[26px] sm:text-[32px]" : "text-[31px] sm:text-[36px]"
+                className={`mt-1.5 flex items-baseline gap-1.5 font-bold tracking-tight tabular-nums text-[#F4F8FC] drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] ${
+                  longBalance ? "text-[26px] sm:text-[32px]" : "text-[32px] sm:text-[36px]"
                 } leading-none`}
               >
                 <span>{balanceStr}</span>
-                <span className="text-[18px] sm:text-[21px] font-bold text-[#E7C98E]">
+                <span className="text-[19px] sm:text-[22px] font-bold text-[#51E7FA]">
                   {t.common.points}
                 </span>
               </div>
 
               {member.lockedPointsCents > 0 && (
-                <div className="mt-1 flex items-center gap-1.5 text-[10.5px] text-[#A9AFBC]">
+                <div className="mt-1 flex items-center gap-1.5 text-[10.5px] text-[#AAB8C7]">
                   <span>{t.overview.frozenLabel}:</span>
-                  <span className="tabular-nums font-medium text-[#F2F0EB]">
+                  <span className="tabular-nums font-medium text-[#F4F8FC]">
                     {formatU(member.lockedPointsCents)} {t.common.points}
                   </span>
                 </div>
@@ -390,18 +390,18 @@ export function HomeClient({
               <div className="mt-3.5 flex flex-wrap items-center gap-1.5">
                 <Link
                   href="/wallet?mode=withdraw"
-                  className="r10-btn-gold-3d inline-flex min-h-[38px] items-center justify-center gap-1 rounded-xl px-3.5 text-[12.5px] font-bold tracking-tight transition-transform duration-100 active:scale-[0.98]"
+                  className="r10-btn-titanium inline-flex min-h-[38px] items-center justify-center gap-1 rounded-xl px-4 text-[12.5px] font-bold tracking-tight shadow-md transition-transform duration-100 active:scale-[0.98]"
                 >
                   <span>{t.overview.withdrawCta}</span>
-                  <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.3]" />
+                  <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.4]" />
                 </Link>
 
                 <Link
                   href="/wallet"
-                  className="inline-flex min-h-[38px] items-center gap-0.5 rounded-xl border border-white/[0.11] bg-black/45 px-2.5 text-[11px] font-medium text-[#C8CDD6] backdrop-blur-xs transition-colors hover:border-[#E7C98E]/55 hover:text-[#F1D59B]"
+                  className="inline-flex min-h-[38px] items-center gap-0.5 rounded-xl border border-[#2B3D4D] bg-[#0E1722]/80 px-3 text-[11px] font-medium text-[#CAD7E6] backdrop-blur-xs transition-colors hover:border-[#51E7FA]/55 hover:text-[#51E7FA]"
                 >
                   <span>{t.overview.ledgerCta}</span>
-                  <ChevronRight className="h-3 w-3 text-[#9DA4B0]" />
+                  <ChevronRight className="h-3 w-3 text-[#AAB8C7]" />
                 </Link>
               </div>
             </div>
@@ -418,19 +418,19 @@ export function HomeClient({
                 progress={clockState?.isSettling ? 1 : rolloverProgress}
                 isUrgentAmber={Boolean(clockState?.isUrgentAmber)}
               >
-                <span className="text-[10px] font-medium text-[#C2C7D0]">
+                <span className="text-[10px] font-medium text-[#CAD7E6]">
                   {t.overview.rolloverCountdownLabel}
                 </span>
 
                 {clockState?.isSettling ? (
-                  <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-[#E7C98E]">
+                  <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-[#51E7FA]">
                     <RefreshCw className="h-3.5 w-3.5 animate-spin" />
                     <span>{t.overview.rolloverSettling}</span>
                   </div>
                 ) : (
                   <div
-                    className={`font-mono-sgt mt-1 whitespace-nowrap text-[18.5px] sm:text-[21px] font-bold tracking-wide tabular-nums drop-shadow-[0_0_12px_rgba(231,201,142,0.38)] ${
-                      clockState?.isUrgentAmber ? "text-amber-300" : "text-[#F0D399]"
+                    className={`font-mono-sgt mt-1 whitespace-nowrap text-[18.5px] sm:text-[21px] font-bold tracking-wide tabular-nums text-[#F4F8FC] drop-shadow-[0_0_12px_rgba(81,231,250,0.45)] ${
+                      clockState?.isUrgentAmber ? "text-amber-300" : "text-[#F4F8FC]"
                     }`}
                   >
                     {clockState?.hhmmss.slice(0, 6) ?? "00:00:"}
@@ -440,7 +440,7 @@ export function HomeClient({
                   </div>
                 )}
 
-                <span className="font-mono-sgt mt-0.5 text-[10px] font-medium text-[#C8CDD6]">
+                <span className="font-mono-sgt mt-0.5 text-[10px] font-medium text-[#AAB8C7]">
                   {t.overview.rolloverMidnightTag}
                 </span>
 
@@ -457,42 +457,42 @@ export function HomeClient({
           <button
             type="button"
             onClick={() => setEodDrawerOpen(true)}
-            className="mt-3 flex min-h-[38px] w-full items-center justify-between gap-2 rounded-xl border border-[#C9A66B]/28 bg-[#090B0E]/88 px-2.5 py-1.5 text-left text-[10.5px] shadow-[inset_0_2px_6px_rgba(0,0,0,0.75)] backdrop-blur-xs transition-colors hover:border-[#E7C98E]/55"
+            className="mt-3 flex min-h-[38px] w-full items-center justify-between gap-2 rounded-xl border border-[#2B3D4D] bg-[#0A101A]/90 px-2.5 py-1.5 text-left text-[10.5px] shadow-[inset_0_2px_6px_rgba(0,0,0,0.75)] backdrop-blur-xs transition-colors hover:border-[#51E7FA]/55"
           >
             <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 leading-snug">
               <CheckeredFlagIcon className="h-3.5 w-3.5 shrink-0" />
-              <span className="shrink-0 font-medium text-[#D6D8DE]">
+              <span className="shrink-0 font-medium text-[#CAD7E6]">
                 {locale === "zh-CN" ? "预计结转" : "Est. rollover"}
               </span>
               <span className="h-2.5 w-px shrink-0 bg-white/15" aria-hidden="true" />
-              <span className="font-medium tabular-nums text-[#EAE7DF]">
+              <span className="font-medium tabular-nums text-[#F4F8FC]">
                 {buildEstimateDetail()}
               </span>
             </div>
-            <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#9DA4B0]" />
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#AAB8C7]" />
           </button>
         </div>
       </section>
 
-      {/* 3. Left & Right Team BV Dual-Chamber 3D Glass Card */}
-      <section className="r10-enter r10-delay-1 r10-card-3d relative overflow-hidden rounded-[20px]">
+      {/* 3. Left & Right Team BV Dual-Chamber 3D Titanium Card */}
+      <section className="r10-enter r10-delay-1 r10-card-titanium relative overflow-hidden rounded-[20px]">
         <ContourWaveOverlay className="absolute -bottom-1 right-0 h-[72px] w-[180px] opacity-85" />
-        <div className="relative z-10 grid grid-cols-2 divide-x divide-[#C9A66B]/20">
+        <div className="relative z-10 grid grid-cols-2 divide-x divide-[#2B3D4D]">
           <Link
             href="/tree?tab=placement&leg=LEFT"
             className="block px-4 py-3.5 transition-colors hover:bg-white/[0.025]"
           >
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#F4DCAA] to-[#C09652] text-[11px] font-bold text-[#110D07] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_2px_6px_rgba(201,166,107,0.3)]">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#7CF0FD] to-[#18C5DC] text-[11px] font-bold text-[#0A101A] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_6px_rgba(81,231,250,0.35)]">
                 L
               </span>
-              <span className="text-[12.5px] font-medium text-[#D6D8DE]">{t.overview.leftBv}</span>
-              <span className="ml-auto h-2 w-2 rounded-full bg-[#4DD7E8] shadow-[0_0_8px_#4DD7E8]" />
+              <span className="text-[12.5px] font-medium text-[#CAD7E6]">{t.overview.leftBv}</span>
+              <span className="ml-auto h-2 w-2 rounded-full bg-[#51E7FA] shadow-[0_0_8px_#51E7FA]" />
             </div>
-            <div className="mt-2 truncate tabular-nums text-[23px] font-bold leading-tight tracking-tight text-[#F7F5F0]">
+            <div className="mt-2 truncate tabular-nums text-[23px] font-bold leading-tight tracking-tight text-[#F4F8FC]">
               {formatBv(member.leftBv)}
             </div>
-            <div className="mt-0.5 tabular-nums text-[11.5px] text-[#9DA4B0]">
+            <div className="mt-0.5 tabular-nums text-[11.5px] text-[#AAB8C7]">
               {formatMemberCountText(member.leftCount, locale)}
             </div>
           </Link>
@@ -502,48 +502,48 @@ export function HomeClient({
             className="block px-4 py-3.5 transition-colors hover:bg-white/[0.025]"
           >
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#E7C98E] to-[#A67D3C] text-[11px] font-bold text-[#110D07] shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_2px_6px_rgba(201,166,107,0.25)]">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#D4C4FF] to-[#8B7CFF] text-[11px] font-bold text-[#0A101A] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_6px_rgba(183,156,255,0.3)]">
                 R
               </span>
-              <span className="text-[12.5px] font-medium text-[#D6D8DE]">{t.overview.rightBv}</span>
-              <span className="ml-auto h-2 w-2 rounded-full bg-[#8B7CFF] shadow-[0_0_8px_#8B7CFF]" />
+              <span className="text-[12.5px] font-medium text-[#CAD7E6]">{t.overview.rightBv}</span>
+              <span className="ml-auto h-2 w-2 rounded-full bg-[#B79CFF] shadow-[0_0_8px_#B79CFF]" />
             </div>
-            <div className="mt-2 truncate tabular-nums text-[23px] font-bold leading-tight tracking-tight text-[#F7F5F0]">
+            <div className="mt-2 truncate tabular-nums text-[23px] font-bold leading-tight tracking-tight text-[#F4F8FC]">
               {formatBv(member.rightBv)}
             </div>
-            <div className="mt-0.5 tabular-nums text-[11.5px] text-[#9DA4B0]">
+            <div className="mt-0.5 tabular-nums text-[11.5px] text-[#AAB8C7]">
               {formatMemberCountText(member.rightCount, locale)}
             </div>
           </Link>
         </div>
       </section>
 
-      {/* 4. Compact Horizontal "My Referrals" 3D Telemetry Capsule (Zero Truncation) */}
-      <section className="r10-enter r10-delay-1 r10-referral-3d relative overflow-hidden rounded-[20px] px-3.5 py-3">
+      {/* 4. Compact Horizontal "My Referrals" Telemetry Capsule */}
+      <section className="r10-enter r10-delay-1 r10-card-titanium relative overflow-hidden rounded-[20px] px-3.5 py-3">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#E7C98E]/60 to-transparent"
+          className="pointer-events-none absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#51E7FA]/50 to-transparent"
         />
         <div className="flex flex-wrap items-center justify-between gap-2">
           {/* Header Label + U = USDT note */}
           <Link
             href="/referrals"
-            className="flex min-w-0 items-center gap-1.5 text-[#F2F0EB] transition-colors hover:text-[#E7C98E]"
+            className="flex min-w-0 items-center gap-1.5 text-[#F4F8FC] transition-colors hover:text-[#51E7FA]"
           >
-            <Users className="h-3.5 w-3.5 shrink-0 text-[#DFBE7E]" strokeWidth={1.75} />
+            <Users className="h-3.5 w-3.5 shrink-0 text-[#51E7FA]" strokeWidth={1.8} />
             <span className="whitespace-nowrap text-[12px] font-medium">
               {t.overview.myReferralsTitle}
             </span>
-            <span className="whitespace-nowrap rounded border border-[#E7C98E]/25 bg-black/40 px-1.5 py-0.5 text-[9.5px] font-medium text-[#C9A66B]">
+            <span className="whitespace-nowrap rounded border border-[#51E7FA]/30 bg-black/40 px-1.5 py-0.5 text-[9.5px] font-medium text-[#51E7FA]">
               {t.overview.usdtUnitNote}
             </span>
           </Link>
 
-          {/* Copy Invite Link 3D Pill (top-right on compact mobile, right on wide) */}
+          {/* Copy Invite Link Pill */}
           <button
             type="button"
             onClick={() => void handleCopyInvite()}
-            className="r10-pill-dark-3d order-2 min-[460px]:order-3 inline-flex min-h-[32px] shrink-0 items-center justify-center gap-1 rounded-lg px-2.5 text-[10.5px] font-semibold text-[#EED39B] transition-all hover:border-[#E7C98E] active:scale-[0.98]"
+            className="order-2 min-[460px]:order-3 inline-flex min-h-[32px] shrink-0 items-center justify-center gap-1 rounded-lg border border-[#51E7FA]/40 bg-[#51E7FA]/12 px-2.5 text-[10.5px] font-semibold text-[#51E7FA] shadow-sm transition-all hover:border-[#51E7FA] hover:bg-[#51E7FA]/20 active:scale-[0.98]"
           >
             {copiedInvite ? (
               <>
@@ -552,7 +552,7 @@ export function HomeClient({
               </>
             ) : (
               <>
-                <Link2 className="h-3 w-3 text-[#DFBE7E]" />
+                <Link2 className="h-3 w-3 text-[#51E7FA]" />
                 <span>{t.overview.copyInviteLink}</span>
               </>
             )}
@@ -564,13 +564,13 @@ export function HomeClient({
               href="/referrals"
               className="group min-w-0 transition-opacity hover:opacity-90"
             >
-              <div className="flex items-baseline gap-1 tabular-nums text-[18px] font-bold leading-none text-[#F7F5F0]">
+              <div className="flex items-baseline gap-1 tabular-nums text-[18px] font-bold leading-none text-[#F4F8FC]">
                 <span>{member.directReferralCount}</span>
                 {locale === "zh-CN" && (
-                  <span className="text-[11px] font-medium text-[#9DA4B0]">人</span>
+                  <span className="text-[11px] font-medium text-[#AAB8C7]">人</span>
                 )}
               </div>
-              <div className="mt-1 text-[10.5px] leading-tight text-[#9DA4B0]">
+              <div className="mt-1 text-[10.5px] leading-tight text-[#AAB8C7]">
                 {t.overview.directReferralsLabel}
               </div>
             </Link>
@@ -579,11 +579,11 @@ export function HomeClient({
               href="/wallet?filter=DIRECT_USDT"
               className="group min-w-0 transition-opacity hover:opacity-90"
             >
-              <div className="flex items-baseline gap-1 tabular-nums text-[18px] font-bold leading-none text-[#F7F5F0]">
+              <div className="flex items-baseline gap-1 tabular-nums text-[18px] font-bold leading-none text-[#F4F8FC]">
                 <span>{formatUsdtMicros(member.directReferralUsdtMicros, "")}</span>
-                <span className="text-[12.5px] font-bold text-[#E7C98E]">U</span>
+                <span className="text-[12.5px] font-bold text-[#51E7FA]">U</span>
               </div>
-              <div className="mt-1 text-[10.5px] leading-tight text-[#9DA4B0]">
+              <div className="mt-1 text-[10.5px] leading-tight text-[#AAB8C7]">
                 {t.overview.referralRewardsEarnedLabel}
               </div>
             </Link>
@@ -591,35 +591,35 @@ export function HomeClient({
         </div>
       </section>
 
-      {/* 5. Today's Matching Bonus 3D Slanted Telemetry Card */}
-      <section className="r10-enter r10-delay-2 r10-card-3d relative overflow-hidden rounded-[20px] px-4 py-3.5 space-y-2.5">
+      {/* 5. Today's Matching Bonus Telemetry Card */}
+      <section className="r10-enter r10-delay-2 r10-card-titanium relative overflow-hidden rounded-[20px] px-4 py-3.5 space-y-2.5">
         <ContourWaveOverlay className="absolute -bottom-2 right-0 h-[78px] w-[190px] opacity-90" />
 
         <div className="relative z-10 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span
-              className="h-3.5 w-[2.5px] rounded-full bg-gradient-to-b from-[#F7E5BA] to-[#B58A44]"
+              className="h-3.5 w-[2.5px] rounded-full bg-[#51E7FA] shadow-[0_0_8px_rgba(81,231,250,0.8)]"
               aria-hidden="true"
             />
-            <span className="text-[12.5px] font-medium text-[#E5E7EC]">{t.overview.todayPairing}</span>
+            <span className="text-[12.5px] font-medium text-[#CAD7E6]">{t.overview.todayPairing}</span>
           </div>
-          <span className="font-mono-sgt text-xs font-semibold text-[#C9A66B]">
+          <span className="font-mono-sgt text-xs font-semibold text-[#51E7FA]">
             {matchingRatioPct}%
           </span>
         </div>
 
         <div className="relative z-10 flex flex-wrap items-baseline justify-between gap-2">
           <div className="flex items-baseline gap-1.5 tabular-nums tracking-tight">
-            <span className="text-[22px] font-bold text-[#F7F5F0]">
+            <span className="text-[22px] font-bold text-[#F4F8FC]">
               {formatU(member.todayPairedCents)}
             </span>
-            <span className="text-[18px] font-semibold text-[#B9BFC9]">
+            <span className="text-[18px] font-semibold text-[#889AA8]">
               / {formatU(member.dailyCapPointsCents)}
             </span>
-            <span className="text-[15px] font-bold text-[#E7C98E]">{t.common.points}</span>
+            <span className="text-[15px] font-bold text-[#51E7FA]">{t.common.points}</span>
           </div>
           {capReached && (
-            <span className="rounded-full border border-[#E7C98E]/45 bg-[#08090B]/80 px-2.5 py-0.5 text-[11px] font-semibold text-[#E7C98E]">
+            <span className="rounded-full border border-[#51E7FA]/45 bg-[#0A101A]/80 px-2.5 py-0.5 text-[11px] font-semibold text-[#51E7FA]">
               {t.overview.capReached}
             </span>
           )}
@@ -633,65 +633,95 @@ export function HomeClient({
         </div>
       </section>
 
-      {/* 6. Packages & Upgrade 3D Action Capsule */}
+      {/* 6. Packages & Upgrade Action Capsule */}
       <section className="r10-enter r10-delay-3">
         {waitingUpgrade ? (
           <button
             type="button"
             onClick={() => setUpgradeDrawerOpen(true)}
-            className="r10-card-3d flex min-h-[48px] w-full items-center justify-between gap-3 rounded-2xl px-4 py-2.5 text-left transition-colors hover:border-[#E7C98E]/50"
+            className="r10-card-titanium flex min-h-[48px] w-full items-center justify-between gap-3 rounded-2xl px-4 py-2.5 text-left transition-colors hover:border-[#51E7FA]/50"
           >
             <div className="flex min-w-0 items-center gap-3">
-              <Box className="h-4.5 w-4.5 shrink-0 text-[#E7C98E]" strokeWidth={1.65} />
+              <Box className="h-4.5 w-4.5 shrink-0 text-[#51E7FA]" strokeWidth={1.75} />
               <div className="min-w-0">
-                <div className="text-[13px] font-medium text-[#F2F0EB]">
+                <div className="text-[13px] font-medium text-[#F4F8FC]">
                   {t.overview.scheduledUpgradeNotice}
                 </div>
-                <div className="mt-0.5 text-[11px] text-[#9DA4B0]">
+                <div className="mt-0.5 text-[11px] text-[#AAB8C7]">
                   {waitingUpgrade.fromPlanShort} → {waitingUpgrade.toPlanShort}
                 </div>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-1.5 font-mono-sgt text-xs text-[#E7C98E]">
+            <div className="flex shrink-0 items-center gap-1.5 font-mono-sgt text-xs text-[#51E7FA]">
               <span>{waitingUpgrade.effectiveShortLabel}</span>
-              <ChevronRight className="h-4 w-4 text-[#9DA4B0]" />
+              <ChevronRight className="h-4 w-4 text-[#AAB8C7]" />
             </div>
           </button>
         ) : recentEffectiveTransition ? (
           <Link
             href="/packages"
-            className="r10-card-3d flex min-h-[48px] items-center justify-between gap-3 rounded-2xl px-4 py-2.5 transition-colors hover:border-[#E7C98E]/45"
+            className="r10-card-titanium flex min-h-[48px] items-center justify-between gap-3 rounded-2xl px-4 py-2.5 transition-colors hover:border-[#51E7FA]/45"
           >
             <div className="flex min-w-0 items-center gap-3">
-              <Box className="h-4.5 w-4.5 shrink-0 text-[#E7C98E]" strokeWidth={1.65} />
+              <Box className="h-4.5 w-4.5 shrink-0 text-[#51E7FA]" strokeWidth={1.75} />
               <div className="min-w-0">
-                <div className="text-[13px] font-medium text-[#F2F0EB]">
+                <div className="text-[13px] font-medium text-[#F4F8FC]">
                   {recentEffectiveTransition.upgradeToCode} · {t.packages.title}
                 </div>
-                <div className="mt-0.5 font-mono-sgt text-[11px] text-[#9DA4B0]">
+                <div className="mt-0.5 font-mono-sgt text-[11px] text-[#AAB8C7]">
                   {recentEffectiveTransition.upgradeEffectiveLabel}
                 </div>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-[#E7C98E]">
+            <div className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-[#51E7FA]">
               <span>
                 +{formatU(recentEffectiveTransition.catchupPointsCents)} {t.common.points}
               </span>
-              <ChevronRight className="h-4 w-4 text-[#9DA4B0]" />
+              <ChevronRight className="h-4 w-4 text-[#AAB8C7]" />
             </div>
           </Link>
         ) : (
           <Link
             href="/packages"
-            className="r10-card-3d flex min-h-[46px] items-center justify-between gap-3 rounded-2xl px-4 text-[13px] font-medium text-[#EDEAE2] transition-colors hover:border-[#E7C98E]/45 hover:text-[#F7E5BA]"
+            className="r10-card-titanium flex min-h-[46px] items-center justify-between gap-3 rounded-2xl px-4 text-[13px] font-medium text-[#CAD7E6] transition-colors hover:border-[#51E7FA]/45 hover:text-[#51E7FA]"
           >
             <span className="flex items-center gap-3">
-              <Box className="h-4.5 w-4.5 text-[#E7C98E]" strokeWidth={1.65} />
+              <Box className="h-4.5 w-4.5 text-[#51E7FA]" strokeWidth={1.75} />
               <span>{t.overview.upgradeCta}</span>
             </span>
-            <ChevronRight className="h-4 w-4 text-[#9DA4B0]" />
+            <ChevronRight className="h-4 w-4 text-[#AAB8C7]" />
           </Link>
         )}
+      </section>
+
+      {/* 7. New Arcade (游戏厅) Preview Action Card */}
+      <section className="r10-enter r10-delay-3">
+        <Link
+          href="/arcade"
+          className="r10-card-titanium flex min-h-[50px] items-center justify-between gap-3 rounded-2xl px-4 py-3 transition-colors hover:border-[#51E7FA]/55 group"
+        >
+          <div className="flex min-w-0 items-center gap-3">
+            <Roll10OrbitalIcon className="h-6 w-auto drop-shadow-[0_0_8px_rgba(81,231,250,0.5)] shrink-0" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[13px] font-semibold text-[#F4F8FC] group-hover:text-[#51E7FA] transition-colors">
+                  {locale === "zh-CN" ? "游戏厅 · 钢珠竞赛" : "Arcade · Steel Ball Racing"}
+                </span>
+                <span className="rounded-full border border-[#51E7FA]/40 bg-[#51E7FA]/10 px-2 py-0.5 text-[10px] font-semibold text-[#51E7FA]">
+                  {locale === "zh-CN" ? "即将开放" : "Coming Soon"}
+                </span>
+              </div>
+              <p className="mt-0.5 text-[11px] text-[#AAB8C7]">
+                {locale === "zh-CN"
+                  ? "3D 竞速直播与选号功能即将开放 · 敬请期待"
+                  : "3D racing live stream and ball selection coming soon"}
+              </p>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-1 text-xs text-[#AAB8C7] group-hover:text-[#51E7FA] transition-colors">
+            <ChevronRight className="h-4 w-4" />
+          </div>
+        </Link>
       </section>
 
       {/* Bottom Drawer: 00:00 SGT Rollover Preview & Decision Basis */}
@@ -702,79 +732,79 @@ export function HomeClient({
       >
         <div className="space-y-4 text-xs">
           <div className="grid grid-cols-2 gap-2.5">
-            <div className="rounded-xl border border-white/[0.08] bg-[#08090B] p-3">
-              <div className="text-[#9DA4B0]">{t.overview.leftBv}</div>
-              <div className="mt-1 tabular-nums text-base font-bold text-[#F2F0EB]">
+            <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
+              <div className="text-[#AAB8C7]">{t.overview.leftBv}</div>
+              <div className="mt-1 tabular-nums text-base font-bold text-[#F4F8FC]">
                 {formatBv(eodPreview.leftBv)}
               </div>
-              <div className="mt-0.5 text-[11px] text-[#9DA4B0]">
+              <div className="mt-0.5 text-[11px] text-[#AAB8C7]">
                 {formatMemberCountText(eodPreview.leftCount, locale)}
               </div>
             </div>
-            <div className="rounded-xl border border-white/[0.08] bg-[#08090B] p-3">
-              <div className="text-[#9DA4B0]">{t.overview.rightBv}</div>
-              <div className="mt-1 tabular-nums text-base font-bold text-[#F2F0EB]">
+            <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
+              <div className="text-[#AAB8C7]">{t.overview.rightBv}</div>
+              <div className="mt-1 tabular-nums text-base font-bold text-[#F4F8FC]">
                 {formatBv(eodPreview.rightBv)}
               </div>
-              <div className="mt-0.5 text-[11px] text-[#9DA4B0]">
+              <div className="mt-0.5 text-[11px] text-[#AAB8C7]">
                 {formatMemberCountText(eodPreview.rightCount, locale)}
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#6E512D]/45 bg-[#08090B] p-4 space-y-2.5">
+          <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-4 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[#9DA4B0]">
+              <span className="text-[#AAB8C7]">
                 {locale === "zh-CN" ? "预估保留区" : "Estimated Retained Side"}
               </span>
-              <span className="font-semibold text-[#F2F0EB]">
+              <span className="font-semibold text-[#F4F8FC]">
                 {formatLegLabel(eodPreview.retainedSide, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[#9DA4B0]">
+              <span className="text-[#AAB8C7]">
                 {locale === "zh-CN" ? "预估结转保留 BV" : "Estimated Carryover BV"}
               </span>
-              <span className="tabular-nums font-semibold text-emerald-300">
+              <span className="tabular-nums font-semibold text-[#51E7FA]">
                 {formatBv(eodPreview.carryoverBv)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[#9DA4B0]">
+              <span className="text-[#AAB8C7]">
                 {locale === "zh-CN" ? "预估清零 BV" : "Estimated Flushed BV"}
               </span>
-              <span className="tabular-nums font-semibold text-[#E7C98E]">
+              <span className="tabular-nums font-semibold text-[#CAD7E6]">
                 {formatBv(eodPreview.flushedBv)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[#9DA4B0]">
+              <span className="text-[#AAB8C7]">
                 {locale === "zh-CN" ? "结转判定依据" : "Decision Basis"}
               </span>
-              <span className="text-right font-mono-sgt text-[#F2F0EB]">
+              <span className="text-right font-mono-sgt text-[#F4F8FC]">
                 {formatDecisionBasisLabel(eodPreview.decisionBasis, locale)}
               </span>
             </div>
           </div>
 
           {latestEod && (
-            <div className="rounded-xl border border-white/[0.08] bg-[#08090B] p-4 space-y-1.5">
-              <div className="font-semibold text-[#F2F0EB]">{t.overview.latestEodLabel}</div>
-              <div className="font-mono-sgt text-[#9DA4B0]">{latestEod.settlementDate}</div>
-              <div className="pt-1 text-[#D6D3CC]">
+            <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-4 space-y-1.5">
+              <div className="font-semibold text-[#F4F8FC]">{t.overview.latestEodLabel}</div>
+              <div className="font-mono-sgt text-[#AAB8C7]">{latestEod.settlementDate}</div>
+              <div className="pt-1 text-[#CAD7E6]">
                 {locale === "zh-CN" ? "保留 " : "Retained "}
-                <strong className="text-[#F2F0EB]">
+                <strong className="text-[#F4F8FC]">
                   {formatLegLabel(latestEod.retainedSide, locale)}
                 </strong>{" "}
                 · {locale === "zh-CN" ? "清零 " : "Flushed "}
-                <strong className="tabular-nums text-[#E7C98E]">
+                <strong className="tabular-nums text-[#51E7FA]">
                   {formatBv(latestEod.flushedBv)}
                 </strong>
               </div>
             </div>
           )}
 
-          <p className="leading-relaxed text-[#9DA4B0]">
+          <p className="leading-relaxed text-[#AAB8C7]">
             {locale === "zh-CN"
               ? "以上按当前实时 BV 余额测算。实际每日 00:00 SGT 日结将优先比较双边 BV（仅在相同时比较活跃人数），并在 D+2 00:01 SGT 升级生效前执行。"
               : "Estimated from live BV balances. Actual 00:00 SGT settlement compares BV first (headcount only on ties) and runs prior to any D+2 00:01 SGT upgrade activation."}
@@ -783,7 +813,7 @@ export function HomeClient({
           <Link
             href="/ledgers?tab=bv"
             onClick={() => setEodDrawerOpen(false)}
-            className="flex min-h-[44px] w-full items-center justify-center rounded-xl bg-[#E7C98E] text-sm font-semibold text-[#08090B] transition-transform duration-100 active:scale-[0.98]"
+            className="r10-btn-cyan flex min-h-[44px] w-full items-center justify-center rounded-xl text-xs font-bold text-[#071118] transition-transform duration-100 active:scale-[0.98]"
           >
             {t.overview.viewEodRecords}
           </Link>
