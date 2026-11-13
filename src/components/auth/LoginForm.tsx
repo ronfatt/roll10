@@ -97,7 +97,6 @@ export function LoginForm({
         targetHref="/dashboard"
         onComplete={() => {
           router.replace("/dashboard");
-          router.refresh();
         }}
       />
     );

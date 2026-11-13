@@ -1,9 +1,10 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { DIRECT_LOGIN_ENABLED } from "@/lib/app-config";
 
-export async function getCurrentMember() {
+export const getCurrentMember = cache(async () => {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return null;
@@ -31,7 +32,7 @@ export async function getCurrentMember() {
     console.error("[getCurrentMember] database lookup failed:", err);
     return null;
   }
-}
+});
 
 export async function requireMember() {
   const member = await getCurrentMember();

@@ -1,3 +1,4 @@
+import type { Member, PackageTier } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/i18n";
@@ -103,14 +104,17 @@ function formatPlanNumeric(code: string | null): string {
 }
 
 export async function loadPortalHomeData(
-  memberId: string,
+  memberOrId: string | (Member & { currentPackage: PackageTier | null }),
   locale: Locale,
   asOf?: Date
 ): Promise<PortalHomePayload | null> {
-  const member = await prisma.member.findUnique({
-    where: { id: memberId },
-    include: { currentPackage: true },
-  });
+  const member =
+    typeof memberOrId === "object"
+      ? memberOrId
+      : await prisma.member.findUnique({
+          where: { id: memberOrId },
+          include: { currentPackage: true },
+        });
   if (!member) return null;
 
   const t = getDictionary(locale);

@@ -29,7 +29,7 @@ export async function GET(req: Request) {
       }
     }
 
-    const payload = await loadPortalHomeData(member.id, locale, asOfOverride);
+    const payload = await loadPortalHomeData(member, locale, asOfOverride);
     if (!payload) {
       return NextResponse.json({ ok: false, error: "Member not found" }, { status: 404 });
     }

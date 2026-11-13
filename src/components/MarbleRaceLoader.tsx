@@ -51,7 +51,7 @@ interface SparkParticle {
 export function MarbleRaceLoader({
   locale = "en",
   targetHref = "/dashboard",
-  durationMs = 2500,
+  durationMs = 1400,
   onComplete,
 }: {
   locale?: Locale;
@@ -76,11 +76,19 @@ export function MarbleRaceLoader({
       onComplete();
     } else {
       router.replace(targetHref);
-      router.refresh();
     }
   }, [onComplete, router, targetHref]);
 
   useEffect(() => {
+    // Eagerly prefetch the destination page while the marble competition is running in parallel
+    if (targetHref) {
+      try {
+        router.prefetch(targetHref);
+      } catch {
+        // no-op if prefetch not supported in environment
+      }
+    }
+
     const prefersReduced =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -88,7 +96,7 @@ export function MarbleRaceLoader({
     if (prefersReduced) {
       setPct(100);
       setWinnerId(3);
-      const t = setTimeout(finishTransition, 450);
+      const t = setTimeout(finishTransition, 250);
       return () => clearTimeout(t);
     }
 
@@ -374,7 +382,7 @@ export function MarbleRaceLoader({
           .sort((a, b) => b.p - a.p)[0]?.id;
         setWinnerId(rankedTop ?? 3);
         setPct(100);
-        finishHoldTimer = setTimeout(finishTransition, 360);
+        finishHoldTimer = setTimeout(finishTransition, 180);
       }
     };
 

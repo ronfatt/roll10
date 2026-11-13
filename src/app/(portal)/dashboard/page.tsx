@@ -28,7 +28,7 @@ export default async function DashboardPage({
   let initialError = initialErrorBase;
   if (!initialErrorBase) {
     try {
-      initialData = await loadPortalHomeData(member.id, locale);
+      initialData = await loadPortalHomeData(member, locale);
     } catch (err) {
       console.error("[DashboardPage] loadPortalHomeData failed:", err);
       initialError = t.common.loadError;

@@ -13,5 +13,5 @@ export default async function EnteringDashboardPage() {
   }
 
   const locale = await getServerLocale();
-  return <MarbleRaceLoader locale={locale} targetHref="/dashboard" />;
+  return <MarbleRaceLoader locale={locale} targetHref="/dashboard" durationMs={1400} />;
 }

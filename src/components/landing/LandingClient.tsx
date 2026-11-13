@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import {
   ArrowRight,
   ChevronLeft,
@@ -15,7 +17,7 @@ import type { Locale } from "@/lib/i18n";
 import { LocaleToggle } from "@/components/LocaleToggle";
 import { Roll10Logo } from "@/components/Roll10Logo";
 import { MarbleRaceLoader } from "@/components/MarbleRaceLoader";
-import { DIRECT_LOGIN_ENABLED } from "@/lib/app-config";
+import { DEFAULT_DIRECT_LOGIN_ACCOUNT, DIRECT_LOGIN_ENABLED } from "@/lib/app-config";
 
 interface PosterSlide {
   id: string;
@@ -118,18 +120,20 @@ export function LandingClient({
   locale: Locale;
   isAuthenticated: boolean;
 }) {
+  const router = useRouter();
   const isZh = locale === "zh-CN";
   const [slideIdx, setSlideIdx] = useState(0);
   const [selectedNotice, setSelectedNotice] = useState<string | null>(null);
   const [previewRaceOpen, setPreviewRaceOpen] = useState(false);
+  const [enteringDashboard, setEnteringDashboard] = useState(false);
 
   useEffect(() => {
-    if (previewRaceOpen) return;
+    if (previewRaceOpen || enteringDashboard) return;
     const timer = setInterval(() => {
       setSlideIdx((prev) => (prev + 1) % HERO_POSTERS.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, [previewRaceOpen]);
+  }, [previewRaceOpen, enteringDashboard]);
 
   const activeSlide = HERO_POSTERS[slideIdx];
   const loginHref = isAuthenticated
@@ -139,12 +143,48 @@ export function LandingClient({
       : "/login";
   const activeNoticeObj = NOTICES.find((n) => n.id === selectedNotice);
 
+  const handleLoginClick = async (e: React.MouseEvent) => {
+    if (isAuthenticated || DIRECT_LOGIN_ENABLED) {
+      e.preventDefault();
+      setEnteringDashboard(true);
+      try {
+        router.prefetch("/dashboard");
+      } catch {}
+      if (!isAuthenticated && DIRECT_LOGIN_ENABLED) {
+        try {
+          await signIn("credentials", {
+            identifier: DEFAULT_DIRECT_LOGIN_ACCOUNT.admin.identifier,
+            password: DEFAULT_DIRECT_LOGIN_ACCOUNT.admin.password,
+            redirect: false,
+          });
+          try {
+            router.prefetch("/dashboard");
+          } catch {}
+        } catch (err) {
+          console.error("Direct sign-in error:", err);
+        }
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#07080A] text-[#F2F0EB]">
+      {/* 1. Full-screen Instant In-Place 10-Ball Entering Motion with Parallel Prefetch */}
+      {enteringDashboard && (
+        <MarbleRaceLoader
+          locale={locale}
+          targetHref="/dashboard"
+          durationMs={1400}
+          onComplete={() => {
+            router.replace("/dashboard");
+          }}
+        />
+      )}
+
       {previewRaceOpen && (
         <MarbleRaceLoader
           locale={locale}
-          durationMs={2600}
+          durationMs={2000}
           onComplete={() => setPreviewRaceOpen(false)}
         />
       )}
@@ -160,6 +200,12 @@ export function LandingClient({
             <LocaleToggle locale={locale} />
             <Link
               href={loginHref}
+              onClick={handleLoginClick}
+              onMouseEnter={() => {
+                try {
+                  router.prefetch("/dashboard");
+                } catch {}
+              }}
               className="r10-btn-gold-3d inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-4 text-xs font-bold tracking-tight transition-transform active:scale-[0.98]"
             >
               <LogIn className="h-3.5 w-3.5 stroke-[2.2]" />
@@ -242,6 +288,12 @@ export function LandingClient({
                 <div className="flex shrink-0 items-center gap-2">
                   <Link
                     href={loginHref}
+                    onClick={handleLoginClick}
+                    onMouseEnter={() => {
+                      try {
+                        router.prefetch("/dashboard");
+                      } catch {}
+                    }}
                     className="r10-btn-gold-3d inline-flex min-h-[40px] items-center gap-1.5 rounded-xl px-4 text-xs font-bold sm:min-h-[44px] sm:px-5 sm:text-sm"
                   >
                     <span>
@@ -295,6 +347,7 @@ export function LandingClient({
               <Link
                 key={card.id}
                 href={isAuthenticated ? card.hrefMember : card.hrefGuest}
+                onClick={card.id === "upcoming" ? handleLoginClick : undefined}
                 className="group r10-card-3d relative overflow-hidden rounded-2xl transition-transform duration-200 hover:-translate-y-0.5 hover:border-[#E7C98E]/55"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden">
