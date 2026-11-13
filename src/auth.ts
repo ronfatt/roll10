@@ -3,6 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 
+// Ensure NextAuth v5 trusts dynamic hosts (both localhost and vercel production) without host mismatch
+if (typeof process !== "undefined" && process.env) {
+  if (process.env.NEXTAUTH_URL) {
+    delete process.env.NEXTAUTH_URL;
+  }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   secret:

@@ -34,10 +34,10 @@ export function ArcadeClient({ locale = "zh-CN" }: { locale?: Locale }) {
         <SubpageCornerBranding />
       </header>
 
-      {/* Upper Section: 钢珠竞赛直播 (16:9 blurred live stream preview) */}
+      {/* Upper Section: 钢珠竞赛直播 (16:9 blurred live stream preview with Gold Rim) */}
       <section
         aria-label={isZh ? "钢珠竞赛直播" : "Steel Ball Live Racing"}
-        className="r10-card-titanium overflow-hidden rounded-[20px] p-3.5 sm:p-4 space-y-3"
+        className="r10-card-gold-rim overflow-hidden rounded-[20px] p-3.5 sm:p-4 space-y-3"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -49,7 +49,7 @@ export function ArcadeClient({ locale = "zh-CN" }: { locale?: Locale }) {
               {isZh ? "钢珠竞赛直播" : "Steel Ball Live"}
             </h2>
           </div>
-          <span className="rounded-full border border-white/15 bg-black/50 px-2.5 py-0.5 text-[10px] font-medium text-[#AAB8C7]">
+          <span className="rounded-full border border-[#F2CD7E]/30 bg-black/50 px-2.5 py-0.5 text-[10px] font-medium text-[#F2CD7E]">
             {isZh ? "未开放" : "Not Open"}
           </span>
         </div>
@@ -70,10 +70,10 @@ export function ArcadeClient({ locale = "zh-CN" }: { locale?: Locale }) {
 
           {/* Center Locked State Badge */}
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center select-none pointer-events-none">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#51E7FA]/40 bg-[#101B27]/90 shadow-[0_4px_20px_rgba(0,0,0,0.8),0_0_15px_rgba(81,231,250,0.25)]">
-              <Lock className="h-5 w-5 text-[#51E7FA]" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#F2CD7E]/50 bg-[#101B27]/90 shadow-[0_4px_20px_rgba(0,0,0,0.8),0_0_15px_rgba(242,205,126,0.25)]">
+              <Lock className="h-5 w-5 text-[#F2CD7E]" />
             </div>
-            <p className="mt-2 text-sm sm:text-base font-bold tracking-tight text-[#F4F8FC] drop-shadow-md">
+            <p className="mt-2 text-sm sm:text-base font-black italic tracking-wide text-[#F2CD7E] drop-shadow-md">
               {isZh ? "即将开放" : "Coming Soon"}
             </p>
             <p className="mt-0.5 text-[11px] text-[#AAB8C7]">
@@ -86,7 +86,7 @@ export function ArcadeClient({ locale = "zh-CN" }: { locale?: Locale }) {
       {/* Lower Section: 钢珠号码与赔率 (2x5 ball cards + 3 gameplay skeletons + locked CTA) */}
       <section
         aria-label={isZh ? "钢珠号码与赔率" : "Ball Numbers & Odds"}
-        className="r10-card-titanium rounded-[20px] p-3.5 sm:p-4 space-y-3"
+        className="r10-card-gold-rim rounded-[20px] p-3.5 sm:p-4 space-y-3"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export function ArcadeClient({ locale = "zh-CN" }: { locale?: Locale }) {
               {isZh ? "钢珠号码与赔率" : "Numbers & Odds"}
             </h2>
           </div>
-          <Lock className="h-4 w-4 text-[#889AA8]" aria-hidden="true" />
+          <Lock className="h-4 w-4 text-[#F2CD7E]/70" aria-hidden="true" />
         </div>
 
         {/* 2 x 5 Steel Ball Skeleton Cards (No sample numbers or real odds) */}
@@ -143,16 +143,15 @@ export function ArcadeClient({ locale = "zh-CN" }: { locale?: Locale }) {
           </div>
         </div>
 
-        {/* Disabled Grey Locked Action Button */}
+        {/* Disabled Grey Locked Action Button with Gold Rim Tone */}
         <button
           type="button"
           disabled
           tabIndex={-1}
-          aria-disabled="true"
-          className="mt-2 flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl border border-[#2B3D4D] bg-[#16212E] text-xs font-semibold text-[#889AA8] cursor-not-allowed select-none opacity-85 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+          className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-[#F2CD7E]/30 bg-[#141C26]/80 text-xs font-bold text-[#F2CD7E]/75 select-none shadow-sm cursor-not-allowed"
         >
-          <Lock className="h-3.5 w-3.5" />
-          <span>{isZh ? "暂未开放" : "Locked / Coming Soon"}</span>
+          <Lock className="h-3.5 w-3.5 text-[#F2CD7E]/70" />
+          <span>{isZh ? "暂未开放" : "Locked · Coming Soon"}</span>
         </button>
       </section>
     </div>

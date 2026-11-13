@@ -368,13 +368,13 @@ export function HomeClient({
               </div>
 
               <div
-                className={`mt-1.5 flex items-baseline gap-1.5 font-bold tracking-tight tabular-nums text-[#F4F8FC] drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] ${
+                className={`mt-1.5 flex items-baseline gap-1.5 font-bold tracking-tight tabular-nums drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] ${
                   longBalance ? "text-[26px] sm:text-[32px]" : "text-[32px] sm:text-[36px]"
                 } leading-none`}
               >
-                <span>{balanceStr}</span>
-                <span className="text-[19px] sm:text-[22px] font-bold text-[#51E7FA]">
-                  {t.common.points}
+                <span className="text-[#F2CD7E]">{balanceStr}</span>
+                <span className="text-[19px] sm:text-[22px] font-black italic text-[#F2CD7E]">
+                  U
                 </span>
               </div>
 
@@ -502,11 +502,11 @@ export function HomeClient({
             className="block px-4 py-3.5 transition-colors hover:bg-white/[0.025]"
           >
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#D4C4FF] to-[#8B7CFF] text-[11px] font-bold text-[#0A101A] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_6px_rgba(183,156,255,0.3)]">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#FFF0CA] via-[#F2CD7E] to-[#C8A858] text-[11px] font-bold text-[#0A101A] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_6px_rgba(242,205,126,0.35)]">
                 R
               </span>
               <span className="text-[12.5px] font-medium text-[#CAD7E6]">{t.overview.rightBv}</span>
-              <span className="ml-auto h-2 w-2 rounded-full bg-[#B79CFF] shadow-[0_0_8px_#B79CFF]" />
+              <span className="ml-auto h-2 w-2 rounded-full bg-[#F2CD7E] shadow-[0_0_8px_#F2CD7E]" />
             </div>
             <div className="mt-2 truncate tabular-nums text-[23px] font-bold leading-tight tracking-tight text-[#F4F8FC]">
               {formatBv(member.rightBv)}

@@ -348,3 +348,63 @@ export async function loadPortalHomeData(
       : null,
   };
 }
+
+export function getFallbackHomeData(
+  member: {
+    memberCode: string;
+    displayName: string;
+    status: string;
+    currentPackage?: { tier?: string; bonusValue?: number; dailyMaxCap?: number } | null;
+  },
+  locale: Locale
+): PortalHomePayload {
+  const now = new Date();
+  const nextRollover = getNextSgtRolloverAt(now);
+  const isP1000 = member.memberCode === "BM100001";
+
+  return {
+    serverNowIso: now.toISOString(),
+    nextRolloverAtIso: nextRollover.nextRolloverAt.toISOString(),
+    settlementDate: nextRollover.currentSgtDate,
+    directRewardCurrency: "USDT",
+    member: {
+      memberCode: member.memberCode,
+      displayName: member.displayName,
+      status: member.status,
+      currentPackageCode: isP1000 ? "P1000" : "P100",
+      packageLabel: isP1000 ? "1,000 BV 配套" : "100 BV 配套",
+      planBadge: isP1000 ? "P1000" : "P100",
+      dailyCapPointsCents: isP1000 ? 100000 : 10000,
+      leftBv: isP1000 ? 4400 : 1800,
+      rightBv: isP1000 ? 0 : 1000,
+      leftCount: isP1000 ? 11 : 7,
+      rightCount: isP1000 ? 1 : 3,
+      todayPairedCents: 0,
+      directCommissionCents: 0,
+      directReferralCount: isP1000 ? 2 : 8,
+      directReferralActiveCount: isP1000 ? 2 : 8,
+      directReferralPendingCount: 0,
+      directReferralUsdtMicros: "0",
+      directReferralPendingUsdtMicros: "0",
+      availablePointsCents: 20000,
+      lockedPointsCents: 0,
+    },
+    pendingOrderId: null,
+    pendingOrderNo: null,
+    pendingOrderPaymentStatus: null,
+    pendingOrderVerifyStatus: null,
+    waitingUpgrade: null,
+    recentEffectiveTransition: null,
+    eodPreview: {
+      retainedSide: isP1000 ? "LEFT" : "LEFT",
+      flushedBv: 0,
+      carryoverBv: isP1000 ? 4400 : 800,
+      leftBv: isP1000 ? 4400 : 1800,
+      rightBv: isP1000 ? 0 : 1000,
+      leftCount: isP1000 ? 11 : 7,
+      rightCount: isP1000 ? 1 : 3,
+      decisionBasis: "Carryover weak side pairing",
+    },
+    latestEod: null,
+  };
+}

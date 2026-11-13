@@ -84,10 +84,10 @@ export function AccountClient({
         subtitle={locale === "zh-CN" ? "会员身份与账户设置" : "Member Identity & Preferences"}
       />
 
-      {/* Member Profile Identity Card */}
-      <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5 shadow-md">
+      {/* Member Profile Identity Card with Luxury Gold Rim */}
+      <div className="r10-card-gold-rim relative overflow-hidden rounded-2xl p-4 sm:p-5">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#51E7FA]/40 bg-[#51E7FA]/10 text-[#51E7FA] shadow-[0_0_12px_rgba(81,231,250,0.2)]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#F2CD7E]/40 bg-[#F2CD7E]/10 text-[#F2CD7E] shadow-[0_0_12px_rgba(242,205,126,0.25)]">
             <User className="h-6 w-6" />
           </div>
           <div className="min-w-0">
@@ -108,7 +108,7 @@ export function AccountClient({
         <div className="mt-4 grid grid-cols-2 divide-x divide-[#2B3D4D] overflow-hidden rounded-xl border border-[#2B3D4D] bg-[#0A101A] text-xs">
           <div className="p-3">
             <div className="text-[#AAB8C7]">{t.packages.currentTier}</div>
-            <div className="mt-0.5 font-bold text-[#51E7FA]">
+            <div className="mt-0.5 font-black italic text-[#F2CD7E] text-sm">
               {member.currentPackageCode ?? t.overview.pendingActivation}
             </div>
           </div>

@@ -275,8 +275,19 @@ export function PackagesClient({
         </div>
       )}
 
-      {/* Vertical Stack of Packages: P100, P500, P1000 */}
-      <div className="space-y-3">
+      {/* 1 U = 1 BV Central Guide Rail Anchor (matching Design Slide 02) */}
+      <div className="relative my-4 flex items-center justify-center">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
+        <div className="mx-3 flex items-center gap-2 rounded-full border border-[#51E7FA]/50 bg-[#0A101A] px-4 py-1.5 shadow-[0_0_16px_rgba(81,231,250,0.3)]">
+          <span className="font-black italic tracking-widest text-[#F2CD7E] text-sm sm:text-base drop-shadow-[0_1px_6px_rgba(242,205,126,0.4)]">
+            1 U = 1 BV
+          </span>
+        </div>
+        <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
+      </div>
+
+      {/* Package Cards: P100, P500, P1000 (Luxury Gold-Rim & Ribbon Style) */}
+      <div className="space-y-3.5">
         {tiers.map((tier) => {
           const isCurrent = tier.code === currentPackageCode;
           const isPendingTarget = tier.code === pendingUpgradePackageCode;
@@ -286,64 +297,66 @@ export function PackagesClient({
           return (
             <div
               key={tier.code}
-              className={`rounded-2xl border p-5 transition ${
+              className={`r10-card-gold-rim relative overflow-hidden rounded-2xl p-4 sm:p-5 transition-all duration-300 ${
                 isCurrent
-                  ? "border-[#51E7FA] shadow-[0_0_15px_rgba(81,231,250,0.25)] bg-[#101B27]"
-                  : "border-[#2B3D4D] bg-[#101B27]"
+                  ? "!border-[#51E7FA] shadow-[0_0_20px_rgba(81,231,250,0.3)]"
+                  : "hover:border-[#F2CD7E]/60"
               }`}
             >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono-sgt text-xs font-bold uppercase tracking-wider text-[#51E7FA]">
-                      {tier.code}
-                    </span>
-                    {isCurrent && (
-                      <span className="rounded-full bg-[#51E7FA] px-2.5 py-0.5 text-[10px] font-bold text-[#0A101A]">
-                        {t.packages.currentTier}
-                      </span>
-                    )}
-                    {isPendingTarget && (
-                      <span className="rounded-full bg-[#51E7FA]/20 px-2.5 py-0.5 text-[10px] font-semibold text-[#51E7FA]">
-                        {t.packages.waitingEffectiveBadge}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="mt-1 text-base font-semibold text-[#F4F8FC]">
+              {/* Top Header: Tier Code + Status Pill */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl sm:text-2xl font-black italic tracking-wider text-[#F4F8FC] drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                    {tier.code}
+                  </span>
+                  <span className="text-xs text-[#AAB8C7] font-medium">
                     {locale === "zh-CN" ? tier.nameZh : tier.nameEn}
-                  </h3>
+                  </span>
                 </div>
-                <div className="text-right">
-                  <div className="tabular-nums text-2xl font-black text-[#F4F8FC]">
-                    {formatU(tier.priceUsdCents)} U
-                  </div>
-                  <div className="tabular-nums text-[11px] font-semibold text-[#51E7FA]">
-                    {formatUsdtMicros(tier.priceUsdtMicros)}
-                  </div>
+
+                <div className="flex items-center gap-1.5">
+                  {isCurrent && (
+                    <span className="rounded-full bg-[#51E7FA] px-2.5 py-0.5 text-[10px] font-bold text-[#0A101A] shadow-[0_0_8px_rgba(81,231,250,0.6)]">
+                      {t.packages.currentTier}
+                    </span>
+                  )}
+                  {isPendingTarget && (
+                    <span className="rounded-full border border-[#F2CD7E]/40 bg-[#F2CD7E]/15 px-2.5 py-0.5 text-[10px] font-semibold text-[#F2CD7E]">
+                      {t.packages.waitingEffectiveBadge}
+                    </span>
+                  )}
                 </div>
               </div>
 
-              <div className="mt-3 grid grid-cols-2 divide-x divide-[#2B3D4D] overflow-hidden rounded-xl border border-[#2B3D4D] bg-[#0A101A] text-xs">
-                <div className="p-3">
-                  <div className="text-[#AAB8C7]">{t.packages.bvLabel}</div>
-                  <div className="mt-0.5 tabular-nums font-bold text-[#F4F8FC]">
+              {/* Slanted Champagne Gold Metallic Price Ribbon */}
+              <div className="my-3 r10-badge-gold-ribbon py-2 px-4 text-center">
+                <div className="text-xl sm:text-2xl font-black italic tracking-wider text-[#F2CD7E] drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                  {formatU(tier.priceUsdCents)} U
+                </div>
+              </div>
+
+              {/* Two-Column Clean Specs Grid (matching Design Slide 02) */}
+              <div className="space-y-2 border-t border-[#2B3D4D]/60 pt-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#AAB8C7] font-medium">{t.packages.bvLabel}</span>
+                  <span className="font-black italic tracking-wide text-[#F2CD7E] text-sm tabular-nums">
                     {formatBv(tier.bv)}
-                  </div>
+                  </span>
                 </div>
-                <div className="p-3">
-                  <div className="text-[#AAB8C7]">{t.packages.dailyCapLabel}</div>
-                  <div className="mt-0.5 tabular-nums font-bold text-[#51E7FA]">
-                    {formatU(tier.dailyCapPointsCents)} {t.common.points}/
-                    {locale === "zh-CN" ? "天" : "day"}
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#AAB8C7] font-medium">{t.packages.dailyCapLabel}</span>
+                  <span className="font-black italic tracking-wide text-[#F2CD7E] text-sm tabular-nums">
+                    {formatU(tier.dailyCapPointsCents)} U/{locale === "zh-CN" ? "天" : "day"}
+                  </span>
                 </div>
               </div>
 
+              {/* Action Button */}
               {canOrder && depositServiceAvailable && (
                 <button
                   type="button"
                   onClick={() => void openConfirmPanel(tier)}
-                  className="mt-3.5 flex min-h-[44px] w-full items-center justify-center rounded-xl bg-[#51E7FA] px-4 text-xs font-bold text-[#0A101A] transition-all hover:brightness-110 active:scale-[0.99] shadow-[0_0_12px_rgba(81,231,250,0.3)]"
+                  className="mt-3.5 flex min-h-[44px] w-full items-center justify-center rounded-xl r10-btn-cyan px-4 text-xs font-bold uppercase tracking-wider transition-all hover:brightness-110 active:scale-[0.99]"
                 >
                   {isInitialFlow
                     ? `${t.packages.activateBtn} (${formatUsdtMicros(tier.priceUsdtMicros)})`
@@ -353,6 +366,29 @@ export function PackagesClient({
             </div>
           );
         })}
+      </div>
+
+      {/* Slide 02 Footnotes & Slide Number */}
+      <div className="rounded-2xl border border-[#2B3D4D] bg-[#101B27] p-4 text-xs space-y-2">
+        <div className="flex items-center gap-2 text-[#CAD7E6]">
+          <span className="font-bold text-[#51E7FA]">/</span>
+          <span>
+            {locale === "zh-CN"
+              ? "U (USDT) 用于配套付款与发放奖金。"
+              : "U (USDT) is used for package payment and bonus payouts."}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-[#CAD7E6]">
+          <span className="font-bold text-[#51E7FA]">/</span>
+          <span>
+            {locale === "zh-CN"
+              ? "BV (Bonus Value) 用于计算团队业绩及对碰。"
+              : "BV (Bonus Value) is used for team volume and binary pairing."}
+          </span>
+        </div>
+        <div className="mt-2 flex items-center justify-end border-t border-[#2B3D4D]/60 pt-2 text-[11px] font-mono-sgt text-[#F2CD7E]/80">
+          <span>── 02 / 05 ──</span>
+        </div>
       </div>
 
       {/* Order History */}

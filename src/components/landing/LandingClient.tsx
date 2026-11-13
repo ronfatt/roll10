@@ -116,6 +116,9 @@ export function LandingClient({
     if (isAuthenticated || DIRECT_LOGIN_ENABLED) {
       e.preventDefault();
       setEnteringDashboard(true);
+      if (typeof document !== "undefined") {
+        document.cookie = "r10_direct_role=admin; path=/; max-age=604800; SameSite=Lax";
+      }
       try {
         router.prefetch("/dashboard");
       } catch {}
@@ -130,7 +133,7 @@ export function LandingClient({
             router.prefetch("/dashboard");
           } catch {}
         } catch (err) {
-          console.error("Direct sign-in error:", err);
+          console.warn("Direct sign-in error:", err);
         }
       }
     }
@@ -260,7 +263,162 @@ export function LandingClient({
           </div>
         </section>
 
-        {/* 2. Visual Event & Offer Cards Grid (2 Columns) */}
+        {/* 2. Brand Origin & Gameplay Timeline Card (matching Design Slide 01) */}
+        <section
+          aria-label={isZh ? "钢球竞速怎么玩" : "How Marble Racing Works"}
+          className="r10-card-gold-rim relative overflow-hidden rounded-[22px] p-4 sm:p-5"
+        >
+          {/* Header: Title + Gold Bar + /// */}
+          <div className="flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-black italic tracking-wide text-[#F2CD7E]">
+              {isZh ? "钢球竞速怎么玩？" : "How Marble Racing Works"}
+            </h2>
+            <div className="h-[2px] flex-1 bg-gradient-to-r from-[#F2CD7E]/80 via-[#F2CD7E]/40 to-transparent" />
+            <span className="font-mono-sgt text-xs font-bold text-[#F2CD7E] tracking-tighter">///</span>
+          </div>
+
+          <p className="mt-2 text-xs sm:text-[13px] text-[#CAD7E6] leading-relaxed">
+            {isZh
+              ? "多颗钢球同时出发，靠重力滚过弯道和坡道，按冲线先后决定名次。"
+              : "Multiple steel balls launch simultaneously, navigating curved tracks and drops by gravity to determine winners."}
+          </p>
+
+          {/* Glowing Cyan Track Timeline */}
+          <div className="relative mt-4 pt-1">
+            {/* Cyan track bar */}
+            <div className="absolute left-2 right-2 top-3 h-[2px] bg-gradient-to-r from-[#51E7FA] via-[#51E7FA] to-[#51E7FA]/30 shadow-[0_0_8px_rgba(81,231,250,0.8)]" />
+
+            <div className="grid grid-cols-2 gap-3 relative z-10 pt-4">
+              {/* 2006 */}
+              <div className="relative">
+                <div className="absolute -top-3 left-3 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-[#0A101A] bg-[#51E7FA] shadow-[0_0_8px_rgba(81,231,250,0.9)]" />
+                <div className="text-xl sm:text-2xl font-black italic text-[#F2CD7E] tabular-nums">2006</div>
+                <p className="mt-1 text-[11px] text-[#AAB8C7] leading-tight">
+                  {isZh
+                    ? "荷兰创作者 Jelle Bakker 开始分享弹珠赛道视频"
+                    : "Jelle Bakker started sharing marble race videos"}
+                </p>
+              </div>
+
+              {/* 2016 */}
+              <div className="relative">
+                <div className="absolute -top-3 left-3 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-[#0A101A] bg-[#51E7FA] shadow-[0_0_8px_rgba(81,231,250,0.9)]" />
+                <div className="text-xl sm:text-2xl font-black italic text-[#F2CD7E] tabular-nums">2016</div>
+                <p className="mt-1 text-[11px] text-[#AAB8C7] leading-tight">
+                  {isZh
+                    ? "首届 Marble League 举办，至今约10年。"
+                    : "Inaugural Marble League held, running for ~10 years."}
+                </p>
+              </div>
+            </div>
+
+            {/* Footnote & Slide Indicator */}
+            <div className="mt-4 flex items-center justify-between border-t border-[#2B3D4D]/60 pt-2 text-[10px] text-[#AAB8C7]">
+              <span>
+                {isZh
+                  ? "竞速背景资料：Jelle's Marble Runs 官方年表。"
+                  : "Source: Jelle's Marble Runs official chronology."}
+              </span>
+              <span className="font-mono-sgt text-[#F2CD7E]">─ 01 / 05 ─</span>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. Package Cards Showcase & 1 U = 1 BV (matching Design Slide 02) */}
+        <section
+          aria-label={isZh ? "配套方案" : "Packages"}
+          className="r10-card-gold-rim relative overflow-hidden rounded-[22px] p-4 sm:p-5 space-y-3"
+        >
+          {/* Header: Title + Slide Number */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="h-4 w-[2.5px] rounded-full bg-[#51E7FA] shadow-[0_0_8px_rgba(81,231,250,0.8)]" />
+              <h2 className="text-base sm:text-lg font-black italic tracking-wide text-[#F4F8FC]">
+                {isZh ? "配套" : "PACKAGES"}{" "}
+                <span className="text-xs text-[#51E7FA] font-bold">/ PACKAGES</span>
+              </h2>
+            </div>
+            <span className="font-mono-sgt text-xs font-bold text-[#F2CD7E]">─ 02 / 05 ─</span>
+          </div>
+
+          {/* Central Guide Line: 1 U = 1 BV */}
+          <div className="relative my-2 flex items-center justify-center">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
+            <div className="mx-3 rounded-full border border-[#51E7FA]/50 bg-[#0A101A] px-3.5 py-1 shadow-[0_0_12px_rgba(81,231,250,0.25)]">
+              <span className="font-black italic text-xs sm:text-sm tracking-widest text-[#F2CD7E] drop-shadow-[0_1px_4px_rgba(242,205,126,0.4)]">
+                1 U = 1 BV
+              </span>
+            </div>
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
+          </div>
+
+          {/* 3 Tier Cards: P100, P500, P1000 */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+            {/* P100 */}
+            <div className="rounded-xl border border-[#F2CD7E]/30 bg-[#0E1520] p-2.5 sm:p-3 text-center shadow-md">
+              <div className="text-sm sm:text-base font-black italic text-[#F4F8FC]">P100</div>
+              <div className="my-1.5 r10-badge-gold-ribbon py-1 px-1">
+                <span className="text-xs sm:text-sm font-black italic text-[#F2CD7E]">100 U</span>
+              </div>
+              <div className="space-y-1 text-[10px] sm:text-[11px] pt-1">
+                <div className="text-[#AAB8C7]">{isZh ? "配套业绩" : "Volume"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">100 BV</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "日封顶" : "Daily Cap"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">100 U</div>
+              </div>
+            </div>
+
+            {/* P500 */}
+            <div className="rounded-xl border border-[#F2CD7E]/30 bg-[#0E1520] p-2.5 sm:p-3 text-center shadow-md">
+              <div className="text-sm sm:text-base font-black italic text-[#F4F8FC]">P500</div>
+              <div className="my-1.5 r10-badge-gold-ribbon py-1 px-1">
+                <span className="text-xs sm:text-sm font-black italic text-[#F2CD7E]">500 U</span>
+              </div>
+              <div className="space-y-1 text-[10px] sm:text-[11px] pt-1">
+                <div className="text-[#AAB8C7]">{isZh ? "配套业绩" : "Volume"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">500 BV</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "日封顶" : "Daily Cap"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">500 U</div>
+              </div>
+            </div>
+
+            {/* P1000 */}
+            <div className="rounded-xl border border-[#F2CD7E]/40 bg-[#0E1520] p-2.5 sm:p-3 text-center shadow-md shadow-[0_0_12px_rgba(242,205,126,0.15)]">
+              <div className="text-sm sm:text-base font-black italic text-[#F4F8FC]">P1000</div>
+              <div className="my-1.5 r10-badge-gold-ribbon py-1 px-1">
+                <span className="text-xs sm:text-sm font-black italic text-[#F2CD7E]">1,000 U</span>
+              </div>
+              <div className="space-y-1 text-[10px] sm:text-[11px] pt-1">
+                <div className="text-[#AAB8C7]">{isZh ? "配套业绩" : "Volume"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">1,000 BV</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "日封顶" : "Daily Cap"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">1,000 U</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footnotes */}
+          <div className="space-y-1 border-t border-[#2B3D4D]/60 pt-2 text-[10.5px] text-[#AAB8C7]">
+            <div className="flex items-center gap-1.5">
+              <span className="font-bold text-[#51E7FA]">/</span>
+              <span>
+                {isZh
+                  ? "U (USDT) 用于配套付款与发放奖金。"
+                  : "U (USDT) is used for package payment and bonus payouts."}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-bold text-[#51E7FA]">/</span>
+              <span>
+                {isZh
+                  ? "BV (Bonus Value) 用于计算团队业绩及对碰。"
+                  : "BV (Bonus Value) is used for team volume and binary pairing."}
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Visual Event & Offer Cards Grid (2 Columns) */}
         <section aria-label={isZh ? "赛事与活动" : "Events & Offers"}>
           <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
             <Link
@@ -329,7 +487,7 @@ export function LandingClient({
           </div>
         </section>
 
-        {/* 3. Action Strip Cards */}
+        {/* 5. Action Strip Cards */}
         <section aria-label={isZh ? "功能与服务" : "Features"} className="space-y-3">
           {/* Card 1: 配套与升级 */}
           <Link

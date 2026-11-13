@@ -359,8 +359,8 @@ export function WalletClient({
         subtitle={t.wallet.subtitle}
       />
 
-      {/* Top Balances Brushed Titanium Racetrack Card */}
-      <div className="relative overflow-hidden rounded-[22px] border border-[#2B3D4D] bg-[#101B27] p-4 sm:p-5 shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+      {/* Top Balances Brushed Titanium Racetrack Card with Luxury Gold Rim */}
+      <div className="r10-card-gold-rim relative overflow-hidden rounded-[22px] p-4 sm:p-5">
         {/* Cyan racetrack streak */}
         <div
           aria-hidden="true"
@@ -375,9 +375,9 @@ export function WalletClient({
           <div className="flex items-center gap-6 sm:gap-8">
             <div>
               <div className="text-xs font-medium text-[#AAB8C7]">{t.wallet.available}</div>
-              <div className="mt-1 tabular-nums text-2xl sm:text-3xl font-extrabold text-[#F4F8FC]">
+              <div className="mt-1 tabular-nums text-2xl sm:text-3xl font-black italic text-[#F2CD7E] drop-shadow-[0_2px_8px_rgba(242,205,126,0.3)]">
                 {formatU(availablePointsCents)}{" "}
-                <span className="text-sm font-bold text-[#51E7FA]">U</span>
+                <span className="text-sm font-black italic text-[#F2CD7E]">U</span>
               </div>
             </div>
 
@@ -385,7 +385,7 @@ export function WalletClient({
 
             <div>
               <div className="text-xs font-medium text-[#AAB8C7]">{t.wallet.locked}</div>
-              <div className="mt-1 tabular-nums text-2xl sm:text-3xl font-extrabold text-[#F4F8FC]">
+              <div className="mt-1 tabular-nums text-2xl sm:text-3xl font-extrabold text-[#CAD7E6]">
                 {formatU(lockedPointsCents)}{" "}
                 <span className="text-sm font-medium text-[#AAB8C7]">U</span>
               </div>
@@ -399,7 +399,7 @@ export function WalletClient({
               setConfirmStep(false);
               setError(null);
             }}
-            className="r10-btn-titanium shrink-0 px-4 py-2 text-xs font-bold transition-all active:scale-95"
+            className="r10-btn-titanium shrink-0 px-4 py-2 text-xs font-bold transition-all active:scale-95 shadow-md"
           >
             {showWithdrawForm ? t.common.cancel : t.overview.withdrawCta}
           </button>

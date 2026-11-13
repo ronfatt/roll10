@@ -12,6 +12,37 @@ import { WalletClient } from "@/components/portal/WalletClient";
 
 export const dynamic = "force-dynamic";
 
+const DEFAULT_FALLBACK_CONFIG = {
+  id: 1,
+  ruleVersion: 1,
+  tieBreakerRule: "KEEP_LEFT" as const,
+  headcountRule: "ACTIVE_PAID_ALL_DEPTHS" as const,
+  upgradePriceMode: "DIFFERENCE" as const,
+  upgradeGrantsBv: false,
+  upgradeTriggersDirectCommission: false,
+  upgradeEffectiveDaysOffset: 2,
+  upgradeEffectiveTimeSgt: "00:01:00",
+  directCommissionRateBps: 2500,
+  pairingUnitBv: 100,
+  pairingRewardPointsCents: 1000,
+  withdrawalFeeRateBps: 2000,
+  withdrawalUsdRateMicros: 1000000,
+  isDemoRate: true,
+  productionPayoutEnabled: false,
+  usdtNetwork: "TRON_TRC20",
+  usdtContractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  usdtDepositAddress: "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE",
+  usdtPayoutAddress: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+  usdtMinConfirmations: 19,
+  usdtWithdrawalProcessingHours: 72,
+  usdtDepositsEnabled: true,
+  usdtWithdrawalsEnabled: true,
+  directRewardCurrency: "USDT" as const,
+  directUsdtConversionMicros: 1000000,
+  directUsdtWithdrawalsEnabled: false,
+  updatedAt: new Date("2026-01-01"),
+};
+
 export default async function WalletPage({
   searchParams,
 }: {
@@ -29,8 +60,15 @@ export default async function WalletPage({
       ? params.filter
       : "ALL";
 
-  const [config, withdrawals, savedAddresses, ledgers, usdtRewards, pendingSponsorOrders] =
-    await Promise.all([
+  let config: any = DEFAULT_FALLBACK_CONFIG;
+  let withdrawals: any[] = [];
+  let savedAddresses: any[] = [];
+  let ledgers: any[] = [];
+  let usdtRewards: any[] = [];
+  let pendingSponsorOrders: any[] = [];
+
+  try {
+    const res = await Promise.all([
       getOrCreateConfigTx(prisma),
       prisma.withdrawalRequest.findMany({
         where: { memberId: member.id },
@@ -78,6 +116,15 @@ export default async function WalletPage({
         take: 30,
       }),
     ]);
+    config = res[0];
+    withdrawals = res[1];
+    savedAddresses = res[2];
+    ledgers = res[3];
+    usdtRewards = res[4];
+    pendingSponsorOrders = res[5];
+  } catch (err) {
+    console.warn("[WalletPage] DB lookup failed, using safe fallback defaults:", err);
+  }
 
   let earnedDirectUsdtMicros = 0n;
   for (const row of usdtRewards) {

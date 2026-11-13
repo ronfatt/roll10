@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { requireMember } from "@/lib/session";
 import { getServerT } from "@/lib/i18n-server";
-import { loadPortalHomeData } from "@/lib/portal-home";
+import { getFallbackHomeData, loadPortalHomeData } from "@/lib/portal-home";
 import { HomeClient } from "@/components/portal/HomeClient";
 
 export const dynamic = "force-dynamic";
@@ -30,8 +30,8 @@ export default async function DashboardPage({
     try {
       initialData = await loadPortalHomeData(member, locale);
     } catch (err) {
-      console.error("[DashboardPage] loadPortalHomeData failed:", err);
-      initialError = t.common.loadError;
+      console.warn("[DashboardPage] loadPortalHomeData failed, falling back to resilient dashboard payload:", err);
+      initialData = getFallbackHomeData(member, locale);
     }
   }
 

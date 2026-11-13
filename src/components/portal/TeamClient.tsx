@@ -1059,9 +1059,9 @@ export function TeamClient({
       {/* ==================== TAB 2: PLACEMENT TREE ==================== */}
       {activeTab === "placement" && (
         <section className="space-y-4">
-          {/* Root Member Own Left / Right Remaining BV & Headcount Overview */}
+          {/* Root Member Own Left / Right Remaining BV & Headcount Overview with Gold Rim */}
           {placeRootOverview && (
-            <div className="overflow-hidden rounded-2xl border border-[#2B3D4D] bg-[#101B27] shadow-md">
+            <div className="r10-card-gold-rim overflow-hidden rounded-2xl shadow-md">
               <div className="border-b border-[#2B3D4D] px-4 py-2 text-[11px] font-semibold text-[#CAD7E6]">
                 {t.tree.rootOverviewLabel}
               </div>
@@ -1082,13 +1082,13 @@ export function TeamClient({
                 </div>
                 <div className="p-3.5">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-[#B79CFF] text-[11px] font-bold text-[#0A101A]">
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#FFF0CA] via-[#F2CD7E] to-[#C8A858] text-[11px] font-bold text-[#0A101A]">
                       R
                     </span>
                     <span className="text-xs text-[#CAD7E6]">
                       {t.common.right} ({placeRootOverview.rightCount})
                     </span>
-                    <span className="ml-auto h-2 w-2 rounded-full bg-[#B79CFF] shadow-[0_0_6px_#B79CFF]" />
+                    <span className="ml-auto h-2 w-2 rounded-full bg-[#F2CD7E] shadow-[0_0_6px_#F2CD7E]" />
                   </div>
                   <div className="mt-2 tabular-nums text-xl font-black text-[#F4F8FC]">
                     {formatBv(placeRootOverview.rightBv)}
