@@ -1077,7 +1077,10 @@ export function TeamClient({
                     <span className="ml-auto h-2 w-2 rounded-full bg-[#51E7FA] shadow-[0_0_6px_#51E7FA]" />
                   </div>
                   <div className="mt-2 tabular-nums text-xl font-black text-[#F4F8FC]">
-                    {formatBv(placeRootOverview.leftBv)}
+                    {placeRootOverview.leftBv.toLocaleString("en-US")}{" "}
+                    <span className="text-xs font-semibold text-[#CAD7E6]">
+                      {locale === "zh-CN" ? "积分" : "pts"}
+                    </span>
                   </div>
                 </div>
                 <div className="p-3.5">
@@ -1091,7 +1094,10 @@ export function TeamClient({
                     <span className="ml-auto h-2 w-2 rounded-full bg-[#F2CD7E] shadow-[0_0_6px_#F2CD7E]" />
                   </div>
                   <div className="mt-2 tabular-nums text-xl font-black text-[#F4F8FC]">
-                    {formatBv(placeRootOverview.rightBv)}
+                    {placeRootOverview.rightBv.toLocaleString("en-US")}{" "}
+                    <span className="text-xs font-semibold text-[#CAD7E6]">
+                      {locale === "zh-CN" ? "积分" : "pts"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1214,7 +1220,7 @@ export function TeamClient({
                         {t.common.left} ({placeFocus.leftCount})
                       </div>
                       <div className="tabular-nums font-semibold text-[#F4F8FC]">
-                        {formatBv(placeFocus.leftBv)}
+                        {placeFocus.leftBv.toLocaleString("en-US")} {locale === "zh-CN" ? "积分" : "pts"}
                       </div>
                     </div>
                     <div className="px-3 py-2">
@@ -1222,7 +1228,7 @@ export function TeamClient({
                         {t.common.right} ({placeFocus.rightCount})
                       </div>
                       <div className="tabular-nums font-semibold text-[#F4F8FC]">
-                        {formatBv(placeFocus.rightBv)}
+                        {placeFocus.rightBv.toLocaleString("en-US")} {locale === "zh-CN" ? "积分" : "pts"}
                       </div>
                     </div>
                   </div>
@@ -1450,7 +1456,7 @@ export function TeamClient({
                       {t.common.left} ({detailModal.node.leftCount})
                     </div>
                     <div className="tabular-nums font-semibold text-[#F4F8FC]">
-                      {formatBv(detailModal.node.leftBv)}
+                      {detailModal.node.leftBv.toLocaleString("en-US")} {locale === "zh-CN" ? "积分" : "pts"}
                     </div>
                   </div>
                   <div>
@@ -1458,7 +1464,7 @@ export function TeamClient({
                       {t.common.right} ({detailModal.node.rightCount})
                     </div>
                     <div className="tabular-nums font-semibold text-[#F4F8FC]">
-                      {formatBv(detailModal.node.rightBv)}
+                      {detailModal.node.rightBv.toLocaleString("en-US")} {locale === "zh-CN" ? "积分" : "pts"}
                     </div>
                   </div>
                 </div>

@@ -489,8 +489,8 @@ export function MarbleRaceLoader({
               <Flag className="h-3.5 w-3.5 text-[#E7C98E]" />
               <span>
                 {isZh
-                  ? "正在同步实时 BV 余额、直推奖励与 00:00 SGT 倒数..."
-                  : "Syncing live BV balances, referral U ledgers & 00:00 SGT rollover..."}
+                  ? "正在同步实时团队积分、直推奖励与 00:00 SGT 倒数..."
+                  : "Syncing live team points, referral rewards & 00:00 SGT rollover..."}
               </span>
             </span>
             <span className="font-mono-sgt font-bold text-[#E7C98E]">{pct}%</span>

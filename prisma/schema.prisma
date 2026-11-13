@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum MemberRole {
@@ -65,7 +66,12 @@ enum PairingTriggerType {
 
 enum WalletEntryType {
   DIRECT_COMMISSION
+  DIFFERENTIAL_REWARD
   BINARY_PAIRING
+  REGISTRATION_PAYMENT_CP
+  REGISTRATION_PAYMENT_RP
+  RP_PURCHASE
+  RP_ISSUANCE
   WITHDRAWAL_LOCK
   WITHDRAWAL_RELEASE
   WITHDRAWAL_PAID
@@ -207,21 +213,22 @@ model RuleVersionRecord {
 }
 
 model PackageTier {
-  code                String         @id
-  nameEn              String
-  nameZh              String
-  priceUsdCents       Int
-  priceUsdtMicros     BigInt         @default(0)
-  bv                  Int
-  dailyCapPointsCents Int
-  sortOrder           Int
-  isActive            Boolean        @default(true)
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
-  membersCurrent      Member[]       @relation("CurrentPackage")
-  membersPending      Member[]       @relation("PendingUpgradePackage")
-  ordersTarget        PackageOrder[] @relation("OrderTargetPackage")
-  ordersPrevious      PackageOrder[] @relation("OrderPreviousPackage")
+  code                  String         @id
+  nameEn                String
+  nameZh                String
+  priceUsdCents         Int
+  priceUsdtMicros       BigInt         @default(0)
+  bv                    Int
+  directReferralRateBps Int            @default(2500)
+  dailyCapPointsCents   Int
+  sortOrder             Int
+  isActive              Boolean        @default(true)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  membersCurrent        Member[]       @relation("CurrentPackage")
+  membersPending        Member[]       @relation("PendingUpgradePackage")
+  ordersTarget          PackageOrder[] @relation("OrderTargetPackage")
+  ordersPrevious        PackageOrder[] @relation("OrderPreviousPackage")
 
   @@map("package_tiers")
 }
@@ -265,6 +272,8 @@ model Member {
   todayPairedPointsCents      Int                       @default(0)
   availablePointsCents        Int                       @default(0)
   lockedPointsCents           Int                       @default(0)
+  cpBalanceCents              Int                       @default(0)
+  rpBalanceCents              Int                       @default(0)
 
   activatedAt                 DateTime?
   createdAt                   DateTime                  @default(now())
@@ -309,6 +318,10 @@ model PackageOrder {
   amountUsdCents             Int
   bvAmount                   Int
   commissionableBv           Int
+  rpAmountCents              Int                    @default(0)
+  cpAmountCents              Int                    @default(0)
+  usdtAmountCents            Int                    @default(0)
+  systemVersion              String                 @default("V2_CP_RP")
   paymentStatus              PaymentStatus          @default(UNPAID)
   paymentRef                 String?
   paidAt                     DateTime?
@@ -454,8 +467,14 @@ model ReferralRewardLedger {
   orderId          String
   order            PackageOrder           @relation(fields: [orderId], references: [id])
   currency         ReferralRewardCurrency @default(USDT)
+  rewardType       String                 @default("DIRECT")
   baseBv           Int
   rateBps          Int
+  diffRateBps      Int                    @default(0)
+  allocatedBeforeBps Int                  @default(0)
+  allocatedAfterBps  Int                  @default(0)
+  sponsorTierSnapshot String?
+  amountCpCents    Int                    @default(0)
   conversionMicros Int                    @default(1000000)
   amountMicros     BigInt
   status           ReferralRewardStatus   @default(CREDITED)

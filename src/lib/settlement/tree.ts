@@ -42,6 +42,38 @@ export async function getPlacementAncestorPath(
 }
 
 /**
+ * Walks up the sponsor tree from `startSponsorId` (direct sponsor) to root,
+ * ordered by ascending depth (depth 1 = direct sponsor, depth 2 = sponsor's sponsor, etc.).
+ */
+export async function getSponsorAncestorChain(
+  db: DbClient,
+  startSponsorId: string
+): Promise<string[]> {
+  const rows = await db.$queryRaw<Array<{ id: string; depth: number }>>`
+    WITH RECURSIVE sponsor_chain AS (
+      SELECT
+        m.id,
+        m."sponsorId",
+        1 AS depth
+      FROM members m
+      WHERE m.id = ${startSponsorId}
+
+      UNION ALL
+
+      SELECT
+        p.id,
+        p."sponsorId",
+        s.depth + 1 AS depth
+      FROM members p
+      JOIN sponsor_chain s ON p.id = s."sponsorId"
+      WHERE s.depth < 100
+    )
+    SELECT id, depth FROM sponsor_chain ORDER BY depth ASC
+  `;
+  return rows.map((r) => r.id);
+}
+
+/**
  * Counts active paid members in a member's LEFT and RIGHT placement subtrees (all depths).
  * When `asOfBoundary` is provided, only includes members activated on or before that boundary
  * so delayed EOD runs reconstruct the exact 00:00 SGT boundary headcount.

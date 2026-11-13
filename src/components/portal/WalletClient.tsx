@@ -165,6 +165,8 @@ export function WalletClient({
   memberStatus,
   availablePointsCents,
   lockedPointsCents,
+  cpBalanceCents = 0,
+  rpBalanceCents = 0,
   feeRateBps,
   usdRateMicros,
   isDemoRate,
@@ -185,6 +187,8 @@ export function WalletClient({
   memberStatus: string;
   availablePointsCents: number;
   lockedPointsCents: number;
+  cpBalanceCents?: number;
+  rpBalanceCents?: number;
   feeRateBps: number;
   usdRateMicros: number;
   isDemoRate: boolean;
@@ -280,7 +284,11 @@ export function WalletClient({
 
   const filteredLedgers = ledgers.filter((l) => {
     if (filter === "ALL") return true;
-    if (filter === "DIRECT") return l.entryType === "DIRECT_COMMISSION";
+    if (filter === "DIRECT")
+      return (
+        l.entryType === "DIRECT_COMMISSION" ||
+        l.entryType === "DIFFERENTIAL_REWARD"
+      );
     if (filter === "PAIRING") return l.entryType === "BINARY_PAIRING";
     return (
       l.entryType === "WITHDRAWAL_LOCK" ||
@@ -403,6 +411,17 @@ export function WalletClient({
           >
             {showWithdrawForm ? t.common.cancel : t.overview.withdrawCta}
           </button>
+        </div>
+
+        <div className="relative mt-3 pt-3 border-t border-white/[0.08] flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-2 rounded-xl border border-[#51E7FA]/35 bg-[#0A101A] px-3 py-1.5 text-xs">
+            <span className="font-semibold text-[#51E7FA]">CP (Cash Point):</span>
+            <span className="font-bold tabular-nums text-[#F4F8FC]">{formatU(cpBalanceCents)} CP</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl border border-[#CBB487]/35 bg-[#0A101A] px-3 py-1.5 text-xs">
+            <span className="font-semibold text-[#F2CD7E]">RP (Register Point):</span>
+            <span className="font-bold tabular-nums text-[#F4F8FC]">{formatU(rpBalanceCents)} RP</span>
+          </div>
         </div>
       </div>
 
@@ -727,7 +746,7 @@ export function WalletClient({
                     </div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-mono-sgt text-[11px] text-[#AAB8C7]">
-                        {item.orderNo} · {item.packageCode} ({item.baseBv} BV ×{" "}
+                        {item.orderNo} · {item.packageCode} ({item.baseBv} U ×{" "}
                         {item.rateBps / 100}%)
                       </span>
                       <span
@@ -1000,7 +1019,7 @@ export function WalletClient({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#AAB8C7]">
-                      {locale === "zh-CN" ? "配套 / BV" : "Plan / BV"}
+                      {locale === "zh-CN" ? "配套 / 积分" : "Plan / Points"}
                     </span>
                     <span>
                       {selectedLedger.sourceDetail.packageCode} ·{" "}
@@ -1046,7 +1065,7 @@ export function WalletClient({
                   </div>
                   <div className="flex justify-between border-t border-[#2B3D4D] pt-2">
                     <span className="text-[#AAB8C7]">
-                      {locale === "zh-CN" ? "双边扣减 BV" : "BV Deducted"}
+                      {locale === "zh-CN" ? "双边扣减积分" : "Points Deducted"}
                     </span>
                     <span className="tabular-nums text-[#F4F8FC]">
                       {locale === "zh-CN" ? "左" : "L"} {selectedLedger.sourceDetail.leftBvBefore} →{" "}

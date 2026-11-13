@@ -275,12 +275,12 @@ export function PackagesClient({
         </div>
       )}
 
-      {/* 1 U = 1 BV Central Guide Rail Anchor (matching Design Slide 02) */}
+      {/* Central Guide Rail Anchor */}
       <div className="relative my-4 flex items-center justify-center">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
         <div className="mx-3 flex items-center gap-2 rounded-full border border-[#51E7FA]/50 bg-[#0A101A] px-4 py-1.5 shadow-[0_0_16px_rgba(81,231,250,0.3)]">
-          <span className="font-black italic tracking-widest text-[#F2CD7E] text-sm sm:text-base drop-shadow-[0_1px_6px_rgba(242,205,126,0.4)]">
-            1 U = 1 BV
+          <span className="font-black italic tracking-widest text-[#F2CD7E] text-xs sm:text-sm drop-shadow-[0_1px_6px_rgba(242,205,126,0.4)]">
+            {locale === "zh-CN" ? "固定 50% RP ＋ 0~50% CP ＋ USDT" : "50% RP + 0~50% CP + USDT"}
           </span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
@@ -335,18 +335,30 @@ export function PackagesClient({
                 </div>
               </div>
 
-              {/* Two-Column Clean Specs Grid (matching Design Slide 02) */}
+              {/* Four-Row Clean Specs Grid */}
               <div className="space-y-2 border-t border-[#2B3D4D]/60 pt-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#AAB8C7] font-medium">{t.packages.bvLabel}</span>
+                  <span className="text-[#AAB8C7] font-medium">
+                    {locale === "zh-CN" ? "团队积分" : "Team Points"}
+                  </span>
                   <span className="font-black italic tracking-wide text-[#F2CD7E] text-sm tabular-nums">
-                    {formatBv(tier.bv)}
+                    {tier.bv.toLocaleString("en-US")} {locale === "zh-CN" ? "积分" : "pts"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#AAB8C7] font-medium">{t.packages.dailyCapLabel}</span>
+                  <span className="text-[#AAB8C7] font-medium">
+                    {locale === "zh-CN" ? "推荐人直推比例" : "Sponsor Direct Rate"}
+                  </span>
+                  <span className="font-black italic tracking-wide text-[#51E7FA] text-sm tabular-nums">
+                    {tier.code === "P100" ? "25%" : tier.code === "P500" ? "30%" : "35%"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#AAB8C7] font-medium">
+                    {locale === "zh-CN" ? "每日对碰封顶" : "Daily Matching Cap"}
+                  </span>
                   <span className="font-black italic tracking-wide text-[#F2CD7E] text-sm tabular-nums">
-                    {formatU(tier.dailyCapPointsCents)} U/{locale === "zh-CN" ? "天" : "day"}
+                    {formatU(tier.dailyCapPointsCents)} CP/{locale === "zh-CN" ? "天" : "d"}
                   </span>
                 </div>
               </div>
@@ -374,16 +386,32 @@ export function PackagesClient({
           <span className="font-bold text-[#51E7FA]">/</span>
           <span>
             {locale === "zh-CN"
-              ? "U (USDT) 用于配套付款与发放奖金。"
-              : "U (USDT) is used for package payment and bonus payouts."}
+              ? "U (USDT) 1 U = 1 USDT，用于配套付款与直推/极差/对碰奖金。"
+              : "U (USDT) 1 U = 1 USDT, used for package purchase and rewards."}
           </span>
         </div>
         <div className="flex items-center gap-2 text-[#CAD7E6]">
           <span className="font-bold text-[#51E7FA]">/</span>
           <span>
             {locale === "zh-CN"
-              ? "BV (Bonus Value) 用于计算团队业绩及对碰。"
-              : "BV (Bonus Value) is used for team volume and binary pairing."}
+              ? "RP (Register Point) 注册点数由公司出售，注册时固定支付 50% 配套金额。"
+              : "RP (Register Point) sold by company; pays fixed 50% of registration."}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-[#CAD7E6]">
+          <span className="font-bold text-[#51E7FA]">/</span>
+          <span>
+            {locale === "zh-CN"
+              ? "CP (Cash Point) 直推/极差/对碰奖励入账单位，注册时最高可自选抵扣 50% 配套金额。"
+              : "CP (Cash Point) crediting unit; offsets up to 50% of package at registration."}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-[#CAD7E6]">
+          <span className="font-bold text-[#51E7FA]">/</span>
+          <span>
+            {locale === "zh-CN"
+              ? "团队积分：左区 100 积分 + 右区 100 积分 = 10 CP 对碰奖励，未对碰积分次日结转保留。"
+              : "Team Points: 100 Left + 100 Right = 10 CP pairing bonus; remaining points roll over."}
           </span>
         </div>
         <div className="mt-2 flex items-center justify-end border-t border-[#2B3D4D]/60 pt-2 text-[11px] font-mono-sgt text-[#F2CD7E]/80">
@@ -403,8 +431,8 @@ export function PackagesClient({
           </div>
           <span className="tabular-nums text-[11px] text-[#AAB8C7]">
             {locale === "zh-CN"
-              ? `左 ${formatBv(leftBv)} / 右 ${formatBv(rightBv)} · 今日已对碰 ${formatU(todayPairedPointsCents)} ${t.common.points}`
-              : `L ${formatBv(leftBv)} / R ${formatBv(rightBv)} · Paired ${formatU(todayPairedPointsCents)} ${t.common.points}`}
+              ? `左 ${leftBv.toLocaleString()} 积分 / 右 ${rightBv.toLocaleString()} 积分 · 今日已对碰 ${formatU(todayPairedPointsCents)} CP`
+              : `L ${leftBv.toLocaleString()} pts / R ${rightBv.toLocaleString()} pts · Paired ${formatU(todayPairedPointsCents)} CP`}
           </span>
         </div>
         {orders.length === 0 ? (
@@ -549,7 +577,7 @@ export function PackagesClient({
                               ? selectedTarget.priceUsdCents
                               : selectedTarget.upgradePayUsdCents
                         )}{" "}
-                        U (1 U = 1 BV)
+                        U (USDT)
                       </div>
                     </div>
                   </div>

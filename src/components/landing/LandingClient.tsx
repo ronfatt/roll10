@@ -54,7 +54,7 @@ const HERO_POSTERS: PosterSlide[] = [
     tagZh: "冠军杯重磅优惠",
     titleEn: "1,000 U CHAMPIONSHIP",
     titleZh: "冠军杯活动",
-    date: "1 U = 1 BV · TRON TRC20",
+    date: "固定 50% RP ＋ USDT · TRON TRC20",
   },
 ];
 
@@ -68,10 +68,10 @@ const NOTICES = [
   },
   {
     id: "n2",
-    pillEn: "1 U = 1 BV",
-    pillZh: "1 U = 1 BV 统一标准",
-    detailEn: "Team legs & midnight rollover in BV; rewards & payouts in U.",
-    detailZh: "团队与结转采用 BV，直推/对碰/提现统一使用 U（USDT）。",
+    pillEn: "50% RP + CP / USDT",
+    pillZh: "固定 50% RP ＋ 自选 CP 支付",
+    detailEn: "50% RP + 0-50% CP + USDT remainder. Rewards credited in CP.",
+    detailZh: "新会员注册支付固定 50% RP，CP 可自选 0%~50%，剩余以 USDT 补足；各项奖励以 CP 实时发放。",
   },
   {
     id: "n3",
@@ -324,7 +324,7 @@ export function LandingClient({
           </div>
         </section>
 
-        {/* 3. Package Cards Showcase & 1 U = 1 BV (matching Design Slide 02) */}
+        {/* 3. Package Cards Showcase & Payment Formula */}
         <section
           aria-label={isZh ? "配套方案" : "Packages"}
           className="r10-card-gold-rim relative overflow-hidden rounded-[22px] p-4 sm:p-5 space-y-3"
@@ -341,12 +341,12 @@ export function LandingClient({
             <span className="font-mono-sgt text-xs font-bold text-[#F2CD7E]">─ 02 / 05 ─</span>
           </div>
 
-          {/* Central Guide Line: 1 U = 1 BV */}
+          {/* Central Guide Line: 50% RP + 0~50% CP + USDT */}
           <div className="relative my-2 flex items-center justify-center">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
-            <div className="mx-3 rounded-full border border-[#51E7FA]/50 bg-[#0A101A] px-3.5 py-1 shadow-[0_0_12px_rgba(81,231,250,0.25)]">
-              <span className="font-black italic text-xs sm:text-sm tracking-widest text-[#F2CD7E] drop-shadow-[0_1px_4px_rgba(242,205,126,0.4)]">
-                1 U = 1 BV
+            <div className="mx-2 sm:mx-3 rounded-full border border-[#51E7FA]/50 bg-[#0A101A] px-3 py-1 shadow-[0_0_12px_rgba(81,231,250,0.25)] text-center">
+              <span className="font-black italic text-[11px] sm:text-xs tracking-wide sm:tracking-widest text-[#F2CD7E] drop-shadow-[0_1px_4px_rgba(242,205,126,0.4)]">
+                {isZh ? "固定 50% RP ＋ 0~50% CP ＋ USDT" : "50% RP + 0~50% CP + USDT"}
               </span>
             </div>
             <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#51E7FA]/50 to-[#51E7FA]" />
@@ -355,44 +355,50 @@ export function LandingClient({
           {/* 3 Tier Cards: P100, P500, P1000 */}
           <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
             {/* P100 */}
-            <div className="rounded-xl border border-[#F2CD7E]/30 bg-[#0E1520] p-2.5 sm:p-3 text-center shadow-md">
+            <div className="rounded-xl border border-[#F2CD7E]/30 bg-[#0E1520] p-2 sm:p-2.5 text-center shadow-md">
               <div className="text-sm sm:text-base font-black italic text-[#F4F8FC]">P100</div>
-              <div className="my-1.5 r10-badge-gold-ribbon py-1 px-1">
+              <div className="my-1 r10-badge-gold-ribbon py-0.5 px-1">
                 <span className="text-xs sm:text-sm font-black italic text-[#F2CD7E]">100 U</span>
               </div>
               <div className="space-y-1 text-[10px] sm:text-[11px] pt-1">
-                <div className="text-[#AAB8C7]">{isZh ? "配套业绩" : "Volume"}</div>
-                <div className="font-bold italic text-[#F2CD7E]">100 BV</div>
-                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "日封顶" : "Daily Cap"}</div>
-                <div className="font-bold italic text-[#F2CD7E]">100 U</div>
+                <div className="text-[#AAB8C7]">{isZh ? "团队积分" : "Team Points"}</div>
+                <div className="font-bold italic text-[#51E7FA]">100</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "直推比例" : "Direct Rate"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">25%</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "对碰封顶" : "Daily Cap"}</div>
+                <div className="font-bold italic text-[#F4F8FC]">100 CP/天</div>
               </div>
             </div>
 
             {/* P500 */}
-            <div className="rounded-xl border border-[#F2CD7E]/30 bg-[#0E1520] p-2.5 sm:p-3 text-center shadow-md">
+            <div className="rounded-xl border border-[#F2CD7E]/30 bg-[#0E1520] p-2 sm:p-2.5 text-center shadow-md">
               <div className="text-sm sm:text-base font-black italic text-[#F4F8FC]">P500</div>
-              <div className="my-1.5 r10-badge-gold-ribbon py-1 px-1">
+              <div className="my-1 r10-badge-gold-ribbon py-0.5 px-1">
                 <span className="text-xs sm:text-sm font-black italic text-[#F2CD7E]">500 U</span>
               </div>
               <div className="space-y-1 text-[10px] sm:text-[11px] pt-1">
-                <div className="text-[#AAB8C7]">{isZh ? "配套业绩" : "Volume"}</div>
-                <div className="font-bold italic text-[#F2CD7E]">500 BV</div>
-                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "日封顶" : "Daily Cap"}</div>
-                <div className="font-bold italic text-[#F2CD7E]">500 U</div>
+                <div className="text-[#AAB8C7]">{isZh ? "团队积分" : "Team Points"}</div>
+                <div className="font-bold italic text-[#51E7FA]">500</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "直推比例" : "Direct Rate"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">30%</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "对碰封顶" : "Daily Cap"}</div>
+                <div className="font-bold italic text-[#F4F8FC]">500 CP/天</div>
               </div>
             </div>
 
             {/* P1000 */}
-            <div className="rounded-xl border border-[#F2CD7E]/40 bg-[#0E1520] p-2.5 sm:p-3 text-center shadow-md shadow-[0_0_12px_rgba(242,205,126,0.15)]">
+            <div className="rounded-xl border border-[#F2CD7E]/40 bg-[#0E1520] p-2 sm:p-2.5 text-center shadow-md shadow-[0_0_12px_rgba(242,205,126,0.15)]">
               <div className="text-sm sm:text-base font-black italic text-[#F4F8FC]">P1000</div>
-              <div className="my-1.5 r10-badge-gold-ribbon py-1 px-1">
+              <div className="my-1 r10-badge-gold-ribbon py-0.5 px-1">
                 <span className="text-xs sm:text-sm font-black italic text-[#F2CD7E]">1,000 U</span>
               </div>
               <div className="space-y-1 text-[10px] sm:text-[11px] pt-1">
-                <div className="text-[#AAB8C7]">{isZh ? "配套业绩" : "Volume"}</div>
-                <div className="font-bold italic text-[#F2CD7E]">1,000 BV</div>
-                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "日封顶" : "Daily Cap"}</div>
-                <div className="font-bold italic text-[#F2CD7E]">1,000 U</div>
+                <div className="text-[#AAB8C7]">{isZh ? "团队积分" : "Team Points"}</div>
+                <div className="font-bold italic text-[#51E7FA]">1,000</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "直推比例" : "Direct Rate"}</div>
+                <div className="font-bold italic text-[#F2CD7E]">35%</div>
+                <div className="text-[#AAB8C7] pt-0.5">{isZh ? "对碰封顶" : "Daily Cap"}</div>
+                <div className="font-bold italic text-[#F4F8FC]">1,000 CP/天</div>
               </div>
             </div>
           </div>
@@ -403,16 +409,16 @@ export function LandingClient({
               <span className="font-bold text-[#51E7FA]">/</span>
               <span>
                 {isZh
-                  ? "U (USDT) 用于配套付款与发放奖金。"
-                  : "U (USDT) is used for package payment and bonus payouts."}
+                  ? "USDT (U) 为支付货币；RP 由公司发行；CP 为奖励发放与自选抵扣点数。"
+                  : "USDT (U) is payment currency; RP issued by platform; CP for rewards & optional offset."}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-[#51E7FA]">/</span>
               <span>
                 {isZh
-                  ? "BV (Bonus Value) 用于计算团队业绩及对碰。"
-                  : "BV (Bonus Value) is used for team volume and binary pairing."}
+                  ? "团队积分按 100 整数倍累计，每 100 对碰结算 10 CP，每日未对碰积分 100% 保留结转。"
+                  : "Team points accumulate in 100 units; every 100 pairs settle 10 CP; un-paired points roll over 100%."}
               </span>
             </div>
           </div>

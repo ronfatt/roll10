@@ -286,7 +286,7 @@ export function UsdtOrderPaymentClient({
             <div>
               {t.deposit.tierLabel}:{" "}
               <strong className="text-[#F4F8FC]">
-                {order.targetPackageCode} ({order.bvAmount} BV)
+                {order.targetPackageCode} ({order.bvAmount} {locale === "zh-CN" ? "积分" : "Points"})
               </strong>
             </div>
             {order.confirmedAtLabel && (
@@ -334,7 +334,7 @@ export function UsdtOrderPaymentClient({
                 {formatOrderType(order.orderType, locale)} · {order.targetPackageCode}
               </div>
               <div className="mt-0.5 text-sm font-semibold text-[#F4F8FC]">
-                {order.tierName} · {order.bvAmount} BV
+                {order.tierName} · {order.bvAmount} {locale === "zh-CN" ? "积分" : "Points"}
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-1.5">

@@ -22,6 +22,8 @@ export interface LockedMemberRow {
   todayPairedPointsCents: number;
   availablePointsCents: number;
   lockedPointsCents: number;
+  cpBalanceCents?: number;
+  rpBalanceCents?: number;
   activatedAt: Date | null;
 }
 
@@ -40,6 +42,8 @@ export interface ConfirmOrderResult {
   effectiveAt?: Date | null;
   upgradeStatus?: "NOT_APPLICABLE" | "WAITING_EFFECTIVE" | "EFFECTIVE";
   directCommissionCents?: number;
+  directCommissionCpCents?: number;
+  differentialCpCents?: number;
   directRewardUsdtMicros?: string;
   pairingSettlementsCount?: number;
 }

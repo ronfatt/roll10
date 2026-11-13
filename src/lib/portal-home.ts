@@ -9,6 +9,7 @@ import {
   getNextSgtRolloverAt,
 } from "@/lib/sgt";
 import { calculateDirectRewardUsdtMicros } from "@/lib/money";
+import { ROLL10_PACKAGES } from "@/lib/packages";
 import { decideEodCarryover, getOrCreateConfigTx } from "@/lib/settlement/engine";
 import { countSubtreeActiveMembers } from "@/lib/settlement/tree";
 
@@ -31,6 +32,11 @@ export interface PortalHomePayload {
     rightCount: number;
     todayPairedCents: number;
     directCommissionCents: number;
+    directCommissionCpCents: number;
+    differentialCpCents: number;
+    directRatePercent: number;
+    cpBalanceCents: number;
+    rpBalanceCents: number;
     directReferralCount: number;
     directReferralActiveCount: number;
     directReferralPendingCount: number;
@@ -92,7 +98,7 @@ function formatPlanShort(code: string | null, locale: Locale): string {
   const numeric = Number(code.replace(/^P/i, ""));
   if (Number.isFinite(numeric) && numeric > 0) {
     const formatted = numeric.toLocaleString("en-US");
-    return locale === "zh-CN" ? `${formatted} BV 配套` : `${formatted} BV Plan`;
+    return locale === "zh-CN" ? `${formatted} U 配套` : `${formatted} U Plan`;
   }
   return code;
 }
@@ -126,6 +132,8 @@ export async function loadPortalHomeData(
   const [
     config,
     directSumAgg,
+    directCpEarnedAgg,
+    differentialCpEarnedAgg,
     directUsdtEarnedAgg,
     directUsdtPendingRows,
     pendingReferralOrders,
@@ -140,6 +148,22 @@ export async function loadPortalHomeData(
     prisma.walletLedger.aggregate({
       where: { memberId: member.id, entryType: "DIRECT_COMMISSION" },
       _sum: { deltaAvailableCents: true },
+    }),
+    prisma.referralRewardLedger.aggregate({
+      where: {
+        memberId: member.id,
+        rewardType: "DIRECT",
+        status: "CREDITED",
+      },
+      _sum: { amountCpCents: true },
+    }),
+    prisma.referralRewardLedger.aggregate({
+      where: {
+        memberId: member.id,
+        rewardType: "DIFFERENTIAL",
+        status: "CREDITED",
+      },
+      _sum: { amountCpCents: true },
     }),
     prisma.referralRewardLedger.aggregate({
       where: {
@@ -271,6 +295,12 @@ export async function loadPortalHomeData(
   const fromCode = waitingUpgradeOrder?.previousPackageCode ?? member.currentPackageCode ?? "";
   const toCode = waitingUpgradeOrder?.targetPackageCode ?? "";
 
+  const sponsorPkgConfig =
+    ROLL10_PACKAGES[member.currentPackageCode || ""] || ROLL10_PACKAGES.P100;
+  const directRatePercent = sponsorPkgConfig.directRatePercent;
+  const directRewardCpCents = directCpEarnedAgg._sum.amountCpCents ?? 0;
+  const differentialRewardCpCents = differentialCpEarnedAgg._sum.amountCpCents ?? 0;
+
   return {
     serverNowIso: now.toISOString(),
     nextRolloverAtIso: nextRolloverAt.toISOString(),
@@ -289,7 +319,12 @@ export async function loadPortalHomeData(
       leftCount: subtreeCounts.leftCount,
       rightCount: subtreeCounts.rightCount,
       todayPairedCents: effectiveTodayPairedCents,
-      directCommissionCents: directSumAgg._sum.deltaAvailableCents ?? 0,
+      directCommissionCents: directRewardCpCents,
+      directCommissionCpCents: directRewardCpCents,
+      differentialCpCents: differentialRewardCpCents,
+      directRatePercent,
+      cpBalanceCents: (member as { cpBalanceCents?: number }).cpBalanceCents ?? 0,
+      rpBalanceCents: (member as { rpBalanceCents?: number }).rpBalanceCents ?? 0,
       directReferralCount,
       directReferralActiveCount,
       directReferralPendingCount,
@@ -326,14 +361,14 @@ export async function loadPortalHomeData(
         : null,
     recentEffectiveTransition,
     eodPreview: {
-      retainedSide: eodPreviewDecision.retainedSide,
-      flushedBv: eodPreviewDecision.flushedBv,
-      carryoverBv,
+      retainedSide: "NONE",
+      flushedBv: 0,
+      carryoverBv: member.leftBv + member.rightBv,
       leftBv: member.leftBv,
       rightBv: member.rightBv,
       leftCount: subtreeCounts.leftCount,
       rightCount: subtreeCounts.rightCount,
-      decisionBasis: eodPreviewDecision.decisionBasis,
+      decisionBasis: "ROLLOVER_FULL_POINTS_RETAINED",
     },
     latestEod: latestEod
       ? {
@@ -372,7 +407,7 @@ export function getFallbackHomeData(
       displayName: member.displayName,
       status: member.status,
       currentPackageCode: isP1000 ? "P1000" : "P100",
-      packageLabel: isP1000 ? "1,000 BV 配套" : "100 BV 配套",
+      packageLabel: isP1000 ? "尊享配套 1,000 U" : "入门配套 100 U",
       planBadge: isP1000 ? "P1000" : "P100",
       dailyCapPointsCents: isP1000 ? 100000 : 10000,
       leftBv: isP1000 ? 4400 : 1800,
@@ -381,6 +416,11 @@ export function getFallbackHomeData(
       rightCount: isP1000 ? 1 : 3,
       todayPairedCents: 0,
       directCommissionCents: 0,
+      directCommissionCpCents: 0,
+      differentialCpCents: 0,
+      directRatePercent: isP1000 ? 35 : 25,
+      cpBalanceCents: 20000,
+      rpBalanceCents: 500000,
       directReferralCount: isP1000 ? 2 : 8,
       directReferralActiveCount: isP1000 ? 2 : 8,
       directReferralPendingCount: 0,
@@ -396,14 +436,14 @@ export function getFallbackHomeData(
     waitingUpgrade: null,
     recentEffectiveTransition: null,
     eodPreview: {
-      retainedSide: isP1000 ? "LEFT" : "LEFT",
+      retainedSide: "NONE",
       flushedBv: 0,
-      carryoverBv: isP1000 ? 4400 : 800,
+      carryoverBv: isP1000 ? 4400 : 2800,
       leftBv: isP1000 ? 4400 : 1800,
       rightBv: isP1000 ? 0 : 1000,
       leftCount: isP1000 ? 11 : 7,
       rightCount: isP1000 ? 1 : 3,
-      decisionBasis: "Carryover weak side pairing",
+      decisionBasis: "ROLLOVER_FULL_POINTS_RETAINED",
     },
     latestEod: null,
   };

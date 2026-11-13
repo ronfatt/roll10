@@ -197,7 +197,7 @@ export function LedgersClient({
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "SGT 日期" : "SGT Date"}</th>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "触发方式" : "Trigger"}</th>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "对碰组数" : "Pairs"}</th>
-                    <th className="py-2 pr-3">{locale === "zh-CN" ? "扣除 BV" : "BV Deducted"}</th>
+                    <th className="py-2 pr-3">{locale === "zh-CN" ? "扣除积分" : "Points Deducted"}</th>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "发放奖金" : "Awarded"}</th>
                     <th className="py-2 pr-3">{locale === "zh-CN" ? "封顶进度" : "Cap Progress"}</th>
                     <th className="py-2 pr-3">{t.common.timeSgt}</th>
@@ -263,7 +263,7 @@ export function LedgersClient({
             <div className="mt-3 grid grid-cols-2 gap-2.5 text-xs sm:grid-cols-4">
               <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
                 <div className="text-[#AAB8C7]">
-                  {locale === "zh-CN" ? "当前左 / 右区 BV" : "Current L / R BV"}
+                  {locale === "zh-CN" ? "当前左 / 右区积分" : "Current L / R Points"}
                 </div>
                 <div className="mt-1 tabular-nums font-semibold text-[#F4F8FC]">
                   {eodPreview.leftBv} / {eodPreview.rightBv}
@@ -287,7 +287,7 @@ export function LedgersClient({
               </div>
               <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-3">
                 <div className="text-[#AAB8C7]">
-                  {locale === "zh-CN" ? "预估清零 BV" : "Est. Flushed BV"}
+                  {locale === "zh-CN" ? "预估清零积分" : "Est. Flushed Points"}
                 </div>
                 <div className="mt-1 tabular-nums font-semibold text-[#51E7FA]">
                   {formatBv(eodPreview.flushedBv)}
@@ -342,7 +342,7 @@ export function LedgersClient({
                         {locale === "zh-CN" ? "人数 (左/右)" : "Headcount (L / R)"}
                       </th>
                       <th className="py-2 pr-3">{locale === "zh-CN" ? "保留区" : "Retained Side"}</th>
-                      <th className="py-2 pr-3">{locale === "zh-CN" ? "清零 BV" : "Flushed BV"}</th>
+                      <th className="py-2 pr-3">{locale === "zh-CN" ? "清零积分" : "Flushed Points"}</th>
                       <th className="py-2 pr-3">
                         {locale === "zh-CN" ? "结转后 (左/右)" : "After (L / R)"}
                       </th>
@@ -386,7 +386,7 @@ export function LedgersClient({
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h2 className="text-sm font-semibold text-[#F4F8FC]">
-                  {locale === "zh-CN" ? "BV 流水明细" : "BV Ledger"}
+                  {locale === "zh-CN" ? "团队积分流水明细" : "Points Ledger"}
                 </h2>
                 <span className="text-[11px] text-[#AAB8C7]">
                   {locale === "zh-CN" ? (
@@ -430,7 +430,7 @@ export function LedgersClient({
                     <tr>
                       <th className="py-2 pr-3">{locale === "zh-CN" ? "区间" : "Leg"}</th>
                       <th className="py-2 pr-3">{locale === "zh-CN" ? "类型" : "Type"}</th>
-                      <th className="py-2 pr-3">{locale === "zh-CN" ? "BV 变动" : "Delta BV"}</th>
+                      <th className="py-2 pr-3">{locale === "zh-CN" ? "积分变动" : "Delta Points"}</th>
                       <th className="py-2 pr-3">{locale === "zh-CN" ? "变动后余额" : "Balance After"}</th>
                       <th className="py-2 pr-3">{locale === "zh-CN" ? "备注" : "Note"}</th>
                       <th className="py-2 pr-3">{t.common.timeSgt}</th>
@@ -517,7 +517,7 @@ export function LedgersClient({
             <div className="rounded-xl border border-[#2B3D4D] bg-[#0A101A] p-4 space-y-2.5 text-[#F4F8FC]">
               <div className="flex justify-between">
                 <span className="text-[#AAB8C7]">
-                  {locale === "zh-CN" ? "日结前 BV" : "BV Before EOD"}
+                  {locale === "zh-CN" ? "日结前积分" : "Points Before EOD"}
                 </span>
                 <span className="tabular-nums font-semibold text-[#F4F8FC]">
                   L {formatBv(selectedEod.leftBvBefore)} / R {formatBv(selectedEod.rightBvBefore)}
@@ -541,7 +541,7 @@ export function LedgersClient({
               </div>
               <div className="flex justify-between">
                 <span className="text-[#AAB8C7]">
-                  {locale === "zh-CN" ? "清零 BV" : "Flushed"}
+                  {locale === "zh-CN" ? "清零积分" : "Flushed"}
                 </span>
                 <span className="tabular-nums font-semibold text-[#51E7FA]">
                   {formatBv(selectedEod.flushedBv)} ({formatLegLabel(selectedEod.flushedSide, locale)})

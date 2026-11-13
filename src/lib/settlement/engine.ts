@@ -14,6 +14,7 @@ import {
   calculatePairingResult,
   usdCentsToUsdtMicros,
 } from "@/lib/money";
+import { ROLL10_PACKAGES, calculateRegistrationPayment } from "@/lib/packages";
 import { isUsdtDepositConfigured } from "@/lib/usdt/address";
 import {
   addDaysToSgtDate,
@@ -21,7 +22,7 @@ import {
   getUpgradeEffectiveScheduleSgt,
   makeSgtDate,
 } from "@/lib/sgt";
-import { countSubtreeActiveMembers, getPlacementAncestorPath } from "./tree";
+import { countSubtreeActiveMembers, getPlacementAncestorPath, getSponsorAncestorChain } from "./tree";
 import type { ConfirmOrderResult, EodDecision, LockedMemberRow } from "./types";
 
 type Tx = Prisma.TransactionClient;
@@ -56,81 +57,16 @@ export function decideEodCarryover(
   rightBv: number,
   leftCount: number,
   rightCount: number,
-  tieBreakerRule: TieBreakerRule
+  tieBreakerRule?: TieBreakerRule
 ): EodDecision {
-  if (leftBv === 0 && rightBv === 0) {
-    return {
-      retainedSide: "NONE",
-      flushedSide: "NONE",
-      flushedBv: 0,
-      leftBvAfter: 0,
-      rightBvAfter: 0,
-      decisionBasis: "ZERO_BALANCES",
-    };
-  }
-
-  if (leftBv > rightBv) {
-    return {
-      retainedSide: "LEFT",
-      flushedSide: rightBv > 0 ? "RIGHT" : "NONE",
-      flushedBv: rightBv,
-      leftBvAfter: leftBv,
-      rightBvAfter: 0,
-      decisionBasis: "HIGHER_BV_LEFT",
-    };
-  }
-
-  if (rightBv > leftBv) {
-    return {
-      retainedSide: "RIGHT",
-      flushedSide: leftBv > 0 ? "LEFT" : "NONE",
-      flushedBv: leftBv,
-      leftBvAfter: 0,
-      rightBvAfter: rightBv,
-      decisionBasis: "HIGHER_BV_RIGHT",
-    };
-  }
-
-  if (leftCount > rightCount) {
-    return {
-      retainedSide: "LEFT",
-      flushedSide: "RIGHT",
-      flushedBv: rightBv,
-      leftBvAfter: leftBv,
-      rightBvAfter: 0,
-      decisionBasis: "TIE_BV_HIGHER_HEADCOUNT_LEFT",
-    };
-  }
-
-  if (rightCount > leftCount) {
-    return {
-      retainedSide: "RIGHT",
-      flushedSide: "LEFT",
-      flushedBv: leftBv,
-      leftBvAfter: 0,
-      rightBvAfter: rightBv,
-      decisionBasis: "TIE_BV_HIGHER_HEADCOUNT_RIGHT",
-    };
-  }
-
-  if (tieBreakerRule === "KEEP_RIGHT") {
-    return {
-      retainedSide: "RIGHT",
-      flushedSide: "LEFT",
-      flushedBv: leftBv,
-      leftBvAfter: 0,
-      rightBvAfter: rightBv,
-      decisionBasis: "TIE_BV_TIE_HEADCOUNT_CONFIG_KEEP_RIGHT",
-    };
-  }
-
+  // ROLL10 V2 Rule: Un-paired team points on both left & right legs are 100% retained and rolled over to next day.
   return {
-    retainedSide: "LEFT",
-    flushedSide: "RIGHT",
-    flushedBv: rightBv,
+    retainedSide: "NONE",
+    flushedSide: "NONE",
+    flushedBv: 0,
     leftBvAfter: leftBv,
-    rightBvAfter: 0,
-    decisionBasis: "TIE_BV_TIE_HEADCOUNT_CONFIG_KEEP_LEFT",
+    rightBvAfter: rightBv,
+    decisionBasis: "ROLLOVER_FULL_POINTS_RETAINED",
   };
 }
 
@@ -177,9 +113,244 @@ export async function getOrCreateConfigTx(tx: Tx | PrismaClient): Promise<System
 }
 
 /**
- * Awards direct referral bonus in either USDT (`referral_reward_ledgers`) or legacy
- * points (`wallet_ledgers`), strictly isolated from daily pairing cap and BV rollover.
- * Guarantees idempotency across retries and currency boundaries.
+ * Awards direct referral rewards (to direct sponsor based on sponsor active tier 25%/30%/35%)
+ * and differential rewards (极差奖励) up the sponsor chain until 35% cap is reached.
+ * All rewards are credited in Cash Point (CP) with strict idempotency and audit trails.
+ */
+export async function awardReferralAndDifferentialRewardsTx(params: {
+  tx: Tx;
+  lockedMembers: Map<string, LockedMemberRow>;
+  sponsorChain: string[];
+  sourceMemberId: string;
+  sourceMemberCode: string;
+  orderId: string;
+  packagePriceU: number;
+  packagePoints: number;
+  currentSgtDate: string;
+  businessAt: Date;
+  processedAt: Date;
+  config: SystemConfig;
+}): Promise<{
+  directCommissionCents: number;
+  directCommissionCpCents: number;
+  differentialCpCents: number;
+  directRewardUsdtMicros: bigint;
+}> {
+  const {
+    tx,
+    lockedMembers,
+    sponsorChain,
+    sourceMemberId,
+    sourceMemberCode,
+    orderId,
+    packagePriceU,
+    packagePoints,
+    currentSgtDate,
+    businessAt,
+    processedAt,
+    config,
+  } = params;
+
+  if (packagePriceU <= 0 || sponsorChain.length === 0) {
+    return {
+      directCommissionCents: 0,
+      directCommissionCpCents: 0,
+      differentialCpCents: 0,
+      directRewardUsdtMicros: 0n,
+    };
+  }
+
+  let directCommissionCpCents = 0;
+  let differentialCpCents = 0;
+  let allocatedRateBps = 0;
+
+  // 1. Direct Sponsor Reward (determined by sponsor's own active tier at the time)
+  const directSponsorId = sponsorChain[0];
+  let directSponsor = lockedMembers.get(directSponsorId);
+  if (directSponsor && directSponsor.status === "ACTIVE") {
+    directSponsor = await ensureMemberChronologyTx(
+      tx,
+      directSponsor,
+      businessAt,
+      config,
+      processedAt,
+      "LAZY_CATCHUP"
+    );
+    lockedMembers.set(directSponsor.id, directSponsor);
+
+    const sponsorPkg =
+      ROLL10_PACKAGES[directSponsor.currentPackageCode || ""] ||
+      ROLL10_PACKAGES.P100;
+    const sponsorRateBps = sponsorPkg.directRateBps; // P100=2500 (25%), P500=3000 (30%), P1000=3500 (35%)
+
+    const directCpCents = Math.round((packagePriceU * 100 * sponsorRateBps) / 10000);
+    const directEventKey = `direct_cp:${orderId}:${directSponsor.id}`;
+
+    const existingDirect = await tx.referralRewardLedger.findUnique({
+      where: { eventKey: directEventKey },
+    });
+
+    if (!existingDirect && directCpCents > 0) {
+      directSponsor.cpBalanceCents = (directSponsor.cpBalanceCents || 0) + directCpCents;
+      directSponsor.availablePointsCents += directCpCents;
+
+      await tx.member.update({
+        where: { id: directSponsor.id },
+        data: {
+          cpBalanceCents: directSponsor.cpBalanceCents,
+          availablePointsCents: directSponsor.availablePointsCents,
+        },
+      });
+
+      const note = `直推奖励 ${sponsorRateBps / 100}% on ${packagePriceU} U from ${sourceMemberCode}`;
+
+      await tx.referralRewardLedger.create({
+        data: {
+          rewardNo: makeDocNo("DIR", currentSgtDate),
+          eventKey: directEventKey,
+          rewardType: "DIRECT",
+          memberId: directSponsor.id,
+          sourceMemberId,
+          orderId,
+          currency: "USDT",
+          baseBv: packagePoints,
+          rateBps: sponsorRateBps,
+          diffRateBps: 0,
+          allocatedBeforeBps: 0,
+          allocatedAfterBps: sponsorRateBps,
+          sponsorTierSnapshot: directSponsor.currentPackageCode,
+          amountCpCents: directCpCents,
+          amountMicros: BigInt(directCpCents) * 10000n,
+          status: "CREDITED",
+          creditedAt: businessAt,
+          note,
+          createdAt: businessAt,
+        },
+      });
+
+      await tx.walletLedger.create({
+        data: {
+          ledgerNo: makeDocNo("WL", currentSgtDate),
+          eventKey: `direct_wl:${orderId}:${directSponsor.id}`,
+          memberId: directSponsor.id,
+          entryType: "DIRECT_COMMISSION",
+          deltaAvailableCents: directCpCents,
+          deltaLockedCents: 0,
+          availableAfterCents: directSponsor.availablePointsCents,
+          lockedAfterCents: directSponsor.lockedPointsCents,
+          orderId,
+          note,
+          createdAt: businessAt,
+        },
+      });
+
+      directCommissionCpCents = directCpCents;
+    }
+    allocatedRateBps = sponsorRateBps;
+  }
+
+  // 2. Differential Rewards (极差奖励) up the sponsor chain
+  for (let i = 1; i < sponsorChain.length; i++) {
+    if (allocatedRateBps >= 3500) break; // Maximum 35% cap reached
+
+    const ancestorId = sponsorChain[i];
+    let ancestor = lockedMembers.get(ancestorId);
+    if (!ancestor || ancestor.status !== "ACTIVE") continue;
+
+    ancestor = await ensureMemberChronologyTx(
+      tx,
+      ancestor,
+      businessAt,
+      config,
+      processedAt,
+      "LAZY_CATCHUP"
+    );
+    lockedMembers.set(ancestor.id, ancestor);
+
+    const ancestorPkg =
+      ROLL10_PACKAGES[ancestor.currentPackageCode || ""] ||
+      ROLL10_PACKAGES.P100;
+    const ancestorRateBps = ancestorPkg.directRateBps;
+
+    if (ancestorRateBps > allocatedRateBps) {
+      const diffRateBps = ancestorRateBps - allocatedRateBps;
+      const diffCpCents = Math.round((packagePriceU * 100 * diffRateBps) / 10000);
+      const diffEventKey = `diff_cp:${orderId}:${ancestor.id}`;
+
+      const existingDiff = await tx.referralRewardLedger.findUnique({
+        where: { eventKey: diffEventKey },
+      });
+
+      if (!existingDiff && diffCpCents > 0) {
+        ancestor.cpBalanceCents = (ancestor.cpBalanceCents || 0) + diffCpCents;
+        ancestor.availablePointsCents += diffCpCents;
+
+        await tx.member.update({
+          where: { id: ancestor.id },
+          data: {
+            cpBalanceCents: ancestor.cpBalanceCents,
+            availablePointsCents: ancestor.availablePointsCents,
+          },
+        });
+
+        const note = `极差奖励 ${diffRateBps / 100}% on ${packagePoints} 积分 from ${sourceMemberCode}`;
+
+        await tx.referralRewardLedger.create({
+          data: {
+            rewardNo: makeDocNo("DIF", currentSgtDate),
+            eventKey: diffEventKey,
+            rewardType: "DIFFERENTIAL",
+            memberId: ancestor.id,
+            sourceMemberId,
+            orderId,
+            currency: "USDT",
+            baseBv: packagePoints,
+            rateBps: diffRateBps,
+            diffRateBps,
+            allocatedBeforeBps: allocatedRateBps,
+            allocatedAfterBps: ancestorRateBps,
+            sponsorTierSnapshot: ancestor.currentPackageCode,
+            amountCpCents: diffCpCents,
+            amountMicros: BigInt(diffCpCents) * 10000n,
+            status: "CREDITED",
+            creditedAt: businessAt,
+            note,
+            createdAt: businessAt,
+          },
+        });
+
+        await tx.walletLedger.create({
+          data: {
+            ledgerNo: makeDocNo("WL", currentSgtDate),
+            eventKey: `diff_wl:${orderId}:${ancestor.id}`,
+            memberId: ancestor.id,
+            entryType: "DIFFERENTIAL_REWARD",
+            deltaAvailableCents: diffCpCents,
+            deltaLockedCents: 0,
+            availableAfterCents: ancestor.availablePointsCents,
+            lockedAfterCents: ancestor.lockedPointsCents,
+            orderId,
+            note,
+            createdAt: businessAt,
+          },
+        });
+
+        differentialCpCents += diffCpCents;
+      }
+      allocatedRateBps = ancestorRateBps;
+    }
+  }
+
+  return {
+    directCommissionCents: directCommissionCpCents,
+    directCommissionCpCents,
+    differentialCpCents,
+    directRewardUsdtMicros: 0n,
+  };
+}
+
+/**
+ * Backward-compatible single-sponsor direct referral helper.
  */
 async function awardDirectReferralRewardTx(params: {
   tx: Tx;
@@ -195,98 +366,24 @@ async function awardDirectReferralRewardTx(params: {
   processedAt: Date;
   config: SystemConfig;
 }): Promise<{ directCommissionCents: number; directRewardUsdtMicros: bigint }> {
-  const { tx, lockedMembers, config, currentSgtDate, businessAt, processedAt } = params;
-  if (params.commissionableBv <= 0) {
-    return { directCommissionCents: 0, directRewardUsdtMicros: 0n };
-  }
-
-  let sponsor = lockedMembers.get(params.sponsorId);
-  if (!sponsor || sponsor.status !== "ACTIVE") {
-    return { directCommissionCents: 0, directRewardUsdtMicros: 0n };
-  }
-
-  sponsor = await ensureMemberChronologyTx(
-    tx,
-    sponsor,
-    businessAt,
-    config,
-    processedAt,
-    "LAZY_CATCHUP"
-  );
-  lockedMembers.set(sponsor.id, sponsor);
-
-  const legacyEventKey = `direct_comm:${params.orderId}:${sponsor.id}`;
-  const usdtEventKey = `direct_usdt:${params.orderId}:${sponsor.id}`;
-
-  const [existingLegacy, existingUsdt] = await Promise.all([
-    tx.walletLedger.findUnique({ where: { eventKey: legacyEventKey } }),
-    tx.referralRewardLedger.findUnique({ where: { eventKey: usdtEventKey } }),
-  ]);
-  if (existingLegacy || existingUsdt) {
-    return { directCommissionCents: 0, directRewardUsdtMicros: 0n };
-  }
-
-  const label =
-    params.orderType === "UPGRADE"
-      ? `Upgrade direct referral ${config.directCommissionRateBps / 100}% on ${params.commissionableBv} BV from ${params.sourceMemberCode}`
-      : `Direct referral ${config.directCommissionRateBps / 100}% on ${params.commissionableBv} BV from ${params.sourceMemberCode}`;
-
-  if (config.directRewardCurrency === "USDT") {
-    const amountMicros = calculateDirectRewardUsdtMicros(
-      params.commissionableBv,
-      config.directCommissionRateBps,
-      config.directUsdtConversionMicros
-    );
-    if (amountMicros > 0n) {
-      await tx.referralRewardLedger.create({
-        data: {
-          rewardNo: makeDocNo("RR", currentSgtDate),
-          eventKey: usdtEventKey,
-          memberId: sponsor.id,
-          sourceMemberId: params.sourceMemberId,
-          orderId: params.orderId,
-          currency: "USDT",
-          baseBv: params.commissionableBv,
-          rateBps: config.directCommissionRateBps,
-          conversionMicros: config.directUsdtConversionMicros,
-          amountMicros,
-          status: "CREDITED",
-          creditedAt: businessAt,
-          note: label,
-          createdAt: businessAt,
-        },
-      });
-    }
-    return { directCommissionCents: 0, directRewardUsdtMicros: amountMicros };
-  }
-
-  const directCommissionCents = calculateDirectCommissionCents(
-    params.commissionableBv,
-    config.directCommissionRateBps
-  );
-  if (directCommissionCents > 0) {
-    sponsor.availablePointsCents += directCommissionCents;
-    await tx.member.update({
-      where: { id: sponsor.id },
-      data: { availablePointsCents: sponsor.availablePointsCents },
-    });
-    await tx.walletLedger.create({
-      data: {
-        ledgerNo: makeDocNo("WL", currentSgtDate),
-        eventKey: legacyEventKey,
-        memberId: sponsor.id,
-        entryType: "DIRECT_COMMISSION",
-        deltaAvailableCents: directCommissionCents,
-        deltaLockedCents: 0,
-        availableAfterCents: sponsor.availablePointsCents,
-        lockedAfterCents: sponsor.lockedPointsCents,
-        orderId: params.orderId,
-        note: label,
-        createdAt: businessAt,
-      },
-    });
-  }
-  return { directCommissionCents, directRewardUsdtMicros: 0n };
+  const res = await awardReferralAndDifferentialRewardsTx({
+    tx: params.tx,
+    lockedMembers: params.lockedMembers,
+    sponsorChain: [params.sponsorId],
+    sourceMemberId: params.sourceMemberId,
+    sourceMemberCode: params.sourceMemberCode,
+    orderId: params.orderId,
+    packagePriceU: params.commissionableBv,
+    packagePoints: params.commissionableBv,
+    currentSgtDate: params.currentSgtDate,
+    businessAt: params.businessAt,
+    processedAt: params.processedAt,
+    config: params.config,
+  });
+  return {
+    directCommissionCents: res.directCommissionCpCents,
+    directRewardUsdtMicros: 0n,
+  };
 }
 
 /**
@@ -392,6 +489,8 @@ async function lockMembersInOrderTx(
       "todayPairedPointsCents",
       "availablePointsCents",
       "lockedPointsCents",
+      "cpBalanceCents",
+      "rpBalanceCents",
       "activatedAt"
     FROM members
     WHERE id = ANY(${uniqueIds}::text[])
@@ -784,6 +883,7 @@ export async function attemptBinaryPairingTx(
     rightBv: calc.rightBvAfter,
     todayPairedPointsCents: calc.dailyPairedAfterCents,
     availablePointsCents: member.availablePointsCents + calc.pointsAwardedCents,
+    cpBalanceCents: (member.cpBalanceCents ?? 0) + calc.pointsAwardedCents,
   };
 
   await tx.member.update({
@@ -793,6 +893,7 @@ export async function attemptBinaryPairingTx(
       rightBv: updatedMember.rightBv,
       todayPairedPointsCents: updatedMember.todayPairedPointsCents,
       availablePointsCents: updatedMember.availablePointsCents,
+      cpBalanceCents: updatedMember.cpBalanceCents,
     },
   });
 
@@ -963,6 +1064,8 @@ export async function createPackageOrder(params: {
   paymentMethod?: "USDT" | "MANUAL";
   placementParentId?: string | null;
   placementLeg?: BinaryLeg | null;
+  requestedCpU?: number;
+  payerMemberId?: string | null;
   asOf?: Date;
 }) {
   const asOf = params.asOf ?? new Date();
@@ -972,10 +1075,6 @@ export async function createPackageOrder(params: {
     const config = await getOrCreateConfigTx(tx);
     const paymentMethod = params.paymentMethod ?? "USDT";
     const paidDemo = Boolean(params.payImmediatelyDemo);
-
-    if (!paidDemo && paymentMethod === "USDT" && !isUsdtDepositConfigured(config)) {
-      throw new Error("USDT deposit service is temporarily unavailable");
-    }
 
     const member = await tx.member.findUnique({ where: { id: params.memberId } });
     if (!member) throw new Error("Member not found");
@@ -997,10 +1096,59 @@ export async function createPackageOrder(params: {
     let bvAmount = targetPkg.bv;
     let commissionableBv = targetPkg.bv;
     let previousPackageCode: string | null = null;
+    let rpAmountCents = 0;
+    let cpAmountCents = 0;
+    let usdtAmountCents = amountUsdCents;
 
     if (params.orderType === "INITIAL") {
       if (member.status === "ACTIVE" && member.currentPackageCode) {
         throw new Error("Member is already active with a package; use UPGRADE");
+      }
+
+      // Exact 50% RP + 0-50% CP + USDT remainder breakdown
+      const paymentCalc = calculateRegistrationPayment(
+        targetPkg.code,
+        params.requestedCpU ?? 0
+      );
+      if (!paymentCalc.valid) {
+        throw new Error(paymentCalc.error || "Invalid registration payment calculation");
+      }
+      rpAmountCents = paymentCalc.rpCents;
+      cpAmountCents = paymentCalc.cpCents;
+      usdtAmountCents = paymentCalc.usdtCents;
+      amountUsdCents = paymentCalc.totalCents;
+      expectedUsdtMicros = BigInt(usdtAmountCents) * 10000n;
+
+      if (params.payerMemberId) {
+        const payer = await tx.member.findUnique({ where: { id: params.payerMemberId } });
+        if (!payer) throw new Error("Payer member not found");
+        if ((payer.rpBalanceCents || 0) < rpAmountCents) {
+          throw new Error(
+            `Insufficient RP balance. Required: ${rpAmountCents / 100} RP, Available: ${(payer.rpBalanceCents || 0) / 100} RP`
+          );
+        }
+        if ((payer.cpBalanceCents || 0) < cpAmountCents) {
+          throw new Error(
+            `Insufficient CP balance. Required: ${cpAmountCents / 100} CP, Available: ${(payer.cpBalanceCents || 0) / 100} CP`
+          );
+        }
+
+        // Deduct payer RP
+        await tx.member.update({
+          where: { id: payer.id },
+          data: { rpBalanceCents: (payer.rpBalanceCents || 0) - rpAmountCents },
+        });
+
+        // Deduct payer CP if > 0
+        if (cpAmountCents > 0) {
+          await tx.member.update({
+            where: { id: payer.id },
+            data: {
+              cpBalanceCents: (payer.cpBalanceCents || 0) - cpAmountCents,
+              availablePointsCents: Math.max(0, payer.availablePointsCents - cpAmountCents),
+            },
+          });
+        }
       }
     } else {
       if (member.status !== "ACTIVE" || !member.currentPackageCode) {
@@ -1061,6 +1209,21 @@ export async function createPackageOrder(params: {
         : 0;
     }
 
+    const isFullyPaidByPoints = params.orderType === "INITIAL" && usdtAmountCents === 0;
+    if (!paidDemo && !isFullyPaidByPoints && paymentMethod === "USDT" && !isUsdtDepositConfigured(config)) {
+      throw new Error("USDT deposit service is temporarily unavailable");
+    }
+
+    const paymentStatus = isFullyPaidByPoints
+      ? "PAID"
+      : paidDemo
+        ? "PAID_DEMO"
+        : "UNPAID";
+    const depositVerifyStatus = isFullyPaidByPoints || paidDemo
+      ? "MATCHED_CONFIRMED"
+      : "AWAITING_TX";
+    const paidAt = isFullyPaidByPoints || paidDemo ? asOf : null;
+
     const order = await tx.packageOrder.create({
       data: {
         orderNo: makeDocNo("ORD", sgtDate),
@@ -1071,15 +1234,19 @@ export async function createPackageOrder(params: {
         amountUsdCents,
         bvAmount,
         commissionableBv,
+        rpAmountCents,
+        cpAmountCents,
+        usdtAmountCents,
+        systemVersion: "V2_CP_RP",
         paymentMethod,
         usdtNetwork: config.usdtNetwork || null,
         usdtContractAddress: config.usdtContractAddress || null,
         usdtDepositAddress: config.usdtDepositAddress || null,
         expectedUsdtMicros,
-        paymentStatus: paidDemo ? "PAID_DEMO" : "UNPAID",
-        paymentRef: paidDemo ? `PAY-${Date.now()}` : null,
-        paidAt: paidDemo ? asOf : null,
-        depositVerifyStatus: paidDemo ? "MATCHED_CONFIRMED" : "AWAITING_TX",
+        paymentStatus,
+        paymentRef: isFullyPaidByPoints ? `RP-CP-${Date.now()}` : paidDemo ? `PAY-${Date.now()}` : null,
+        paidAt,
+        depositVerifyStatus,
         status: "PENDING_CONFIRMATION",
         upgradeStatus: "NOT_APPLICABLE",
         requestedPlacementParentId: params.placementParentId ?? null,
@@ -1376,11 +1543,15 @@ export async function confirmPackageOrderTx(
           ? await getPlacementAncestorPath(tx, resolvedParentId, resolvedLeg)
           : [];
 
+      const sponsorChain = rawMember.sponsorId
+        ? await getSponsorAncestorChain(tx, rawMember.sponsorId)
+        : [];
+
       const idsToLock = [
         rawMember.id,
-        rawMember.sponsorId,
         resolvedParentId,
         ...ancestorSteps.map((s) => s.ancestorId),
+        ...sponsorChain,
       ];
       const lockedMembers = await lockMembersInOrderTx(tx, idsToLock);
       const lockedTargetMember = lockedMembers.get(rawMember.id)!;
@@ -1417,25 +1588,26 @@ export async function confirmPackageOrderTx(
         },
       });
 
-      let directCommissionCents = 0;
-      let directRewardUsdtMicros = 0n;
-      if (lockedTargetMember.sponsorId && order.commissionableBv > 0) {
-        const directRes = await awardDirectReferralRewardTx({
+      let directCommissionCpCents = 0;
+      let differentialCpCents = 0;
+      if (sponsorChain.length > 0) {
+        const pkgConfig = ROLL10_PACKAGES[targetPkg.code] || ROLL10_PACKAGES.P100;
+        const rewardRes = await awardReferralAndDifferentialRewardsTx({
           tx,
           lockedMembers,
-          sponsorId: lockedTargetMember.sponsorId,
+          sponsorChain,
           sourceMemberId: lockedTargetMember.id,
           sourceMemberCode: lockedTargetMember.memberCode,
           orderId: order.id,
-          orderType: "INITIAL",
-          commissionableBv: order.commissionableBv,
+          packagePriceU: pkgConfig.priceU,
+          packagePoints: pkgConfig.teamPoints,
           currentSgtDate,
           businessAt,
           processedAt,
           config,
         });
-        directCommissionCents = directRes.directCommissionCents;
-        directRewardUsdtMicros = directRes.directRewardUsdtMicros;
+        directCommissionCpCents = rewardRes.directCommissionCpCents;
+        differentialCpCents = rewardRes.differentialCpCents;
       }
 
       let pairingSettlementsCount = 0;
@@ -1488,7 +1660,7 @@ export async function confirmPackageOrderTx(
             packageCode: targetPkg.code,
             placementParentId: resolvedParentId,
             placementLeg: resolvedLeg,
-            directCommissionCents,
+            directCommissionCpCents,
             pairingSettlementsCount,
             businessAt: businessAt.toISOString(),
             processedAt: processedAt.toISOString(),
@@ -1505,8 +1677,10 @@ export async function confirmPackageOrderTx(
         effectiveSgtDate: currentSgtDate,
         effectiveAt: businessAt,
         upgradeStatus: "NOT_APPLICABLE",
-        directCommissionCents,
-        directRewardUsdtMicros: directRewardUsdtMicros.toString(),
+        directCommissionCents: directCommissionCpCents,
+        directCommissionCpCents,
+        differentialCpCents,
+        directRewardUsdtMicros: "0",
         pairingSettlementsCount,
       };
     }
@@ -1527,10 +1701,14 @@ export async function confirmPackageOrderTx(
         ? await getPlacementAncestorPath(tx, rawMember.placementParentId, rawMember.placementLeg)
         : [];
 
+    const sponsorChain = rawMember.sponsorId
+      ? await getSponsorAncestorChain(tx, rawMember.sponsorId)
+      : [];
+
     const idsToLock = [
       rawMember.id,
-      order.commissionableBv > 0 ? rawMember.sponsorId : null,
       ...ancestorSteps.map((s) => s.ancestorId),
+      ...sponsorChain,
     ];
     const lockedMembers = await lockMembersInOrderTx(tx, idsToLock);
     let member = lockedMembers.get(rawMember.id)!;
@@ -1572,25 +1750,25 @@ export async function confirmPackageOrderTx(
       },
     });
 
-    let directCommissionCents = 0;
-    let directRewardUsdtMicros = 0n;
-    if (order.commissionableBv > 0 && member.sponsorId) {
-      const directRes = await awardDirectReferralRewardTx({
+    let directCommissionCpCents = 0;
+    let differentialCpCents = 0;
+    if (order.commissionableBv > 0 && sponsorChain.length > 0) {
+      const rewardRes = await awardReferralAndDifferentialRewardsTx({
         tx,
         lockedMembers,
-        sponsorId: member.sponsorId,
+        sponsorChain,
         sourceMemberId: member.id,
         sourceMemberCode: member.memberCode,
         orderId: order.id,
-        orderType: "UPGRADE",
-        commissionableBv: order.commissionableBv,
+        packagePriceU: order.commissionableBv,
+        packagePoints: order.commissionableBv,
         currentSgtDate,
         businessAt,
         processedAt,
         config,
       });
-      directCommissionCents = directRes.directCommissionCents;
-      directRewardUsdtMicros = directRes.directRewardUsdtMicros;
+      directCommissionCpCents = rewardRes.directCommissionCpCents;
+      differentialCpCents = rewardRes.differentialCpCents;
     }
 
     let pairingSettlementsCount = 0;
@@ -1657,8 +1835,10 @@ export async function confirmPackageOrderTx(
       effectiveSgtDate: schedule.effectiveSgtDate,
       effectiveAt: schedule.effectiveAt,
       upgradeStatus: "WAITING_EFFECTIVE",
-      directCommissionCents,
-      directRewardUsdtMicros: directRewardUsdtMicros.toString(),
+      directCommissionCents: directCommissionCpCents,
+      directCommissionCpCents,
+      differentialCpCents,
+      directRewardUsdtMicros: "0",
       pairingSettlementsCount,
     };
 }

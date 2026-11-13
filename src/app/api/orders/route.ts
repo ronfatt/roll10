@@ -8,6 +8,7 @@ import { prisma } from "@/lib/db";
 const createOrderSchema = z.object({
   orderType: z.enum(["INITIAL", "UPGRADE"]),
   targetPackageCode: z.enum(["P100", "P500", "P1000"]),
+  requestedCpU: z.number().min(0).optional(),
   paymentMethod: z.enum(["USDT", "MANUAL"]).optional(),
   payImmediatelyDemo: z.boolean().optional(),
 });
@@ -27,6 +28,8 @@ export async function POST(req: Request) {
       memberId: member.id,
       orderType: parsed.data.orderType,
       targetPackageCode: parsed.data.targetPackageCode,
+      requestedCpU: parsed.data.requestedCpU ?? 0,
+      payerMemberId: member.id,
       paymentMethod: parsed.data.paymentMethod ?? "USDT",
       payImmediatelyDemo: parsed.data.payImmediatelyDemo ?? false,
     });

@@ -13,6 +13,8 @@ const registerSchema = z.object({
   password: z.string().min(6).max(100),
   sponsorCode: z.string().min(3).max(24),
   packageCode: z.enum(["P100", "P500", "P1000"]).optional(),
+  cpAmountU: z.number().min(0).optional(),
+  payerMemberId: z.string().optional(),
   payImmediatelyDemo: z.boolean().optional(),
 });
 
@@ -77,6 +79,8 @@ export async function POST(req: Request) {
         orderType: "INITIAL",
         targetPackageCode: parsed.data.packageCode,
         paymentMethod: "USDT",
+        requestedCpU: parsed.data.cpAmountU ?? 0,
+        payerMemberId: parsed.data.payerMemberId ?? null,
         payImmediatelyDemo: false,
       });
     }

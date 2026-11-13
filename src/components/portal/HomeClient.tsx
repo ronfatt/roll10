@@ -222,19 +222,9 @@ export function HomeClient({
   // Format crisp rollover summary text in EN / zh-CN
   const buildEstimateDetail = () => {
     const isZh = locale === "zh-CN";
-    if (eodPreview.retainedSide === "NONE") {
-      return isZh
-        ? `左区保留 ${formatBv(eodPreview.carryoverBv)} · 右区清零 ${formatBv(eodPreview.flushedBv)}`
-        : `Left retains ${formatBv(eodPreview.carryoverBv)} · Right clears ${formatBv(eodPreview.flushedBv)}`;
-    }
-    if (eodPreview.retainedSide === "LEFT") {
-      return isZh
-        ? `左区保留 ${formatBv(eodPreview.carryoverBv)} · 右区清零 ${formatBv(eodPreview.flushedBv)}`
-        : `Left retains ${formatBv(eodPreview.carryoverBv)} · Right clears ${formatBv(eodPreview.flushedBv)}`;
-    }
     return isZh
-      ? `右区保留 ${formatBv(eodPreview.carryoverBv)} · 左区清零 ${formatBv(eodPreview.flushedBv)}`
-      : `Right retains ${formatBv(eodPreview.carryoverBv)} · Left clears ${formatBv(eodPreview.flushedBv)}`;
+      ? `左区保留 ${member.leftBv.toLocaleString()} 积分 · 右区保留 ${member.rightBv.toLocaleString()} 积分`
+      : `Left retains ${member.leftBv.toLocaleString()} pts · Right retains ${member.rightBv.toLocaleString()} pts`;
   };
 
   return (
@@ -486,11 +476,16 @@ export function HomeClient({
               <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#7CF0FD] to-[#18C5DC] text-[11px] font-bold text-[#0A101A] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_6px_rgba(81,231,250,0.35)]">
                 L
               </span>
-              <span className="text-[12.5px] font-medium text-[#CAD7E6]">{t.overview.leftBv}</span>
+              <span className="text-[12.5px] font-medium text-[#CAD7E6]">
+                {locale === "zh-CN" ? "左区积分" : "Left Points"}
+              </span>
               <span className="ml-auto h-2 w-2 rounded-full bg-[#51E7FA] shadow-[0_0_8px_#51E7FA]" />
             </div>
             <div className="mt-2 truncate tabular-nums text-[23px] font-bold leading-tight tracking-tight text-[#F4F8FC]">
-              {formatBv(member.leftBv)}
+              {member.leftBv.toLocaleString("en-US")}{" "}
+              <span className="text-sm font-semibold text-[#CAD7E6]">
+                {locale === "zh-CN" ? "积分" : "pts"}
+              </span>
             </div>
             <div className="mt-0.5 tabular-nums text-[11.5px] text-[#AAB8C7]">
               {formatMemberCountText(member.leftCount, locale)}
@@ -505,11 +500,16 @@ export function HomeClient({
               <span className="inline-flex h-5 w-5 items-center justify-center rounded-[5px] bg-gradient-to-b from-[#FFF0CA] via-[#F2CD7E] to-[#C8A858] text-[11px] font-bold text-[#0A101A] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_6px_rgba(242,205,126,0.35)]">
                 R
               </span>
-              <span className="text-[12.5px] font-medium text-[#CAD7E6]">{t.overview.rightBv}</span>
+              <span className="text-[12.5px] font-medium text-[#CAD7E6]">
+                {locale === "zh-CN" ? "右区积分" : "Right Points"}
+              </span>
               <span className="ml-auto h-2 w-2 rounded-full bg-[#F2CD7E] shadow-[0_0_8px_#F2CD7E]" />
             </div>
             <div className="mt-2 truncate tabular-nums text-[23px] font-bold leading-tight tracking-tight text-[#F4F8FC]">
-              {formatBv(member.rightBv)}
+              {member.rightBv.toLocaleString("en-US")}{" "}
+              <span className="text-sm font-semibold text-[#CAD7E6]">
+                {locale === "zh-CN" ? "积分" : "pts"}
+              </span>
             </div>
             <div className="mt-0.5 tabular-nums text-[11.5px] text-[#AAB8C7]">
               {formatMemberCountText(member.rightCount, locale)}
@@ -558,10 +558,10 @@ export function HomeClient({
             )}
           </button>
 
-          {/* Metrics Row: Direct Referrals & Earned Referral U */}
+          {/* Metrics Row: Direct Referrals & Earned Referral CP */}
           <div className="order-3 min-[460px]:order-2 grid w-full min-[460px]:w-auto min-[460px]:flex-1 grid-cols-2 items-center gap-3 border-t border-white/[0.06] pt-2 min-[460px]:border-t-0 min-[460px]:pt-0">
             <Link
-              href="/referrals"
+              href="/tree?tab=referral"
               className="group min-w-0 transition-opacity hover:opacity-90"
             >
               <div className="flex items-baseline gap-1 tabular-nums text-[18px] font-bold leading-none text-[#F4F8FC]">
@@ -569,6 +569,9 @@ export function HomeClient({
                 {locale === "zh-CN" && (
                   <span className="text-[11px] font-medium text-[#AAB8C7]">人</span>
                 )}
+                <span className="ml-1 rounded border border-[#51E7FA]/35 bg-[#51E7FA]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#51E7FA]">
+                  {member.directRatePercent ?? 25}%
+                </span>
               </div>
               <div className="mt-1 text-[10.5px] leading-tight text-[#AAB8C7]">
                 {t.overview.directReferralsLabel}
@@ -576,15 +579,20 @@ export function HomeClient({
             </Link>
 
             <Link
-              href="/wallet?filter=DIRECT_USDT"
+              href="/wallet?filter=DIRECT"
               className="group min-w-0 transition-opacity hover:opacity-90"
             >
               <div className="flex items-baseline gap-1 tabular-nums text-[18px] font-bold leading-none text-[#F4F8FC]">
-                <span>{formatUsdtMicros(member.directReferralUsdtMicros, "")}</span>
-                <span className="text-[12.5px] font-bold text-[#51E7FA]">U</span>
+                <span>{formatU(member.directCommissionCpCents ?? member.directCommissionCents)}</span>
+                <span className="text-[12.5px] font-bold text-[#51E7FA]">CP</span>
               </div>
               <div className="mt-1 text-[10.5px] leading-tight text-[#AAB8C7]">
                 {t.overview.referralRewardsEarnedLabel}
+                {(member.differentialCpCents ?? 0) > 0 && (
+                  <span className="ml-1 text-[10px] text-[#A5F6FF]">
+                    (+{formatU(member.differentialCpCents)} 极差)
+                  </span>
+                )}
               </div>
             </Link>
           </div>
@@ -616,7 +624,7 @@ export function HomeClient({
             <span className="text-[18px] font-semibold text-[#889AA8]">
               / {formatU(member.dailyCapPointsCents)}
             </span>
-            <span className="text-[15px] font-bold text-[#51E7FA]">{t.common.points}</span>
+            <span className="text-[15px] font-bold text-[#51E7FA]">CP</span>
           </div>
           {capReached && (
             <span className="rounded-full border border-[#51E7FA]/45 bg-[#0A101A]/80 px-2.5 py-0.5 text-[11px] font-semibold text-[#51E7FA]">
@@ -763,7 +771,7 @@ export function HomeClient({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[#AAB8C7]">
-                {locale === "zh-CN" ? "预估结转保留 BV" : "Estimated Carryover BV"}
+                {locale === "zh-CN" ? "预估结转保留积分" : "Estimated Carryover Points"}
               </span>
               <span className="tabular-nums font-semibold text-[#51E7FA]">
                 {formatBv(eodPreview.carryoverBv)}
@@ -771,18 +779,18 @@ export function HomeClient({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[#AAB8C7]">
-                {locale === "zh-CN" ? "预估清零 BV" : "Estimated Flushed BV"}
+                {locale === "zh-CN" ? "预估清零积分" : "Estimated Flushed Points"}
               </span>
               <span className="tabular-nums font-semibold text-[#CAD7E6]">
-                {formatBv(eodPreview.flushedBv)}
+                0
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-[#AAB8C7]">
-                {locale === "zh-CN" ? "结转判定依据" : "Decision Basis"}
+                {locale === "zh-CN" ? "结转判定依据" : "Settlement Rule"}
               </span>
-              <span className="text-right font-mono-sgt text-[#F4F8FC]">
-                {formatDecisionBasisLabel(eodPreview.decisionBasis, locale)}
+              <span className="text-right font-mono-sgt text-[#51E7FA]">
+                {locale === "zh-CN" ? "100% 全额保留" : "100% Retained"}
               </span>
             </div>
           </div>
@@ -794,11 +802,11 @@ export function HomeClient({
               <div className="pt-1 text-[#CAD7E6]">
                 {locale === "zh-CN" ? "保留 " : "Retained "}
                 <strong className="text-[#F4F8FC]">
-                  {formatLegLabel(latestEod.retainedSide, locale)}
+                  {locale === "zh-CN" ? "双区全额保留" : "Both Legs 100%"}
                 </strong>{" "}
                 · {locale === "zh-CN" ? "清零 " : "Flushed "}
                 <strong className="tabular-nums text-[#51E7FA]">
-                  {formatBv(latestEod.flushedBv)}
+                  0
                 </strong>
               </div>
             </div>
@@ -806,8 +814,8 @@ export function HomeClient({
 
           <p className="leading-relaxed text-[#AAB8C7]">
             {locale === "zh-CN"
-              ? "以上按当前实时 BV 余额测算。实际每日 00:00 SGT 日结将优先比较双边 BV（仅在相同时比较活跃人数），并在 D+2 00:01 SGT 升级生效前执行。"
-              : "Estimated from live BV balances. Actual 00:00 SGT settlement compares BV first (headcount only on ties) and runs prior to any D+2 00:01 SGT upgrade activation."}
+              ? "根据新制度，每日 00:00 SGT 结算重置当日对碰封顶，左右区未对碰团队积分 100% 自动结转至下一日，零清零。"
+              : "Under the confirmed rules, 00:00 SGT midnight settlement resets the daily pairing cap; un-paired team points on both legs roll over 100% to the next day with zero flushing."}
           </p>
 
           <Link

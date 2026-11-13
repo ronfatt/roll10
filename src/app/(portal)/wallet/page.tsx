@@ -175,6 +175,8 @@ export default async function WalletPage({
       memberStatus={member.status}
       availablePointsCents={member.availablePointsCents}
       lockedPointsCents={member.lockedPointsCents}
+      cpBalanceCents={(member as any).cpBalanceCents || 0}
+      rpBalanceCents={(member as any).rpBalanceCents || 0}
       feeRateBps={config.withdrawalFeeRateBps}
       usdRateMicros={config.withdrawalUsdRateMicros}
       isDemoRate={config.isDemoRate}
