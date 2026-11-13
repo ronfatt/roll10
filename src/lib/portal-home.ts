@@ -9,7 +9,7 @@ import {
   getNextSgtRolloverAt,
 } from "@/lib/sgt";
 import { calculateDirectRewardUsdtMicros } from "@/lib/money";
-import { ROLL10_PACKAGES } from "@/lib/packages";
+import { ROLL10_PACKAGES, getPackageTierName } from "@/lib/packages";
 import { decideEodCarryover, getOrCreateConfigTx } from "@/lib/settlement/engine";
 import { countSubtreeActiveMembers } from "@/lib/settlement/tree";
 
@@ -96,12 +96,7 @@ export interface PortalHomePayload {
 
 function formatPlanShort(code: string | null, locale: Locale): string {
   if (!code) return locale === "zh-CN" ? "待激活" : "Pending";
-  const numeric = Number(code.replace(/^P/i, ""));
-  if (Number.isFinite(numeric) && numeric > 0) {
-    const formatted = numeric.toLocaleString("en-US");
-    return locale === "zh-CN" ? `${formatted} U 配套` : `${formatted} U Plan`;
-  }
-  return code;
+  return getPackageTierName(code);
 }
 
 function formatPlanNumeric(code: string | null): string {
@@ -288,9 +283,7 @@ export async function loadPortalHomeData(
   }
 
   const packageLabel = member.currentPackage
-    ? locale === "zh-CN"
-      ? member.currentPackage.nameZh
-      : member.currentPackage.nameEn
+    ? `${getPackageTierName(member.currentPackage.code)} (${(member.currentPackage.priceUsdCents / 100).toLocaleString()} U)`
     : t.overview.pendingActivation;
 
   const fromCode = waitingUpgradeOrder?.previousPackageCode ?? member.currentPackageCode ?? "";
@@ -409,8 +402,8 @@ export function getFallbackHomeData(
       displayName: member.displayName,
       status: member.status,
       currentPackageCode: isP1000 ? "P1000" : "P100",
-      packageLabel: isP1000 ? "尊享配套 1,000 U" : "入门配套 100 U",
-      planBadge: isP1000 ? "P1000" : "P100",
+      packageLabel: isP1000 ? "Diamond (1,000 U)" : "Silver (100 U)",
+      planBadge: isP1000 ? "Diamond" : "Silver",
       dailyCapPointsCents: isP1000 ? 100000 : 10000,
       leftBv: isP1000 ? 4400 : 1800,
       rightBv: isP1000 ? 0 : 1000,

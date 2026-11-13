@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatMemberStatus } from "@/lib/i18n-labels";
+import { getPackageTierName } from "@/lib/packages";
 import { LocaleToggle } from "@/components/LocaleToggle";
 import { SubpageHeaderTitle } from "@/components/Roll10Logo";
 
@@ -109,14 +110,16 @@ export function AccountClient({
           <div className="p-3">
             <div className="text-[#829098]">{t.packages.currentTier}</div>
             <div className="mt-0.5 font-mono-sgt font-bold text-[#E9C66B] text-sm">
-              {member.currentPackageCode ?? t.overview.pendingActivation}
+              {member.currentPackageCode
+                ? `${getPackageTierName(member.currentPackageCode)}`
+                : t.overview.pendingActivation}
             </div>
           </div>
           <div className="p-3">
             <div className="text-[#829098]">{t.common.status}</div>
             <div className="mt-0.5 font-bold text-[#00D9DF]">
               {formatMemberStatus(member.status, locale)}
-              {member.pendingUpgradePackageCode ? ` (→ ${member.pendingUpgradePackageCode})` : ""}
+              {member.pendingUpgradePackageCode ? ` (→ ${getPackageTierName(member.pendingUpgradePackageCode)})` : ""}
             </div>
           </div>
         </div>

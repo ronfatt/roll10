@@ -12,6 +12,7 @@ import {
   formatOrderType,
 } from "@/lib/i18n-labels";
 import { formatBv, formatU, formatUsdtMicros } from "@/lib/money";
+import { getPackageTierName } from "@/lib/packages";
 import { formatNetworkLabel } from "@/lib/usdt/address";
 import { BottomDrawer } from "@/components/MotionPrimitives";
 import { SubpageHeaderTitle } from "@/components/Roll10Logo";
@@ -208,7 +209,7 @@ export function PackagesClient({
               {t.packages.waitingEffectiveBadge}
             </span>
             <span className="text-sm font-bold text-[#F4F6F7]">
-              {currentPackageCode} → {pendingUpgradePackageCode}
+              {getPackageTierName(currentPackageCode)} → {getPackageTierName(pendingUpgradePackageCode)}
             </span>
           </div>
           {waitingNaturalSchedule && (
@@ -307,10 +308,16 @@ export function PackagesClient({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2.5">
                   <span className="text-xl sm:text-2xl font-black italic tracking-wider text-[#F4F6F7]">
-                    {tier.code}
+                    {getPackageTierName(tier.code)}
                   </span>
                   <span className="text-xs text-[#B0BBC2] font-medium">
-                    {locale === "zh-CN" ? tier.nameZh : tier.nameEn}
+                    {locale === "zh-CN"
+                      ? tier.code === "P100"
+                        ? "白银配套"
+                        : tier.code === "P500"
+                          ? "黄金配套"
+                          : "钻石配套"
+                      : `${getPackageTierName(tier.code)} Tier`}
                   </span>
                 </div>
 
@@ -459,8 +466,8 @@ export function PackagesClient({
                 <div className="mt-1.5 flex justify-between text-[#B0BBC2]">
                   <span>
                     {formatOrderType(o.orderType, locale)}:{" "}
-                    {o.previousPackageCode ? `${o.previousPackageCode} → ` : ""}
-                    <strong className="text-[#F4F6F7]">{o.targetPackageCode}</strong>
+                    {o.previousPackageCode ? `${getPackageTierName(o.previousPackageCode)} → ` : ""}
+                    <strong className="text-[#F4F6F7]">{getPackageTierName(o.targetPackageCode)}</strong>
                   </span>
                   <span className="tabular-nums text-[#F4F6F7]">
                     {formatU(o.amountUsdCents)} U · {formatBv(o.bvAmount)}
@@ -518,7 +525,7 @@ export function PackagesClient({
             <div className="flex items-center gap-1.5 text-[#00D9DF] font-semibold">
               <Sparkles className="h-4 w-4" />
               <span>
-                {currentPackageCode ?? t.overview.pendingActivation} → {selectedTarget.code}
+                {getPackageTierName(currentPackageCode)} → {getPackageTierName(selectedTarget.code)}
               </span>
             </div>
 
@@ -541,14 +548,14 @@ export function PackagesClient({
                   <div className="flex justify-between">
                     <span className="text-[#B0BBC2]">{t.packages.currentTier}</span>
                     <span className="font-semibold text-[#F4F6F7]">
-                      {currentPackageCode ?? t.overview.pendingActivation}
+                      {getPackageTierName(currentPackageCode)}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#B0BBC2]">
                       {locale === "zh-CN" ? "目标升级配套" : "Target Tier"}
                     </span>
-                    <span className="font-semibold text-[#00D9DF]">{selectedTarget.code}</span>
+                    <span className="font-semibold text-[#00D9DF]">{getPackageTierName(selectedTarget.code)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#B0BBC2]">{t.deposit.networkLabel}</span>

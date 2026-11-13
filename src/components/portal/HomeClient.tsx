@@ -26,6 +26,7 @@ import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDecisionBasisLabel, formatLegLabel } from "@/lib/i18n-labels";
 import type { PortalHomePayload } from "@/lib/portal-home";
 import { formatBv, formatU, formatUsdtMicros } from "@/lib/money";
+import { getPackageTierName } from "@/lib/packages";
 import {
   computeMidnightCountdownState,
   formatMemberCountText,
@@ -285,7 +286,7 @@ export function HomeClient({
             href="/packages"
             className="inline-flex items-center gap-1.5 rounded-lg border border-[#E9C66B]/60 bg-gradient-to-r from-[#FFE8A3]/15 via-[#E9C66B]/10 to-transparent px-2.5 py-1 text-xs font-bold text-[#E9C66B] shadow-[0_0_10px_rgba(233,198,107,0.15)] transition hover:border-[#E9C66B]"
           >
-            <span>{member.currentPackageCode ?? "P1000"} 会员</span>
+            <span>{getPackageTierName(member.currentPackageCode)} 会员</span>
             <span className="text-[10px] text-[#00D9DF]">({member.directRatePercent ?? 35}%)</span>
           </Link>
         </div>

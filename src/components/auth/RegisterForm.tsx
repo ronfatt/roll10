@@ -201,16 +201,19 @@ export function RegisterForm({
             {[
               {
                 code: "P100" as const,
+                name: "Silver",
                 price: "100 U",
                 direct: "25%",
               },
               {
                 code: "P500" as const,
+                name: "Gold",
                 price: "500 U",
                 direct: "30%",
               },
               {
                 code: "P1000" as const,
+                name: "Diamond",
                 price: "1,000 U",
                 direct: "35%",
               },
@@ -224,7 +227,7 @@ export function RegisterForm({
                     setPackageCode(pkg.code);
                     setCpAmount("0");
                   }}
-                  className={`relative min-h-[68px] rounded-xl border p-2.5 text-center transition-all ${
+                  className={`relative min-h-[72px] rounded-xl border p-2 text-center transition-all ${
                     selected
                       ? "border-[#E9C66B] bg-[#172126] text-[#F4F6F7] shadow-[0_0_12px_rgba(233,198,107,0.25)]"
                       : "border-[#29363D] bg-[#070B0D] text-[#B0BBC2] hover:border-[#29363D]/80"
@@ -235,10 +238,13 @@ export function RegisterForm({
                       <Check className="h-2.5 w-2.5 stroke-[3]" />
                     </span>
                   )}
+                  <div className="text-xs font-black italic tracking-wide text-[#E9C66B]">
+                    {pkg.name}
+                  </div>
                   <div className="tabular-nums text-sm font-bold text-[#F4F6F7]">
                     {pkg.price}
                   </div>
-                  <div className="tabular-nums text-xs font-semibold text-[#829098] mt-0.5">
+                  <div className="tabular-nums text-[11px] font-semibold text-[#829098]">
                     {pkg.direct}
                   </div>
                 </button>

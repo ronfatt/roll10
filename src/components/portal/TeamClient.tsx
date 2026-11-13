@@ -24,6 +24,7 @@ import {
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatLegLabel, formatMemberStatus } from "@/lib/i18n-labels";
 import { formatBv } from "@/lib/money";
+import { getPackageTierName } from "@/lib/packages";
 import type {
   PlacementBreadcrumbItem,
   PlacementNodeDto,
@@ -120,8 +121,8 @@ function DesktopReferralBranch({
             <span className="font-mono-sgt text-[11px] font-bold text-[#51E7FA]">
               {node.memberCode}
             </span>
-            <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-1.5 py-0.5 text-[10px] font-medium text-[#F4F8FC]">
-              {node.packageCode ?? "—"}
+            <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-1.5 py-0.5 text-[10px] font-bold text-[#E9C66B]">
+              {node.packageCode ? getPackageTierName(node.packageCode) : "—"}
             </span>
           </div>
           <div className="mt-1 truncate text-sm font-semibold text-[#F4F8FC]">
@@ -308,8 +309,8 @@ function MobileReferralBranch({
             <span className="font-mono-sgt text-xs font-bold text-[#51E7FA]">
               {node.memberCode}
             </span>
-            <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-2 py-0.5 text-[10px] font-medium text-[#F4F8FC]">
-              {node.packageCode ?? "—"}
+            <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-2 py-0.5 text-[10px] font-bold text-[#E9C66B]">
+              {node.packageCode ? getPackageTierName(node.packageCode) : "—"}
             </span>
             <StatusBadge status={node.status} locale={locale} />
           </div>
@@ -1183,8 +1184,8 @@ export function TeamClient({
                       <span className="font-mono-sgt text-xs font-bold text-[#51E7FA]">
                         {placeFocus.memberCode}
                       </span>
-                      <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-2 py-0.5 text-[10px] font-medium text-[#F4F8FC]">
-                        {placeFocus.packageCode ?? "—"}
+                      <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-2 py-0.5 text-[10px] font-bold text-[#E9C66B]">
+                        {placeFocus.packageCode ? getPackageTierName(placeFocus.packageCode) : "—"}
                       </span>
                       <StatusBadge status={placeFocus.status} locale={locale} />
                     </div>
@@ -1282,8 +1283,8 @@ export function TeamClient({
                           {slot.node.displayName}
                         </div>
                         <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                          <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-1.5 py-0.5 text-[10px] text-[#F4F8FC]">
-                            {slot.node.packageCode ?? "—"}
+                          <span className="rounded border border-[#2B3D4D] bg-[#0A101A] px-1.5 py-0.5 text-[10px] font-bold text-[#E9C66B]">
+                            {slot.node.packageCode ? getPackageTierName(slot.node.packageCode) : "—"}
                           </span>
                           <StatusBadge status={slot.node.status} locale={locale} />
                         </div>
@@ -1410,7 +1411,7 @@ export function TeamClient({
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[#AAB8C7]">{t.tree.packageStatusLabel}</span>
                 <span className="font-semibold text-[#F4F8FC]">
-                  {detailModal.node.packageCode ?? "—"} ·{" "}
+                  {detailModal.node.packageCode ? getPackageTierName(detailModal.node.packageCode) : "—"} ·{" "}
                   {formatMemberStatus(detailModal.node.status, locale)}
                 </span>
               </div>
@@ -1478,7 +1479,7 @@ export function TeamClient({
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[#AAB8C7]">{t.tree.packageStatusLabel}</span>
                 <span className="font-semibold text-[#F4F8FC]">
-                  {detailModal.node.packageCode ?? "—"} ·{" "}
+                  {detailModal.node.packageCode ? getPackageTierName(detailModal.node.packageCode) : "—"} ·{" "}
                   {formatMemberStatus(detailModal.node.status, locale)}
                 </span>
               </div>

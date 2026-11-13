@@ -351,11 +351,11 @@ export function LandingClient({
             <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#00D9DF]/40 to-[#00D9DF]" />
           </div>
 
-          {/* 3 Tier Cards: P100, P500, P1000 */}
+          {/* 3 Tier Cards: Silver, Gold, Diamond */}
           <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
-            {/* P100 */}
+            {/* Silver (100 U) */}
             <div className="rounded-xl border border-[#29363D] bg-[#070B0D] p-2 sm:p-2.5 text-center shadow-md">
-              <div className="text-sm sm:text-base font-black italic text-[#F4F6F7]">P100</div>
+              <div className="text-sm sm:text-base font-black italic tracking-wide text-[#F4F6F7]">Silver</div>
               <div className="my-1 rounded-md border border-[#E9C66B]/30 bg-[#E9C66B]/10 py-0.5 px-1">
                 <span className="text-xs sm:text-sm font-mono-sgt font-bold text-[#E9C66B]">100 U</span>
               </div>
@@ -369,9 +369,9 @@ export function LandingClient({
               </div>
             </div>
 
-            {/* P500 */}
+            {/* Gold (500 U) */}
             <div className="rounded-xl border border-[#29363D] bg-[#070B0D] p-2 sm:p-2.5 text-center shadow-md">
-              <div className="text-sm sm:text-base font-black italic text-[#F4F6F7]">P500</div>
+              <div className="text-sm sm:text-base font-black italic tracking-wide text-[#F4F6F7]">Gold</div>
               <div className="my-1 rounded-md border border-[#E9C66B]/30 bg-[#E9C66B]/10 py-0.5 px-1">
                 <span className="text-xs sm:text-sm font-mono-sgt font-bold text-[#E9C66B]">500 U</span>
               </div>
@@ -385,9 +385,9 @@ export function LandingClient({
               </div>
             </div>
 
-            {/* P1000 */}
+            {/* Diamond (1,000 U) */}
             <div className="rounded-xl border border-[#E9C66B]/50 bg-[#070B0D] p-2 sm:p-2.5 text-center shadow-md shadow-[0_0_12px_rgba(233,198,107,0.15)]">
-              <div className="text-sm sm:text-base font-black italic text-[#F4F6F7]">P1000</div>
+              <div className="text-sm sm:text-base font-black italic tracking-wide text-[#F4F6F7]">Diamond</div>
               <div className="my-1 rounded-md border border-[#E9C66B]/40 bg-[#E9C66B]/15 py-0.5 px-1">
                 <span className="text-xs sm:text-sm font-mono-sgt font-bold text-[#E9C66B]">1,000 U</span>
               </div>

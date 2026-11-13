@@ -70,8 +70,8 @@ async function main() {
   const tiers = [
     {
       code: "P100",
-      nameEn: "Starter 100",
-      nameZh: "入门配套 100",
+      nameEn: "Silver",
+      nameZh: "Silver (白银)",
       priceUsdCents: 10000,
       priceUsdtMicros: BigInt(100_000_000),
       bv: 100,
@@ -80,8 +80,8 @@ async function main() {
     },
     {
       code: "P500",
-      nameEn: "Pro 500",
-      nameZh: "进阶配套 500",
+      nameEn: "Gold",
+      nameZh: "Gold (黄金)",
       priceUsdCents: 50000,
       priceUsdtMicros: BigInt(500_000_000),
       bv: 500,
@@ -90,8 +90,8 @@ async function main() {
     },
     {
       code: "P1000",
-      nameEn: "Elite 1000",
-      nameZh: "尊享配套 1000",
+      nameEn: "Diamond",
+      nameZh: "Diamond (钻石)",
       priceUsdCents: 100000,
       priceUsdtMicros: BigInt(1_000_000_000),
       bv: 1000,

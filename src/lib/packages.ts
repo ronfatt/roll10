@@ -14,6 +14,7 @@
 
 export interface PackageConfig {
   code: "P100" | "P500" | "P1000";
+  tierName: "Silver" | "Gold" | "Diamond";
   nameZh: string;
   nameEn: string;
   priceU: number;
@@ -27,8 +28,9 @@ export interface PackageConfig {
 export const ROLL10_PACKAGES: Record<string, PackageConfig> = {
   P100: {
     code: "P100",
-    nameZh: "入门配套 100",
-    nameEn: "Starter 100",
+    tierName: "Silver",
+    nameZh: "Silver (白银 100 U)",
+    nameEn: "Silver 100 U",
     priceU: 100,
     teamPoints: 100,
     directRateBps: 2500,
@@ -38,8 +40,9 @@ export const ROLL10_PACKAGES: Record<string, PackageConfig> = {
   },
   P500: {
     code: "P500",
-    nameZh: "进阶配套 500",
-    nameEn: "Pro 500",
+    tierName: "Gold",
+    nameZh: "Gold (黄金 500 U)",
+    nameEn: "Gold 500 U",
     priceU: 500,
     teamPoints: 500,
     directRateBps: 3000,
@@ -49,8 +52,9 @@ export const ROLL10_PACKAGES: Record<string, PackageConfig> = {
   },
   P1000: {
     code: "P1000",
-    nameZh: "尊享配套 1000",
-    nameEn: "Elite 1000",
+    tierName: "Diamond",
+    nameZh: "Diamond (钻石 1,000 U)",
+    nameEn: "Diamond 1,000 U",
     priceU: 1000,
     teamPoints: 1000,
     directRateBps: 3500,
@@ -59,6 +63,48 @@ export const ROLL10_PACKAGES: Record<string, PackageConfig> = {
     sortOrder: 3,
   },
 };
+
+/**
+ * Returns the standardized tier name: Silver, Gold, Diamond.
+ */
+export function getPackageTierName(code?: string | null): string {
+  if (!code) return "Silver";
+  const clean = code.toUpperCase();
+  if (clean === "P1000" || clean === "DIAMOND") return "Diamond";
+  if (clean === "P500" || clean === "GOLD") return "Gold";
+  if (clean === "P100" || clean === "SILVER") return "Silver";
+  return code;
+}
+
+/**
+ * Returns the localized tier title: e.g. Silver (白银), Gold (黄金), Diamond (钻石).
+ */
+export function getPackageTierNameZh(code?: string | null): string {
+  if (!code) return "Silver (白银)";
+  const clean = code.toUpperCase();
+  if (clean === "P1000" || clean === "DIAMOND") return "Diamond (钻石)";
+  if (clean === "P500" || clean === "GOLD") return "Gold (黄金)";
+  if (clean === "P100" || clean === "SILVER") return "Silver (白银)";
+  return code;
+}
+
+/**
+ * Returns full display label with U amount: e.g. "Diamond · 1,000 U"
+ */
+export function formatPackageFullLabel(code?: string | null, locale: string = "zh-CN"): string {
+  const tier = getPackageTierName(code);
+  const pkg =
+    ROLL10_PACKAGES[code || ""] ||
+    (tier === "Diamond"
+      ? ROLL10_PACKAGES.P1000
+      : tier === "Gold"
+        ? ROLL10_PACKAGES.P500
+        : ROLL10_PACKAGES.P100);
+  if (locale === "zh-CN") {
+    return `${tier} · ${pkg.priceU.toLocaleString()} U`;
+  }
+  return `${tier} (${pkg.priceU.toLocaleString()} U)`;
+}
 
 export const MAX_SPONSOR_RATE_BPS = 3500; // 35% max differential cap
 
